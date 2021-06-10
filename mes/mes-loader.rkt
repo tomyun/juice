@@ -1,0 +1,193 @@
+#lang racket
+
+(require "mes-opener.rkt")
+;(require "mes-lexer.rkt")
+;(require "mes-parser.rkt")
+(require "mes-parsack.rkt")
+
+;(define example-mes-file "START.MES")
+;(define example-mes-file "START1.MES")
+;(define example-mes-file "YUI.MES")
+
+;(define mes (open-mes example-mes-file))
+;(define lex-res (time (match mes [(list 'MES dict code) (lex-mes dict code)])))
+;(define parse-res (time (match mes [(list 'MES dict code) (parse lex-res)])))
+;(define res (time (match mes [(list 'MES dict code) (parse-to-datum (lex-mes dict code))])))
+;(define res (time (match mes [(list 'MES dict code) (parse-result <mes> (bytes->string/latin-1 code))])))
+;(match-define (list 'MES dict code) mes)
+;(define res (time (parse-result <mes> (bytes->string/latin-1 code))))
+
+(define (load-mes path)
+  (define f (open-mes path))
+  (match-define `(MES ,dict ,code) f)
+  (define r (parse-result <mes> code))
+  (fuse (resolve (lower r)) dict))
+
+;(require parsack)
+;(define code (bytes->string/latin-1 (third mes)))
+;(define ex (substring code 0 12))
+;(define ex (substring code 0 4433))
+;(define ex (substring code 0 5079))
+
+(define (lower l)
+  (define (: x)
+    (match x
+      [`(num ,n) n]
+      [`(exprs ,e ...) (: e)]
+      [`(,c ... (exprs ,e ...)) `(,@(: c) ,@(: e))]
+      [`(expr ,e ...) (fold-expr (: e))]
+      [`(,c (params ,p ...)) `(,(: c) ,@(: p))]
+      [`(param ,p) (: p)]
+      ;[`(begin ,s ...) `(,@(: s))]
+      [`(,a ...) (map : a)]
+      [a a]))
+  (: l))
+
+(define (fold-expr l)
+  (define (: x)
+    (match x
+      [`((,a ,b ,s ...) (term2 ,f) ,r ...) (: (cons (cons `((exp ,f) ,b ,a) s) r))]
+      [`((,a ,s ...) (term1 ,f) ,r ...) (: (cons (cons `((exp ,f) ,a) s) r))]
+      [`((,s ...) (term0 ,f) ,a ,r ...) (: (cons (cons `((exp ,f) ,a) s) r))]
+      [`((,s ...) ,a ,r ...) (: (cons (cons a s) r))]
+      [`((,s)) s]
+      [`(()) `(_)])) ; empty expr in np2/MISATO.MES
+  (: (cons '() l)))
+
+(define (resolve l)
+  (define (: x)
+    (match x
+      [`(exp ,x) (resolve-exp x)]
+      [`(cmd ,x) (resolve-cmd x)]
+      [`(sys ,x) (resolve-sys x)]
+      [`(,x ...) (map : x)]
+      [x x]))
+  (: l))
+
+(define (resolve-exp c)
+  (match (char->integer c)
+    [#x20 '+]
+    [#x21 '-]
+    [#x22 '*]
+    [#x23 '/]
+    [#x24 '%]
+    [#x25 '!] ;FIXME: use single `|` in own #lang?
+    [#x26 '&]
+    [#x27 '==]
+    [#x28 '!=]
+    [#x29 '>]
+    [#x2A '<]
+    [#x2B 'arr]
+    [#x2C 'arr.b]
+    [#x2D 'reg]
+    [#x2E 'reg]
+    [#x2F 'rnd]))
+
+(define (resolve-cmd c)
+  (match (char->integer c)
+    [#x10 'text-color]
+    [#x11 'wait]
+    [#x12 'define-proc]
+    [#x13 'proc]
+    [#x14 'call]
+    [#x15 'print-number]
+    [#x16 'delay]
+    [#x17 'clear]
+    [#x18 'color]
+    [#x19 'util]
+    [#x1A 'animate]
+    [i (unknown-op-name 'cmd i)]))
+
+(define (resolve-sys c)
+  (match (char->integer c)
+    [#x10 'while]
+    [#x11 'continue]
+    [#x12 'break]
+    [#x13 'menu-show]
+    [#x14 'menu-init]
+    [#x15 'mouse]
+    [#x16 'palette]
+    [#x17 'draw-box]
+    [#x18 'draw-box-inverse]
+    [#x19 'blit]
+    [#x1A 'blit-swap]
+    [#x1B 'blit-mask]
+    [#x1C 'load-file]
+    [#x1D 'load-image]
+    [#x1E 'mes-run]
+    [#x1F 'mes-call]
+    [#x21 'flag]
+    [#x22 'slot]
+    [#x23 'click]
+    [#x24 'sound]
+    [#x26 'field]
+    [i (unknown-op-name 'sys i)]))
+
+(define (unknown-op-name s i) `(,s ,i))
+  ;(string->symbol (string-append s (~r i #:base 16 #:min-width 2 #:pad-string "0"))))
+
+(define (fuse l dict)
+  (define f
+    `(,fuse-while
+      ,fuse-logic
+      ,(curry fuse-dic dict)
+      ,(curry fuse-dic-header dict)
+      ,fuse-text))
+  ((apply compose1 (reverse f)) l))
+
+(define (fuse-while l)
+  (define (: x)
+    (match x
+      [`((while) (if ,c ,t) ,r ...) (cons `(while ,(: c) ,(: t)) (: r))]
+      [`(,a ,r ...) (cons (: a) (: r))]
+      [a a]))
+  (: l))
+
+(define (fuse-logic l)
+  (define (: x)
+    (match x
+      [(or `(& (& ,a ,b) ,c) `(& ,a (& ,b ,c))) `(& ,@(:& a) ,@(:& b) ,@(:& c))]
+      [(or `(! (! ,a ,b) ,c) `(! ,a (! ,b ,c))) `(! ,@(:! a) ,@(:! b) ,@(:! c))]
+      [`(,a ...) (map : a)]
+      [a a]))
+  (define (:& x)
+    (match x
+      [`(& ,a ,b) `(,@(:& a) ,@(:& b))]
+      [e `(,e)]))
+  (define (:! x)
+    (match x
+      [`(! ,a ,b) `(,@(:! a) ,@(:! b))]
+      [e `(,e)]))
+  (: l))
+
+(define (fuse-dic dict l)
+  (define n (length dict))
+  (define (: x)
+    (match x
+      [`(dic ,i) (if (< i n) `(chr ,(list-ref dict i)) `(dic ,i))]
+      [`(,a ...) (map : a)]
+      [a a]))
+  (: l))
+
+(define (fuse-dic-header dict l)
+  (match l
+   [`(mes ,r ...) `(mes (dict ,@dict) ,@r)]))
+
+(define (fuse-text l)
+  (define (: x)
+    (match x
+      [`(chrs (chr ,c) ...) `(text ,(apply string c))]
+      [`(,a ...) (map : a)]
+      [a a]))
+  (: l))
+
+;(require racket/trace)
+;(trace lower)
+;(trace fold-expr)
+;(trace resolve)
+;(trace resolve-expr)
+;(trace fuse)
+
+;(fuse (resolve (lower res)) dict)
+
+(provide load-mes)
