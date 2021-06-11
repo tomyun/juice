@@ -71,15 +71,9 @@
    [(<= n #x0FFF)   (cons NUM2 (g n))] ; 4095
    [(<= n #x03FFFF) (cons NUM3 (g n))] ; 262143
    [else            (error (format "too large number:e ~a" n))]))
-(define (mes:num? n)
-  (match n
-   [`(,(? char? c))        (char<=? #\u30 c #\u3F)]
-   [`(,(? char? c) ,r ...) (char<=? #\u07 c #\u09)]
-   [_                      #f]))
 
 (define (mes:set-reg v . e)
   (match v
-   ;[(? mes:num? n)             `(,SETRC    ,n             ,@(mes:exprs e))]
    [(? number? n)               `(,SETRC    ,(mes:num n)   ,@(mes:exprs e))]
    [(? mes:var? x)              `(,SETRE    ,(mes:expr x)  ,@(mes:exprs e))]
    [`(,l ...)                   `(,SETRE    ,(mes:expr l)  ,@(mes:exprs e))]))
