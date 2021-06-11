@@ -40,6 +40,7 @@
   
 (define (decompile filename)
   (display filename)
+  (flush-output)
   (cond
    [(extension? filename ".mes")
     (let* ([mes (load-mes filename)]
@@ -48,10 +49,12 @@
       (with-output-to-file outname #:exists (exists)
         (λ () (display src)))
       (displayln ".rkt"))]
-   [else (displayln "?")]))
+   [else (displayln "?")])
+  (flush-output))
 
 (define (compile filename)
   (display filename)
+  (flush-output)
   (cond
    [(extension? filename ".rkt")
     (let ([mes (compile-mes filename)]
@@ -59,7 +62,8 @@
       (with-output-to-file outname #:exists (exists)
         (λ () (write-bytes mes)))
       (displayln ".mes"))]
-   [else (displayln "?")]))
+   [else (displayln "?")])
+  (flush-output))
  
 (case (command)
  ['decompile (work decompile)]
