@@ -123,7 +123,7 @@
 (define stmt  (<or> block cut op chrs))
 (define stmts (many stmt))
 
-(define <mes> ($cons 'mes (:~ (~> stmts) END $eof)))
+(define <mes> ($cons 'mes (:~ (~> stmts) (optional END) (optional $eof)))) ; many inconsistent endings
 
 (provide parse-result
          parse
