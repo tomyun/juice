@@ -59,8 +59,8 @@
 (define (mes:num n)
   (define (f l)
     (match l
-      [`(() 0) 0]
-      [`(,r 0) r]
+      [`(() 0)  0]
+      [`(,r 0)  r]
       [`(,r ,x) (f `(,(cons (bitwise-ior (arithmetic-shift (bitwise-and x #x3F) 2) #x03) r)
                      ,(arithmetic-shift x -6)))]))
   (define (g n) (map integer->char (f `(() ,n))))
@@ -74,7 +74,7 @@
 (define (mes:num? n)
   (match n
    [`(,(? char? c) ,r ...) (or (char<=? #\u30 c #\u3F) (char<=? #\u07 c #\u09))]
-   [_            #f]))
+   [_                      #f]))
 
 (define (mes:set-reg v . e)
   (match v
@@ -129,7 +129,7 @@
   (define (f l)
     (match l
      [`(,c1 ,c2 ,r ...) `(,@(mes:chr c1 c2) ,@(f r))]
-     [x x]))
+     [x                 x]))
   (f (bytes->list b)))
 
 (define (mes:dict . l)

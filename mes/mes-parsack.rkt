@@ -33,9 +33,9 @@
     (define (f a) (arithmetic-shift a -2))
     (define (g a b) (bitwise-ior (arithmetic-shift a 8) b))
     (match x
-      [(list a) (f a)]
+      [(list a)       (f a)]
       [(list a ... b) (f (g (num a) b))]
-      [_ x]))
+      [_              x]))
   (num (map char->integer l)))
 
 (define (lex-chr c1 c2)

@@ -16,26 +16,26 @@
 (define (lower l)
   (define (: x)
     (match x
-      [`(num ,n) n]
-      [`(exprs ,e ...) (: e)]
+      [`(num ,n)                n]
+      [`(exprs ,e ...)          (: e)]
       [`(,c ... (exprs ,e ...)) `(,@(: c) ,@(: e))]
-      [`(expr ,e ...) (fold-expr (: e))]
-      [`(,c (params ,p ...)) `(,(: c) ,@(: p))]
-      [`(param ,p) (: p)]
-      ;[`(begin ,s ...) `(,@(: s))]
-      [`(,a ...) (map : a)]
-      [a a]))
+      [`(expr ,e ...)           (fold-expr (: e))]
+      [`(,c (params ,p ...))    `(,(: c) ,@(: p))]
+      [`(param ,p)              (: p)]
+      ;[`(begin ,s ...)         `(,@(: s))]
+      [`(,a ...)                (map : a)]
+      [a                        a]))
   (: l))
 
 (define (fold-expr l)
   (define (: x)
     (match x
-      [`((,a ,b ,s ...) (term2 ,f) ,r ...) (: (cons (cons `((exp ,f) ,b ,a) s) r))]
-      [`((,a ,s ...) (term1 ,f) ,r ...) (: (cons (cons `((exp ,f) ,a) s) r))]
-      [`((,s ...) (term0 ,f) ,a ,r ...) (: (cons (cons `((exp ,f) ,a) s) r))]
+      [`((,a ,b ,s ...)      (term2 ,f) ,r ...) (: (cons (cons `((exp ,f) ,b ,a) s) r))]
+      [`((,a ,s ...)         (term1 ,f) ,r ...) (: (cons (cons `((exp ,f) ,a) s) r))]
+      [`((,s ...)            (term0 ,f) ,a ,r ...) (: (cons (cons `((exp ,f) ,a) s) r))]
       [`((,s ...) ,a ,r ...) (: (cons (cons a s) r))]
-      [`((,s)) s]
-      [`(()) `(_)])) ; empty expr in np2/MISATO.MES
+      [`((,s))               s]
+      [`(())                 `(_)])) ; empty expr in np2/MISATO.MES
   (: (cons '() l)))
 
 (define (resolve l)
@@ -122,8 +122,8 @@
   (define (: x)
     (match x
       [`((while) (if ,c ,t) ,r ...) (cons `(while ,(: c) ,(: t)) (: r))]
-      [`(,a ,r ...) (cons (: a) (: r))]
-      [a a]))
+      [`(,a ,r ...)                 (cons (: a) (: r))]
+      [a                            a]))
   (: l))
 
 (define (fuse-logic l)
@@ -131,16 +131,16 @@
     (match x
       [(or `(& (& ,a ,b) ,c) `(& ,a (& ,b ,c))) `(& ,@(:& a) ,@(:& b) ,@(:& c))]
       [(or `(! (! ,a ,b) ,c) `(! ,a (! ,b ,c))) `(! ,@(:! a) ,@(:! b) ,@(:! c))]
-      [`(,a ...) (map : a)]
-      [a a]))
+      [`(,a ...)                                (map : a)]
+      [a                                        a]))
   (define (:& x)
     (match x
       [`(& ,a ,b) `(,@(:& a) ,@(:& b))]
-      [e `(,e)]))
+      [e          `(,e)]))
   (define (:! x)
     (match x
       [`(! ,a ,b) `(,@(:! a) ,@(:! b))]
-      [e `(,e)]))
+      [e          `(,e)]))
   (: l))
 
 (define (fuse-dic dict l)
@@ -149,7 +149,7 @@
     (match x
       [`(dic ,i) (if (< i n) `(chr ,(list-ref dict i)) `(dic ,i))]
       [`(,a ...) (map : a)]
-      [a a]))
+      [a         a]))
   (: l))
 
 (define (fuse-dic-header dict l)
@@ -160,8 +160,8 @@
   (define (: x)
     (match x
       [`(chrs (chr ,c) ...) `(text ,(apply string c))]
-      [`(,a ...) (map : a)]
-      [a a]))
+      [`(,a ...)            (map : a)]
+      [a                    a]))
   (: l))
 
 (provide load-mes)

@@ -27,7 +27,7 @@
 (define filename
  (match args
   [`(,f) f]
-  [_ #f]))
+  [_     #f]))
 
 (define (decompile)
   (define mes (load-mes filename))

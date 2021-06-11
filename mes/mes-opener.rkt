@@ -13,7 +13,7 @@
   (define (f l)
     (flatten (match l
               [(list a b c ...) (list (bytes a b) (f c))]
-              [_ '()])))
+              [_                '()])))
   (define (g b) (read-char (reencode-input-port (open-input-bytes b) "sjis")))
   (map g (f l)))
 (define (bit-code b) (bytes->string/latin-1 (bit-string->bytes b)))
