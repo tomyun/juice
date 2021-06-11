@@ -87,11 +87,11 @@
 (define (mes:set-arr v i . e)   `(,SETAW ,v ,(mes:expr i)  ,@(mes:exprs e)))
 (define (mes:set-arr.b v i . e) `(,SETAB ,v ,(mes:expr i)  ,@(mes:exprs e)))
 
-(define (mes:if c t)        `(,CND ,(mes:expr c) ,(mes:block t)))
-(define (mes:if-else c t e) `(,CND ,(mes:expr c) ,(mes:block t) ,CNT ,(mes:block e)))
+(define (mes:if c t)        `(,CND ,(mes:expr c) ,t))
+(define (mes:if-else c t e) `(,CND ,(mes:expr c) ,t ,CNT ,e))
 (define-syntax mes:cond
   (syntax-rules (else)
-    [(_ [else e])    `(,(mes:block e))]
+    [(_ [else e])    `(,e)]
     [(_ [c t])       `(,(mes:if c t))]
     [(_ [c t] l ...) `(,(mes:if c t) ,CNT ,(mes:cond l ...))]))
 
@@ -192,9 +192,9 @@
 
 (define (mes:param p)
   (match p
-   [`(block ,l ...) l]
-   [(? string? s)   (mes:str s)]
-   [e               (mes:expr e)]))
+   [(? mes:block? b)    b]
+   [(? string? s)       (mes:str s)]
+   [e                   (mes:expr e)]))
 (define (mes:params . p)
   (define (f x)
     (match x
@@ -203,18 +203,17 @@
       [`((,l ...) ())          l]))
   (f `(() ,@p)))
 
-(define (mes:begin . l) `(block ,BEG ,@l ,END))
-(define (mes:block b)
+(define (mes:begin . l) `(,BEG ,@l ,END))
+(define (mes:block? b)
   (match b
-   [`(block ,l ...) l]
-   [x               x]))
-
+   [`(,(? char? a) ,l ... ,(? char? b)) (and (char=? a BEG) (char=? b END))]
+   [_                                   #f]))
 (define (mes:mes . l) (flatten `(,l ,END)))
 
 ;; compiler-util
 
 (define (char->hex c) (~r (char->integer c) #:base 16 #:min-width 2 #:pad-string "0"))
-(define (show-hex l) (string-join (map char->hex (flatten (mes:block l)))))
+(define (show-hex l) (string-join (map char->hex (flatten l))))
 
 (provide show-hex)
 
