@@ -9,6 +9,7 @@
 
 (define version "v0.0.1+20210609")
 (define command (make-parameter null))
+(define exists (make-parameter 'error))
 
 (define filenames
   (command-line
@@ -20,6 +21,9 @@
                          (command 'compile)]
    [("-v" "--version")   "show version"
                          (command 'version)]
+   #:once-each
+   [("--force" "-f")     "force overwriting output files"
+                         (exists 'replace)]
    #:ps "<args> : filenames"
    #:args args
    args))
@@ -35,7 +39,7 @@
   (define mes (load-mes filename))
   (define src (pretty-format mes #:mode 'write))
   (define outname (string-append filename ".rkt"))
-  (define out (open-output-file outname))
+  (define out (open-output-file outname #:exists (exists)))
   (display src out)
   (close-output-port out)
   (displayln ".rkt"))
@@ -45,7 +49,7 @@
   (flush-output)
   (define mes (compile-mes filename))
   (define outname (string-append filename ".mes"))
-  (define out (open-output-file outname #:exists 'replace))
+  (define out (open-output-file outname #:exists (exists)))
   (write-bytes mes out)
   (close-output-port out)
   (displayln ".mes"))
