@@ -5,7 +5,7 @@
 (define (load-bytes path) (port->bytes (open-input-file path)))
 ;(define example-mes (load-bytes "START.MES"))
 ;(define example-mes (load-bytes "MYHOUS.MES"))
-(define example-mes (load-bytes "YUI.MES"))
+;(define example-mes (load-bytes "YUI.MES"))
 
 (define (bit-dict b)
   (define l (bytes->list (bit-string->bytes b)))
@@ -27,7 +27,7 @@
 
 (define (open-mes path) (open-mes-bytes (load-bytes path)))
 
-(define example-bit (open-mes-bytes example-mes))
+;(define example-bit (open-mes-bytes example-mes))
 
 (provide open-mes-bytes
          open-mes)
