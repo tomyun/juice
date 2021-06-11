@@ -33,14 +33,14 @@
     (define (f a) (arithmetic-shift a -2))
     (define (g a b) (bitwise-ior (arithmetic-shift a 8) b))
     (match x
-      [(list a)       (f a)]
-      [(list a ... b) (f (g (num a) b))]
-      [_              x]))
+      [`(,a)        (f a)]
+      [`(,a ... ,b) (f (g (num a) b))]
+      [_            x]))
   (num (map char->integer l)))
 
 (define (lex-chr c1 c2)
-  (define i (map char->integer (list c1 c2)))
-  (define m (match i [(list a b) (list (+ a #x20) b)]))
+  (define i (map char->integer `(,c1 ,c2)))
+  (define m (match i [`(,a ,b) `(,(+ a #x20) ,b)]))
   (define b (list->bytes m))
   ;(bytes->string/latin-1 b))
   ;(apply string (map integer->char m)))
@@ -62,7 +62,7 @@
                                     (char-between #\uA1 #\uDF))))
                   (char #\u06)
                   (return (list->string c))))
-(define NUM1  (:% (char #\u07) (c <- $anyChar) (return `(num ,(lex-num (list c))))))
+(define NUM1  (:% (char #\u07) (c <- $anyChar)           (return `(num ,(lex-num `(,c))))))
 (define NUM2  (:% (char #\u08) (c <- (times 2 $anyChar)) (return `(num ,(lex-num c)))))
 (define NUM3  (:% (char #\u09) (c <- (times 3 $anyChar)) (return `(num ,(lex-num c)))))
 (define SETRC (char #\u0A))
