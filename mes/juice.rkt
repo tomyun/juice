@@ -10,7 +10,7 @@
 (require "mes-loader.rkt")
 (require "mes-builder.rkt")
 
-(define version "v0.0.1+20210609")
+(define version "v0.0.2+20210611")
 (define command (make-parameter null))
 (define exists (make-parameter 'error))
 
