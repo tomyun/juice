@@ -79,11 +79,11 @@
 
 (define (mes:set-reg v . e)
   (match v
-   [(? mes:num? n)              `(,SETRC    ,n             ,@(mes:exprs e))]
+   ;[(? mes:num? n)             `(,SETRC    ,n             ,@(mes:exprs e))]
    [(? number? n)               `(,SETRC    ,(mes:num n)   ,@(mes:exprs e))]
    [(? mes:var? x)              `(,SETRE    ,(mes:expr x)  ,@(mes:exprs e))]
    [`(,l ...)                   `(,SETRE    ,(mes:expr l)  ,@(mes:exprs e))]))
-
+(define (mes:set-reg* v . e)    `(,SETRE    ,(mes:expr v)  ,@(mes:exprs e)))
 (define (mes:set-var v e)       `(,SETV  ,v ,(mes:expr e)))
 (define (mes:set-arr v i . e)   `(,SETAW ,v ,(mes:expr i)  ,@(mes:exprs e)))
 (define (mes:set-arr.b v i . e) `(,SETAB ,v ,(mes:expr i)  ,@(mes:exprs e)))
