@@ -10,7 +10,7 @@
 (define version "v0.0.1+20210609")
 (define command (make-parameter null))
 
-(define args
+(define filenames
   (command-line
    #:program "juice"
    #:once-any
@@ -20,14 +20,14 @@
                          (command 'compile)]
    [("-v" "--version")   "show version"
                          (command 'version)]
-   #:ps "<args> : filename"
+   #:ps "<args> : filenames"
    #:args args
    args))
 
-(define filename
- (match args
-  [`(,f) f]
-  [_     #f]))
+(define (work proc)
+  (for ([f filenames])
+    (with-handlers ([exn:fail? (λ (v) (newline) (displayln (exn-message v)))])
+      (proc f))))
 
 (define (decompile filename)
   (display filename)
@@ -51,7 +51,7 @@
   (displayln ".mes"))
  
 (case (command)
- ['decompile (decompile filename)]
- ['compile   (compile filename)]
+ ['decompile (work decompile)]
+ ['compile   (work compile)]
  ['version   (displayln (format "juice ~a by tomyun" version))]
  [else       (displayln "type `juice -h` for help")])
