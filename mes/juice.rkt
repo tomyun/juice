@@ -30,7 +30,7 @@
 
 (define (work proc)
   (for ([f filenames])
-    (with-handlers ([exn:fail? (λ (v) (newline) (displayln (exn-message v)))])
+    (with-handlers ([exn:fail? (λ (v) (displayln "!") (displayln (exn-message v)))])
       (proc f))))
 
 (define (decompile filename)
