@@ -6,7 +6,7 @@
 
 (require bitsyntax)
 
-(define (load-bytes path) (port->bytes (open-input-file path)))
+(define (load-bytes path) (port->bytes (open-input-file path) #:close? #t))
 
 (define (bit-dict b)
   (define l (bytes->list (bit-string->bytes b)))
