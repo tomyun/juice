@@ -3,6 +3,7 @@
 (require racket/cmdline)
 (require racket/match)
 (require racket/pretty)
+(require racket/string)
 
 (require "mes-loader.rkt")
 (require "mes-builder.rkt")
@@ -33,26 +34,34 @@
     (with-handlers ([exn:fail? (λ (v) (displayln "!") (displayln (exn-message v)))])
       (proc f))))
 
+(define (extension? filename ext)
+  (or (string-suffix? filename (string-downcase ext))
+      (string-suffix? filename (string-upcase ext))))
+  
 (define (decompile filename)
   (display filename)
-  (flush-output)
-  (define mes (load-mes filename))
-  (define src (pretty-format mes #:mode 'write))
-  (define outname (string-append filename ".rkt"))
-  (define out (open-output-file outname #:exists (exists)))
-  (display src out)
-  (close-output-port out)
-  (displayln ".rkt"))
+  (cond
+   [(extension? filename ".mes")
+    (let* ([mes (load-mes filename)]
+           [src (pretty-format mes #:mode 'write)]
+           [outname (string-append filename ".rkt")]
+           [out (open-output-file outname #:exists (exists))])
+      (display src out)
+      (close-output-port out)
+      (displayln ".rkt"))]
+   [else (displayln "?")]))
 
 (define (compile filename)
   (display filename)
-  (flush-output)
-  (define mes (compile-mes filename))
-  (define outname (string-append filename ".mes"))
-  (define out (open-output-file outname #:exists (exists)))
-  (write-bytes mes out)
-  (close-output-port out)
-  (displayln ".mes"))
+  (cond
+   [(extension? filename ".rkt")
+    (let* ([mes (compile-mes filename)]
+           [outname (string-append filename ".mes")]
+           [out (open-output-file outname #:exists (exists))])
+      (write-bytes mes out)
+      (close-output-port out)
+      (displayln ".mes"))]
+   [else (displayln "?")]))
  
 (case (command)
  ['decompile (work decompile)]
