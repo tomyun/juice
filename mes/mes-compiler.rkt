@@ -7,7 +7,7 @@
 ;(require racket/private/cond (rename-in (only-in racket cond) [cond rk-cond]))
 (require racket/format)
 (require racket/provide)
-(require racket/string)
+(require racket/string (for-syntax racket/string))
 (require syntax/parse (for-syntax syntax/parse))
 
 ;; lexer
@@ -246,11 +246,5 @@
 (provide show-hex)
 
 (provide (filtered-out
-          (λ (name)
-            (and (regexp-match? #rx"^mes:.+" name)
-                 (regexp-replace #rx"^mes:" name "")))
+          (λ (n) (and (string-prefix? n "mes:") (string-replace n "mes:" "")))
           (all-defined-out)))
-
-; (provide (filtered-out
-;           (λ (n) (and (string-prefix? n "mes:") (string-replace n "mes:" "")))
-;           (all-defined-out)))
