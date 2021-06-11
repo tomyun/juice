@@ -5,6 +5,8 @@
 (require racket/pretty)
 (require racket/string)
 
+(require ansi-color)
+
 (require "mes-loader.rkt")
 (require "mes-builder.rkt")
 
@@ -31,15 +33,18 @@
 
 (define (work proc)
   (for ([f filenames])
-    (with-handlers ([exn:fail? (λ (v) (displayln "!") (displayln (exn-message v)))])
+    (with-handlers ([exn:fail? (λ (v) (displayln-color 'b-red "!") (displayln (exn-message v)))])
       (proc f))))
 
 (define (extension? filename ext)
   (or (string-suffix? filename (string-downcase ext))
       (string-suffix? filename (string-upcase ext))))
-  
+
+(define (display-color c s)   (with-colors c (lambda () (display s))))
+(define (displayln-color c s) (with-colors c (lambda () (displayln s))))
+
 (define (decompile filename)
-  (display filename)
+  (display-color 'b-white filename)
   (flush-output)
   (cond
    [(extension? filename ".mes")
@@ -48,12 +53,12 @@
            [outname (string-append filename ".rkt")])
       (with-output-to-file outname #:exists (exists)
         (λ () (display src)))
-      (displayln ".rkt"))]
-   [else (displayln "?")])
+      (displayln-color 'b-green ".rkt"))]
+   [else (displayln-color 'b-yellow "?")])
   (flush-output))
 
 (define (compile filename)
-  (display filename)
+  (display-color 'b-white filename)
   (flush-output)
   (cond
    [(extension? filename ".rkt")
@@ -61,8 +66,8 @@
           [outname (string-append filename ".mes")])
       (with-output-to-file outname #:exists (exists)
         (λ () (write-bytes mes)))
-      (displayln ".mes"))]
-   [else (displayln "?")])
+      (displayln-color 'b-blue ".mes"))]
+   [else (displayln-color 'b-yellow "?")])
   (flush-output))
  
 (case (command)
