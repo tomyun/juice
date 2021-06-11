@@ -7,9 +7,6 @@
 (require bitsyntax)
 
 (define (load-bytes path) (port->bytes (open-input-file path)))
-;(define example-mes (load-bytes "START.MES"))
-;(define example-mes (load-bytes "MYHOUS.MES"))
-;(define example-mes (load-bytes "YUI.MES"))
 
 (define (bit-dict b)
   (define l (bytes->list (bit-string->bytes b)))
@@ -19,7 +16,6 @@
               [_ '()])))
   (define (g b) (read-char (reencode-input-port (open-input-bytes b) "sjis")))
   (map g (f l)))
-;(define (bit-code b) (bit-string->bytes b))
 (define (bit-code b) (bytes->string/latin-1 (bit-string->bytes b)))
 
 (define (open-mes-bytes b)
@@ -30,8 +26,6 @@
     (list 'MES (bit-dict dict) (bit-code code)))))
 
 (define (open-mes path) (open-mes-bytes (load-bytes path)))
-
-;(define example-bit (open-mes-bytes example-mes))
 
 (provide open-mes-bytes
          open-mes)

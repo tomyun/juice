@@ -12,7 +12,6 @@
 (define-syntax-rule (:: p ...) (parser-seq p ...))
 (define-syntax-rule (:~ p ...) (parser-one p ...))
 (define-syntax-rule (:% p ...) (parser-compose p ...))
-;(define ($cons . a) (match a [(list t ... p) (>>= p (λ (x) (return (list t x))))]))
 (define ($list t p) (>>= p (λ (x) (return (list t x)))))
 (define ($cons t p) (>>= p (λ (x) (return (cons t x)))))
 

@@ -5,33 +5,13 @@
 (require racket/match)
 
 (require "mes-opener.rkt")
-;(require "mes-lexer.rkt")
-;(require "mes-parser.rkt")
 (require "mes-parsack.rkt")
-
-;(define example-mes-file "START.MES")
-;(define example-mes-file "START1.MES")
-;(define example-mes-file "YUI.MES")
-
-;(define mes (open-mes example-mes-file))
-;(define lex-res (time (match mes [(list 'MES dict code) (lex-mes dict code)])))
-;(define parse-res (time (match mes [(list 'MES dict code) (parse lex-res)])))
-;(define res (time (match mes [(list 'MES dict code) (parse-to-datum (lex-mes dict code))])))
-;(define res (time (match mes [(list 'MES dict code) (parse-result <mes> (bytes->string/latin-1 code))])))
-;(match-define (list 'MES dict code) mes)
-;(define res (time (parse-result <mes> (bytes->string/latin-1 code))))
 
 (define (load-mes path)
   (define f (open-mes path))
   (match-define `(MES ,dict ,code) f)
   (define r (parse-result <mes> code))
   (fuse (resolve (lower r)) dict))
-
-;(require parsack)
-;(define code (bytes->string/latin-1 (third mes)))
-;(define ex (substring code 0 12))
-;(define ex (substring code 0 4433))
-;(define ex (substring code 0 5079))
 
 (define (lower l)
   (define (: x)
@@ -128,7 +108,6 @@
     [i (unknown-op-name 'sys i)]))
 
 (define (unknown-op-name s i) `(,s ,i))
-  ;(string->symbol (string-append s (~r i #:base 16 #:min-width 2 #:pad-string "0"))))
 
 (define (fuse l dict)
   (define f
@@ -184,14 +163,5 @@
       [`(,a ...) (map : a)]
       [a a]))
   (: l))
-
-;(require racket/trace)
-;(trace lower)
-;(trace fold-expr)
-;(trace resolve)
-;(trace resolve-expr)
-;(trace fuse)
-
-;(fuse (resolve (lower res)) dict)
 
 (provide load-mes)

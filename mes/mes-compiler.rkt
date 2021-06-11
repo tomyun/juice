@@ -26,7 +26,6 @@
 (define SETAB #\u0E)
 (define CND   #\u0F)
 (define NUM0  #\u30)
-; (define DIC   (:% (c <- (char-between #\u80 #\uFF)) (return `(dic ,(lex-dic c)))))
 
 ;; compiler
 
@@ -90,21 +89,6 @@
 
 (define (mes:if c t)        `(,CND ,(mes:expr c) ,(mes:block t)))
 (define (mes:if-else c t e) `(,CND ,(mes:expr c) ,(mes:block t) ,CNT ,(mes:block e)))
-; (define-syntax (mes:cond stx)
-;   (syntax-case stx ()
-;     [(_ [c t] ...)] #'()))
-; (define (mes:cond ct . l)
-;   (list
-;    (match ct
-;     [`(,c ,t)         (mes:if c t)])
-;    (match l
-;     [`([,c ,t] r ...) `(,CNT ,(mes:expr c) ,CNT ,(mes:block t))]
-;     [`([else ,e])     `(,CNT ,(block e))])))
-; (define-syntax mes:cond
-;   (syntax-rules (else)
-;     [(_ [else e])    #'(list CNT (mes:block e))]
-;     [(_ [c t])       #'(list (mes:if c t))]
-;     [(_ [c t] l ...) #'(list (mes:if c t) CNT (mes:cond l ...))]))
 (define-syntax mes:cond
   (syntax-rules (else)
     [(_ [else e])    `(,(mes:block e))]
@@ -133,7 +117,6 @@
 
 (define dict (hash))
 
-;(define (mes:chr c1 c2) (map integer->char `(,(- c1 #x20) ,c2)))
 (define (mes:chr c1 c2)
   (define c0 (hash-ref dict `(,c1 ,c2) #f))
   (map integer->char
@@ -148,14 +131,6 @@
      [`(,c1 ,c2 ,r ...) `(,@(mes:chr c1 c2) ,@(f r))]
      [x x]))
   (f (bytes->list b)))
-
-; (define (mes:dict . l)
-;   (define n (length l))
-;   (set! dict (make-hash (map cons l (range n))))
-;   (define (: b) (map integer->char (bytes->list b)))
-;   (define s (: (integer->integer-bytes (* (add1 n) 2) 2 #f #f)))
-;   (define (f c) (parameterize ([current-locale "ja_JP.SJIS"]) (: (string->bytes/locale (string c)))))
-;   `(,s ,(map f l)))
 
 (define (mes:dict . l)
   (define (f c) (parameterize ([current-locale "ja_JP.SJIS"]) (string->bytes/locale (string c))))
