@@ -98,7 +98,7 @@
     [#x1B 'blit-mask]
     [#x1C 'load-file]
     [#x1D 'load-image]
-    [#x1E 'mes-run]
+    [#x1E 'mes-jump]
     [#x1F 'mes-call]
     [#x21 'flag]
     [#x22 'slot]
