@@ -29,7 +29,7 @@
   [`(,f) f]
   [_     #f]))
 
-(define (decompile)
+(define (decompile filename)
   (display filename)
   (flush-output)
   (define mes (load-mes filename))
@@ -40,7 +40,7 @@
   (close-output-port out)
   (displayln ".rkt"))
 
-(define (compile)
+(define (compile filename)
   (display filename)
   (flush-output)
   (define mes (compile-mes filename))
@@ -51,7 +51,7 @@
   (displayln ".mes"))
  
 (case (command)
- ['decompile (decompile)]
- ['compile   (compile)]
+ ['decompile (decompile filename)]
+ ['compile   (compile filename)]
  ['version   (displayln (format "juice ~a by tomyun" version))]
  [else       (displayln "type `juice -h` for help")])
