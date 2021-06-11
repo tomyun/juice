@@ -73,7 +73,8 @@
    [else            (error (format "too large number:e ~a" n))]))
 (define (mes:num? n)
   (match n
-   [`(,(? char? c) ,r ...) (or (char<=? #\u30 c #\u3F) (char<=? #\u07 c #\u09))]
+   [`(,(? char? c))        (char<=? #\u30 c #\u3F)]
+   [`(,(? char? c) ,r ...) (char<=? #\u07 c #\u09)]
    [_                      #f]))
 
 (define (mes:set-reg v . e)
