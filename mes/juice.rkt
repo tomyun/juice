@@ -15,11 +15,11 @@
   (command-line
    #:program "juice"
    #:once-any
-   [("-d" "--decompile") "decompile MES bytecode into rkt source"
+   [("--decompile""-d")  "decompile MES bytecode into rkt source"
                          (command 'decompile)]
-   [("-c" "--compile")   "compile rkt source into MES bytecode"
+   [("--compile" "-c")   "compile rkt source into MES bytecode"
                          (command 'compile)]
-   [("-v" "--version")   "show version"
+   [("--version" "-v")   "show version"
                          (command 'version)]
    #:once-each
    [("--force" "-f")     "force overwriting output files"
