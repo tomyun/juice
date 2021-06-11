@@ -44,10 +44,9 @@
    [(extension? filename ".mes")
     (let* ([mes (load-mes filename)]
            [src (pretty-format mes #:mode 'write)]
-           [outname (string-append filename ".rkt")]
-           [out (open-output-file outname #:exists (exists))])
-      (display src out)
-      (close-output-port out)
+           [outname (string-append filename ".rkt")])
+      (with-output-to-file outname #:exists (exists)
+        (λ () (display src)))
       (displayln ".rkt"))]
    [else (displayln "?")]))
 
@@ -55,11 +54,10 @@
   (display filename)
   (cond
    [(extension? filename ".rkt")
-    (let* ([mes (compile-mes filename)]
-           [outname (string-append filename ".mes")]
-           [out (open-output-file outname #:exists (exists))])
-      (write-bytes mes out)
-      (close-output-port out)
+    (let ([mes (compile-mes filename)]
+          [outname (string-append filename ".mes")])
+      (with-output-to-file outname #:exists (exists)
+        (λ () (write-bytes mes)))
       (displayln ".mes"))]
    [else (displayln "?")]))
  
