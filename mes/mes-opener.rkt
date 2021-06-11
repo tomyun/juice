@@ -1,4 +1,8 @@
-#lang racket
+#lang racket/base
+
+(require racket/list)
+(require racket/match)
+(require racket/port)
 
 (require bitsyntax)
 

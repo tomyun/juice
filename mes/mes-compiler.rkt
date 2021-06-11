@@ -1,10 +1,11 @@
-#lang racket
-;#lang racket/base
+#lang racket/base
 
-;(require racket/match)
-;(require racket/list)
+(require (for-syntax racket/base))
+
+(require racket/match)
+(require racket/list)
 ;(require racket/private/cond (rename-in (only-in racket cond) [cond rk-cond]))
-;(require racket/format)
+(require racket/format)
 (require racket/provide)
 (require racket/string)
 (require syntax/parse (for-syntax syntax/parse))

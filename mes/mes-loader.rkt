@@ -1,4 +1,8 @@
-#lang racket
+#lang racket/base
+
+(require racket/format)
+(require racket/function)
+(require racket/match)
 
 (require "mes-opener.rkt")
 ;(require "mes-lexer.rkt")
