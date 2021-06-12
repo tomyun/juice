@@ -128,3 +128,5 @@
 (provide parse-result
          parse
          <mes>)
+
+(provide (prefix-out p: (all-defined-out)))
