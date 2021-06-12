@@ -119,7 +119,7 @@
                                   [else                        `(cond ,a ,@b (else ,c))]))))
 (define op-cnd2 ($cons 'if (:: (~ CND) expr chrs)))
 (define op-cnd  (<or> op-cnd1 op-cnd2))
-(define op-cmd  (:: CMD params (~ (optional CNT)))) ;FIXME: handle superfluous ',' in DK4?
+(define op-cmd  (:: CMD params))
 (define op      (<or> op-sys op-str op-set op-cnd op-cmd))
 
 (define block ($cons 'begin (:~ BEG (~> stmts) END)))
