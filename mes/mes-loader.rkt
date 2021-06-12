@@ -13,6 +13,9 @@
   (define r (parse-result <mes> code))
   (fuse (resolve (lower r)) dict))
 
+(define (load-mes-snippet h [p <mes>])
+  (parse-result p (open-mes-snippet h)))
+
 (define (lower l)
   (define (: x)
     (match x
@@ -164,4 +167,5 @@
       [a                    a]))
   (: l))
 
-(provide load-mes)
+(provide load-mes
+         load-mes-snippet)

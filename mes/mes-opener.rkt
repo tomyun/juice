@@ -3,6 +3,9 @@
 (require racket/list)
 (require racket/match)
 (require racket/port)
+(require racket/string)
+
+(require file/sha1)
 
 (require bitsyntax)
 
@@ -25,7 +28,11 @@
      (code :: binary)]
     (list 'MES (bit-dict dict) (bit-code code)))))
 
+(define (open-mes-snippet h)
+  (bit-code (hex-string->bytes (string-replace h " " ""))))
+
 (define (open-mes path) (open-mes-bytes (load-bytes path)))
 
 (provide open-mes-bytes
+         open-mes-snippet
          open-mes)
