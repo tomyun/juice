@@ -90,7 +90,10 @@
 (define exprs ($cons 'exprs (sepBy1 expr CNT)))
 
 (define param  ($list 'param (<or> (@ block) STR expr)))
-(define params ($cons 'params (sepBy param CNT)))
+;(define params ($cons 'params (sepBy param CNT)))
+(define params ($cons 'params (optional (:% (p <- param)
+                                            (l <- (many (try (:~ CNT (~> param)))))
+                                            (return `(,p ,@l))))))
 
 (define chr  (<or> CHR DIC))
 (define chrs ($cons 'chrs (many1 chr)))
