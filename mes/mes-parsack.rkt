@@ -117,12 +117,13 @@
                                   [(empty? b)                  `(if-else ,@a ,c)]
                                   [(empty? c)                  `(cond ,a ,@b)]
                                   [else                        `(cond ,a ,@b (else ,c))]))))
-(define op-cnd2 ($cons 'if (:: (~ CND) expr chrs)))
+(define op-cnd2 ($cons 'if (:: (~ CND) expr block*))) ;TODO: check if `else` is not used in deja2/015A.MES
 (define op-cnd  (<or> op-cnd1 op-cnd2))
 (define op-cmd  (:: CMD params))
 (define op      (<or> op-sys op-str op-set op-cnd op-cmd))
 
-(define block ($cons 'begin (:~ BEG (~> stmts) END)))
+(define block  ($cons 'begin (:~ BEG (~> stmts) END)))
+(define block* ($cons 'begin* (many1 (<or> op chrs))))
 (define stmt  (<or> block cut op chrs))
 (define stmts (many stmt))
 

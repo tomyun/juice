@@ -198,7 +198,8 @@
       [`((,l ...) ())          l]))
   (f `(() ,@p)))
 
-(define (mes:begin . l) `(,BEG ,@l ,END))
+(define (mes:begin . l)  `(,BEG ,@l ,END))
+(define (mes:begin* . l) `(,@l))
 (define (mes:block? b)
   (match b
    [`(,(? char? a) ,l ... ,(? char? b)) (and (char=? a BEG) (char=? b END))]
