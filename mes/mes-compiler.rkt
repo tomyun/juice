@@ -239,6 +239,10 @@
    [_                                   #f]))
 (define (mes:mes . l) (flatten `(,l ,END)))
 
+(define (mes:init)
+  (set! dict (hash))
+  (set! tbl (make-hash)))
+
 ;; compiler-util
 
 (define (char->hex c) (~r (char->integer c) #:base 16 #:min-width 2 #:pad-string "0"))

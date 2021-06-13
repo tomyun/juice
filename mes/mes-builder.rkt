@@ -8,7 +8,9 @@
   (define in (open-input-file path))
   (define src (read in))
   (close-input-port in)
-  (define mes (eval src (namespace-anchor->namespace nsa)))
+  (define ns (namespace-anchor->namespace nsa))
+  (eval (init) ns)
+  (define mes (eval src ns))
   (list->bytes (map char->integer mes)))
 
 (provide compile-mes)
