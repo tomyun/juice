@@ -29,7 +29,7 @@
     (list 'MES (bit-dict dict) (bit-code code)))))
 
 (define (open-mes-snippet h)
-  (bit-code (hex-string->bytes (string-replace h " " ""))))
+  (bit-code (hex-string->bytes (string-normalize-spaces h #px"\\s+" ""))))
 
 (define (open-mes path) (open-mes-bytes (load-bytes path)))
 
