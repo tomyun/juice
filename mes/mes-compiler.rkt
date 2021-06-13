@@ -127,6 +127,14 @@
      [x                 x]))
   (f (bytes->list b)))
 
+(define (mes:text-raw s)
+  (define (f c)
+    (define i (char->integer c))
+    (define c1 (arithmetic-shift (bitwise-and i #xFF00) -8))
+    (define c2 (bitwise-and i #x00FF))
+    (map integer->char `(,(- c1 #x20) ,c2)))
+  (flatten (map f (string->list s))))
+
 (define (mes:dict . l)
   (define (f c) (parameterize ([current-locale "ja_JP.SJIS"]) (string->bytes/locale (string c))))
   (define n (length l))
