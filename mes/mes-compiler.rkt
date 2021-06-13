@@ -119,6 +119,8 @@
            `(,(+ c0 #x80))
            `(,(- c1 #x20) ,c2))))
 
+(define text-tbl (hash))
+
 (define (char->sjis c)
   (define t (bytes-open-converter "utf-8" "sjis"))
   (define-values (b n r) (bytes-convert t (string->bytes/utf-8 (string c))))
@@ -126,7 +128,10 @@
   (bytes->list b))
 
 (define (mes:text s)
-  (define l (flatten (map char->sjis (string->list s))))
+  (define (: c)
+    (define c1 (hash-ref text-tbl c #f))
+    (if c1 c1 (char->sjis c)))
+  (define l (flatten (map : (string->list s))))
   (define (f l)
     (match l
      [`(,c1 ,c2 ,r ...) `(,@(mes:chr c1 c2) ,@(f r))]
