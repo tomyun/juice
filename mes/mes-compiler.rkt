@@ -147,14 +147,13 @@
   (flatten (map f (string->list s))))
 
 (define (mes:dict . l)
-  (define (f c) (parameterize ([current-locale "ja_JP.SJIS"]) (string->bytes/locale (string c))))
   (define n (length l))
-  (define K (map (compose1 bytes->list f) l))
+  (define K (map char->sjis l))
   (define V (range n))
   (set! dict (make-hash (map cons K V)))
   (define (bytes->char b) (map integer->char (bytes->list b)))
   (define s (bytes->char (integer->integer-bytes (* (add1 n) 2) 2 #f #f)))
-  (define D (map (compose1 bytes->char f) l))
+  (define D (map integer->char (flatten K)))
   `(,s ,D))
 
 (define (mes:cut) `(,CNT))
