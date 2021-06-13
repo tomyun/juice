@@ -151,8 +151,8 @@
   (define K (map char->sjis l))
   (define V (range n))
   (set! dict (make-hash (map cons K V)))
-  (define (bytes->char b) (map integer->char (bytes->list b)))
-  (define s (bytes->char (integer->integer-bytes (* (add1 n) 2) 2 #f #f)))
+  (define (bytes->chars b) (map integer->char (bytes->list b)))
+  (define s (bytes->chars (integer->integer-bytes (* (add1 n) 2) 2 #f #f)))
   (define D (map integer->char (flatten K)))
   `(,s ,D))
 
