@@ -119,13 +119,19 @@
            `(,(+ c0 #x80))
            `(,(- c1 #x20) ,c2))))
 
+(define (char->sjis c)
+  (define t (bytes-open-converter "utf-8" "sjis"))
+  (define-values (b n r) (bytes-convert t (string->bytes/utf-8 (string c))))
+  (bytes-close-converter t)
+  (bytes->list b))
+
 (define (mes:text s)
-  (define b (parameterize ([current-locale "ja_JP.SJIS"]) (string->bytes/locale s)))
+  (define l (flatten (map char->sjis (string->list s))))
   (define (f l)
     (match l
      [`(,c1 ,c2 ,r ...) `(,@(mes:chr c1 c2) ,@(f r))]
      [x                 x]))
-  (f (bytes->list b)))
+  (f l))
 
 (define (mes:text-raw s)
   (define (f c)
