@@ -119,7 +119,22 @@
            `(,(+ c0 #x80))
            `(,(- c1 #x20) ,c2))))
 
-(define text-tbl (hash))
+(define tbl (make-hash))
+
+(define (sjis k t)
+  (define s1 (cond [(<=  1 k 62) (floor (/ (+ k 257) 2))]
+                   [(<= 63 k 94) (floor (/ (+ k 385) 2))]))
+  (define s2 (cond [(even? k)    (+ t 158)]
+                   [(<=  1 t 63) (+ t 63)]
+                   [(<= 64 t 94) (+ t 64)]))
+  `(,s1 ,s2))
+
+(define (mes:tbl k t . l)
+  (for ([c l]
+        [i (range (length l))])
+    (define j (sjis (+ (quotient i 94) k)
+                    (+ (remainder i 94) t)))
+    (hash-set! tbl c j)))
 
 (define (char->sjis c)
   (define t (bytes-open-converter "utf-8" "sjis"))
@@ -129,7 +144,7 @@
 
 (define (mes:text s)
   (define (: c)
-    (define c1 (hash-ref text-tbl c #f))
+    (define c1 (hash-ref tbl c #f))
     (if c1 c1 (char->sjis c)))
   (define l (flatten (map : (string->list s))))
   (define (f l)
