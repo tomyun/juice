@@ -112,7 +112,7 @@
                       ($cons 'set-arr.b (:: (~ SETAB) VAR expr exprs))))
 (define cnd     (:: (~ CND) expr block))
 (define op-cnd1 (:% (a <- (try cnd))
-                    (b <- (many (try (:~ CNT (~> cnd)))))
+                    (b <- (many (try (:~ CNT (~> cnd))))) ;TODO: check if `while` can be also used for np2/AZUMI9/12.MES
                     ;(c <- (optional (:~ CNT (~> block))))
                     (c <- (optional (:~ CNT (~> (optional block))))) ; missing else in np2/TOWN1.MES
                     (return (cond [(and (empty? b) (empty? c)) `(if ,@a)]
