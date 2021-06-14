@@ -123,7 +123,7 @@
 (define op      (<or> op-sys op-str op-set op-cnd op-cmd))
 
 (define block  ($cons 'begin (:~ BEG (~> stmts) END)))
-(define block* ($cons 'begin* (many1 (<or> op chrs))))
+(define block* ($cons 'begin* (many (<or> op chrs)))) ; many instead of many1 for dr3/SHOP.MES
 (define stmt  (<or> block cut op chrs))
 (define stmts (many stmt))
 
