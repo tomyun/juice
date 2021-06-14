@@ -151,7 +151,11 @@
   (define n (length dict))
   (define (: x)
     (match x
-      [`(dic ,i) (if (< i n) `(chr ,(list-ref dict i)) `(dic ,i))]
+      [`(dic ,i) (if (< i n)
+                     (match (list-ref dict i)
+                       [(? char? c)  `(chr ,c)]
+                       [`'(,c1 ,c2)   `(chr-raw ,c1 ,c2)])
+                     `(dic ,i))]
       [`(,a ...) (map : a)]
       [a         a]))
   (: l))

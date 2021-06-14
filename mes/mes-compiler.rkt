@@ -169,8 +169,12 @@
   (flatten (map f (string->list s))))
 
 (define (mes:dict . l)
+  (define (f d)
+    (match d
+     [(? char? c) (char->sjis c)]
+     [`(,c1 ,c2)  `(,c1 ,c2)]))
+  (define K (map f l))
   (define n (length l))
-  (define K (map char->sjis l))
   (define V (range n))
   (set! dict (make-hash (map cons K V)))
   (define (bytes->chars b) (map integer->char (bytes->list b)))
