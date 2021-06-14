@@ -26,7 +26,7 @@
 
 ;; lexer-util
 
-(define (lex-num0 c) (- (char->integer c) #x30))
+(define (lex-num0 c) `(num ,(- (char->integer c) #x30)))
 
 (define (lex-num l)
   (define (num x)
@@ -36,7 +36,7 @@
       [`(,a)        (f a)]
       [`(,a ... ,b) (f (g (num a) b))]
       [_            x]))
-  (num (map char->integer l)))
+  `(num ,(num (map char->integer l))))
 
 (define (lex-chr c1 c2)
   (define i (map char->integer `(,c1 ,c2)))
@@ -48,7 +48,7 @@
                                             #t)))
   (if (eof-object? c) `(chr-raw ,@m) `(chr ,c)))
 
-(define (lex-dic c) (- (char->integer c) #x80))
+(define (lex-dic c) `(dic ,(- (char->integer c) #x80)))
 
 ;; lexer
 
@@ -64,9 +64,9 @@
                                     (char-between #\uA1 #\uDF))))
                   (char #\u06)
                   (return (list->string c))))
-(define NUM1  (:% (char #\u07) (c <- $anyChar)           (return `(num ,(lex-num `(,c))))))
-(define NUM2  (:% (char #\u08) (c <- (times 2 $anyChar)) (return `(num ,(lex-num c)))))
-(define NUM3  (:% (char #\u09) (c <- (times 3 $anyChar)) (return `(num ,(lex-num c)))))
+(define NUM1  (:% (char #\u07) (c <- $anyChar)           (return (lex-num `(,c)))))
+(define NUM2  (:% (char #\u08) (c <- (times 2 $anyChar)) (return (lex-num c))))
+(define NUM3  (:% (char #\u09) (c <- (times 3 $anyChar)) (return (lex-num c))))
 (define SETRC (char #\u0A))
 (define SETRE (char #\u0B))
 (define SETV  (char #\u0C))
@@ -77,12 +77,12 @@
 (define TERM2 ($list 'term2 (char-between #\u20 #\u2C)))
 (define TERM1 ($list 'term1 (char #\u2E)))
 (define TERM0 ($list 'term0 (<or> (char #\u2D) (char #\u2F))))
-(define NUM0  (:% (c <- (char-between #\u30 #\u3F)) (return `(num ,(lex-num0 c)))))
+(define NUM0  (:% (c <- (char-between #\u30 #\u3F)) (return (lex-num0 c))))
 (define VAR   ($list 'var (char-between #\u40 #\u5A)))
 (define CHR   (:% (c1 <- (char-between #\u60 #\u7F))
                   (c2 <- (char-between #\u40 #\uFC))
                   (return (lex-chr c1 c2))))
-(define DIC   (:% (c <- (char-between #\u80 #\uFF)) (return `(dic ,(lex-dic c)))))
+(define DIC   (:% (c <- (char-between #\u80 #\uFF)) (return (lex-dic c))))
 
 ;; parser
 
