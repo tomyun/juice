@@ -112,7 +112,7 @@
 
 (define dict (hash))
 
-(define (mes:chr c1 c2)
+(define (mes:chr-raw c1 c2)
   (define c0 (hash-ref dict `(,c1 ,c2) #f))
   (map integer->char
        (if c0
@@ -156,7 +156,7 @@
   (define l (flatten (map : (string->list s))))
   (define (f l)
     (match l
-     [`(,c1 ,c2 ,r ...) `(,@(mes:chr c1 c2) ,@(f r))]
+     [`(,c1 ,c2 ,r ...) `(,@(mes:chr-raw c1 c2) ,@(f r))]
      [x                 x]))
   (f l))
 

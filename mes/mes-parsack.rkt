@@ -42,9 +42,11 @@
   (define i (map char->integer `(,c1 ,c2)))
   (define m (match i [`(,a ,b) `(,(+ a #x20) ,b)]))
   (define b (list->bytes m))
-  ;(bytes->string/latin-1 b))
-  ;(apply string (map integer->char m)))
-  (read-char (reencode-input-port (open-input-bytes b) "shift_jisx0213")))
+  (define c (read-char (reencode-input-port (open-input-bytes b)
+                                            "shift_jisx0213"
+                                            (bytes)
+                                            #t)))
+  (if (eof-object? c) `(chr-raw ,@m) `(chr ,c)))
 
 (define (lex-dic c) (- (char->integer c) #x80))
 
@@ -79,7 +81,7 @@
 (define VAR   ($list 'var (char-between #\u40 #\u5A)))
 (define CHR   (:% (c1 <- (char-between #\u60 #\u7F))
                   (c2 <- (char-between #\u40 #\uFC))
-                  (return `(chr ,(lex-chr c1 c2)))))
+                  (return (lex-chr c1 c2))))
 (define DIC   (:% (c <- (char-between #\u80 #\uFF)) (return `(dic ,(lex-dic c)))))
 
 ;; parser

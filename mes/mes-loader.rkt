@@ -163,9 +163,14 @@
 (define (fuse-text l)
   (define (: x)
     (match x
-      [`(chrs (chr ,c) ...) `(text ,(apply string c))]
-      [`(,a ...)            (map : a)]
-      [a                    a]))
+      [`((chrs ,c ...) ,r ...) (append (:: c) (: r))]
+      [`(,a ,r ...)            (cons (: a) (: r))]
+      [a                       a]))
+  (define (:: x)
+     (match x
+       [`((chr ,c) ..1 ,r ...)     (cons `(text ,(apply string c)) (:: r))]
+       [`((chr-raw ,c ...) ,r ...) (cons `(chr-raw ,@c) (:: r))]
+       [a                          a]))
   (: l))
 
 (provide load-mes
