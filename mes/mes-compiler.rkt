@@ -149,7 +149,14 @@
   (bytes-close-converter t)
   (bytes->list b))
 
-(define (mes:text s)
+(define (mes:text . l)
+  (define (f t)
+    (match t
+      [(? string? s) (mes:text* s)]
+      [(? number? n) (mes:proc n)]))
+  (map f l))
+
+(define (mes:text* s)
   (define (: c)
     (define c1 (hash-ref tbl c #f))
     (if c1 c1 (char->sjis c)))
