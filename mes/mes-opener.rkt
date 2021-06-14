@@ -17,7 +17,10 @@
     (flatten (match l
               [`(,a ,b ,c ...) `(,(bytes a b) ,(f c))]
               [_               '()])))
-  (define (g b) (read-char (reencode-input-port (open-input-bytes b) "sjis")))
+  (define (g b) (read-char (reencode-input-port (open-input-bytes b)
+                                                "shift_jisx0213"
+                                                (bytes)
+                                                #t)))
   (map g (f l)))
 (define (bit-code b) (bytes->string/latin-1 (bit-string->bytes b)))
 
