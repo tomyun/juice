@@ -60,7 +60,8 @@
                   (c <- (char-between #\u10 #\uFF))
                   (return `(sys ,c))))
 (define STR   (:% (char #\u06)
-                  (c <- (many (<or> (char-between #\u20 #\u7E)
+                  (c <- (many (<or> (char #\u09) ; tab used in ww/CAMP.MES
+                                    (char-between #\u20 #\u7E)
                                     (char-between #\uA1 #\uDF))))
                   (char #\u06)
                   (return (list->string c))))
