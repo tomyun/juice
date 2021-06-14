@@ -44,7 +44,7 @@
   (define b (list->bytes m))
   ;(bytes->string/latin-1 b))
   ;(apply string (map integer->char m)))
-  (read-char (reencode-input-port (open-input-bytes b) "sjis")))
+  (read-char (reencode-input-port (open-input-bytes b) "shift_jisx0213")))
 
 (define (lex-dic c) (- (char->integer c) #x80))
 
