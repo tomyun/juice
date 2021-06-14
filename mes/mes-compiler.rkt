@@ -132,9 +132,10 @@
 (define (mes:tbl k t . l)
   (for ([c l]
         [i (range (length l))])
-    (define j (sjis (+ (quotient i 94) k)
-                    (+ (remainder i 94) t)))
-    (hash-set! tbl c j)))
+    (define j (sjis (+ k (quotient (+ (sub1 t) i) 94))
+                    (add1 (remainder (+ (sub1 t) i) 94))))
+    (hash-set! tbl c j))
+  '())
 
 (define (char->sjis c)
   (define t (bytes-open-converter "utf-8" "sjis"))
