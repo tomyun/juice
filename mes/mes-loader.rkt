@@ -20,6 +20,7 @@
   (define (: x)
     (match x
       [`(num ,n)                n]
+      [`(var ,v)                (lower-var v)]
       [`(exprs ,e ...)          (: e)]
       [`(,c ... (exprs ,e ...)) `(,@(: c) ,@(: e))]
       [`(expr ,e ...)           (fold-expr (: e))]
@@ -30,6 +31,11 @@
       [`(,a ...)                (map : a)]
       [a                        a]))
   (: l))
+
+(define (lower-var v)
+  (match v
+    [(? char? c) (string->symbol (string v))]
+    [a           a]))
 
 (define (fold-expr l)
   (define (: x)
