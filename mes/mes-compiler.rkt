@@ -29,8 +29,10 @@
 
 ;; compiler
 
-(define (mes:sys i) (λ p `(,(mes:sys* i) ,@(mes:params p))))
-(define (mes:sys* i) `(,SYS ,(integer->char i)))
+(define (mes:sys i [n #f]) (λ p `(,(mes:sys* i n) ,@(mes:params p))))
+(define (mes:sys* i [n #f])
+  (if n `(,SYS ,(integer->char i) ,(num n 3))
+        `(,SYS ,(integer->char i))))
 
 (define (mes:while c t) `(,(mes:sys* #x10) ,(mes:if c t)))
 (define mes:continue    (mes:sys #x11))

@@ -57,8 +57,13 @@
 (define CNT   (char #\u02))
 (define VAL   (char #\u03))
 (define SYS   (:% (char #\u04)
-                  (c <- (char-between #\u10 #\uFF))
-                  (return `(sys ,c))))
+                  (s <- (<or> (:%   (c <- (<or> (char-between #\u10 #\u28)
+                                                (char-between #\u2B #\uFF)))
+                                    (return `(,c)))
+                              (:%   (c <- (char-between #\u29 #\u2A))
+                                    (n <- (times 3 $anyChar)) ;HACK: handle esoteric opcodes from isaku/yuno
+                                    (return `(,c ,(lex-num n))))))
+                  (return `(sys ,@s))))
 (define STR   (:% (char #\u06)
                   (c <- (many (<or> (char #\u09) ; tab used in ww/CAMP.MES
                                     (char-between #\u20 #\u7E)

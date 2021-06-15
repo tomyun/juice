@@ -53,7 +53,7 @@
     (match x
       [`(exp ,x) (resolve-exp x)]
       [`(cmd ,x) (resolve-cmd x)]
-      [`(sys ,x) (resolve-sys x)]
+      [`(sys ,c ...) (apply resolve-sys c)]
       [`(,x ...) (map : x)]
       [x x]))
   (: l))
@@ -92,30 +92,34 @@
     [#x1A 'animate]
     [i (unknown-op-name 'cmd i)]))
 
-(define (resolve-sys c)
-  (match (char->integer c)
-    [#x10 'while]
-    [#x11 'continue]
-    [#x12 'break]
-    [#x13 'menu-show]
-    [#x14 'menu-init]
-    [#x15 'mouse]
-    [#x16 'palette]
-    [#x17 'box]
-    [#x18 'box-inv]
-    [#x19 'blit]
-    [#x1A 'blit-swap]
-    [#x1B 'blit-mask]
-    [#x1C 'load-file]
-    [#x1D 'load-image]
-    [#x1E 'mes-jump]
-    [#x1F 'mes-call]
-    [#x21 'flag]
-    [#x22 'slot]
-    [#x23 'click]
-    [#x24 'sound]
-    [#x26 'field]
-    [i (unknown-op-name 'sys i)]))
+(define (resolve-sys c [n #f])
+  (define s
+    (match (char->integer c)
+      [#x10 'while]
+      [#x11 'continue]
+      [#x12 'break]
+      [#x13 'menu-show]
+      [#x14 'menu-init]
+      [#x15 'mouse]
+      [#x16 'palette]
+      [#x17 'box]
+      [#x18 'box-inv]
+      [#x19 'blit]
+      [#x1A 'blit-swap]
+      [#x1B 'blit-mask]
+      [#x1C 'load-file]
+      [#x1D 'load-image]
+      [#x1E 'mes-jump]
+      [#x1F 'mes-call]
+      [#x21 'flag]
+      [#x22 'slot]
+      [#x23 'click]
+      [#x24 'sound]
+      [#x26 'field]
+      [i (unknown-op-name 'sys i)]))
+  (cond [n    (match s [`(,l ...) `(,@l ,n)]
+                       [s         `(,s ,n)])]
+        [else                     s]))
 
 (define (unknown-op-name s i) `(,s ,i))
 
