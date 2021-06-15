@@ -8,6 +8,8 @@
 (require racket/provide)
 (require racket/string (for-syntax racket/string))
 
+(require "mes-config.rkt")
+
 ;; lexer
 
 (define END   #\u00)
@@ -153,7 +155,7 @@
   (define c0 (hash-ref dict `(,c1 ,c2) #f))
   (map integer->char
        (if c0
-           `(,(+ c0 #x80))
+           `(,(+ c0 (cfg:dict)))
            `(,(- c1 #x20) ,c2))))
 
 (define tbl (make-hash))

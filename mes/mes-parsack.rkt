@@ -6,6 +6,8 @@
 
 (require parsack)
 
+(require "mes-config.rkt")
+
 ;; parsack
 
 (define-syntax-rule (@ p) (λ (x) (p x)))
@@ -48,7 +50,7 @@
                                             #t)))
   (if (eof-object? c) `(chr-raw ,@m) `(chr ,c)))
 
-(define (lex-dic c) `(dic ,(- (char->integer c) #x80)))
+(define (lex-dic c d) `(dic ,(- (char->integer c) d)))
 
 ;; lexer
 
@@ -85,10 +87,12 @@
 (define TERM0 ($list 'term0 (<or> (char #\u2D) (char #\u2F))))
 (define NUM0  (:% (c <- (char-between #\u30 #\u3F)) (return (lex-num0 c))))
 (define VAR   ($list 'var (char-between #\u40 #\u5A)))
-(define CHR   (:% (c1 <- (char-between #\u60 #\u7F))
+(define CHR   (:% (d  <- (getState 'dict))
+                  (c1 <- (char-between #\u60 (integer->char (sub1 d))))
                   (c2 <- (char-between #\u40 #\uFC))
                   (return (lex-chr c1 c2))))
-(define DIC   (:% (c <- (char-between #\u80 #\uFF)) (return (lex-dic c))))
+(define DIC   (:% (d <- (getState 'dict))
+                  (c <- (char-between (integer->char d) #\uFF)) (return (lex-dic c d))))
 
 ;; parser
 
@@ -137,8 +141,11 @@
 
 (define <mes> ($cons 'mes (:~ (~> stmts) (optional END) (optional $eof)))) ; many inconsistent endings
 
+(define (mes-parser)
+  (:% (setState 'dict (cfg:dict)) <mes>))
+
 (provide parse-result
          parse
-         <mes>)
+         mes-parser)
 
 (provide (prefix-out p: (all-defined-out)))
