@@ -57,20 +57,26 @@
 (define (mes:str s) `(,STR ,@(string->list s) ,STR))
 
 (define (mes:num n)
+  (cond
+   [(< n 0)         (error (format "negative number not supported:e ~a" n))]
+   [(<= n #x0F)     (integer->char (+ n (char->integer NUM0)))] ; 15
+   [(<= n #x3F)     (cons NUM1 (num n))] ; 63
+   [(<= n #x0FFF)   (cons NUM2 (num n))] ; 4095
+   [(<= n #x03FFFF) (cons NUM3 (num n))] ; 262143
+   [else            (error (format "too large number:e ~a" n))]))
+
+(define (num n [i 0])
+  (define (: r x) (cons (bitwise-ior (arithmetic-shift (bitwise-and x #x3F) 2) #x03) r))
+  (define (:: x)  (arithmetic-shift x -6))
   (define (f l)
     (match l
       [`(() 0)  0]
       [`(,r 0)  r]
-      [`(,r ,x) (f `(,(cons (bitwise-ior (arithmetic-shift (bitwise-and x #x3F) 2) #x03) r)
-                     ,(arithmetic-shift x -6)))]))
-  (define (g n) (map integer->char (f `(() ,n))))
-  (cond
-   [(< n 0)         (error (format "negative number not supported:e ~a" n))]
-   [(<= n #x0F)     (integer->char (+ n (char->integer NUM0)))] ; 15
-   [(<= n #x3F)     (cons NUM1 (g n))] ; 63
-   [(<= n #x0FFF)   (cons NUM2 (g n))] ; 4095
-   [(<= n #x03FFFF) (cons NUM3 (g n))] ; 262143
-   [else            (error (format "too large number:e ~a" n))]))
+      [`(,r ,x) (f `(,(: r x) ,(:: x)))]))
+  (define v (f `(() ,n)))
+  (define p (max 0 (- i (length v))))
+  (define v1 ((apply compose1 (make-list p (λ (r) (: r 0)))) v))
+  (map integer->char v1))
 
 (define (mes:set-reg v . e)
   (match v
