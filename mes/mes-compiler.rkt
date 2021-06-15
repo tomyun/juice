@@ -158,6 +158,22 @@
                    [(<= 64 t 94) (+ t 64)]))
   `(,s1 ,s2))
 
+(define (jis s1 s2)
+  (define i (if (<= s2 158) 0 1))
+  (define k (+ i (cond [(<= 129 s1 159) (- (* s1 2) 257)]
+                       [(<= 224 s1 239) (- (* s1 2) 385)])))
+  (define t (cond [(even? k)            (- s2 158)]
+                  [(<= s2 126)          (- s2 63)]
+                  [(<= s2 158)          (- s2 64)]))
+  `(,k ,t))
+
+; (for* ([k (inclusive-range 1 94)]
+;        [t (inclusive-range 1 94)])
+;   (match-define `(,s1 ,s2) (sjis k t))
+;   (match-define `(,k1 ,t1) (jis s1 s2))
+;   (unless (and (eq? k k1) (eq? t t1))
+;     (displayln (format "~a => ~a => ~a" `(,k ,t) `(,s1 ,s2) `(,k1 ,t2)))))
+
 (define (mes:tbl k t . l)
   (for ([c l]
         [i (range (length l))])
