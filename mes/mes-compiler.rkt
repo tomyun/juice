@@ -70,7 +70,7 @@
   (define (:: x)  (arithmetic-shift x -6))
   (define (f l)
     (match l
-      [`(() 0)  0]
+      [`(() 0)  (: '() 0)]
       [`(,r 0)  r]
       [`(,r ,x) (f `(,(: r x) ,(:: x)))]))
   (define v (f `(() ,n)))
