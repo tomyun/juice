@@ -71,11 +71,11 @@
     [#x28 '!=]
     [#x29 '>]
     [#x2A '<]
-    [#x2B 'arr]
-    [#x2C 'arr.b]
-    [#x2D 'reg]
-    [#x2E 'reg]
-    [#x2F 'rnd]))
+    [#x2B '~]
+    [#x2C '~b]
+    [#x2D ':]
+    [#x2E ':]
+    [#x2F '?]))
 
 (define (resolve-cmd c)
   (match (char->integer c)

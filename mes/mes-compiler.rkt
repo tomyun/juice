@@ -255,13 +255,19 @@
 (define (mes:!=    a b) (mes:term2 a b #\u28))
 (define (mes:>     a b) (mes:term2 a b #\u29))
 (define (mes:<     a b) (mes:term2 a b #\u2A))
-(define (mes:arr   a b) (mes:term2 a b #\u2B))
-(define (mes:arr.b a b) (mes:term2 a b #\u2C))
-(define (mes:reg   a)
+(define (mes:~     a b) (mes:term2 a b #\u2B))
+(define (mes:~b    a b) (mes:term2 a b #\u2C))
+(define (mes::     a)
   (match a
     [(? number? n)      (mes:term0 n #\u2D)]
     [a                  (mes:term1 a #\u2E)]))
-(define (mes:rnd a)     (mes:term0 a #\u2F))
+(define (mes:?     a)   (mes:term0 a #\u2F))
+
+; compatibility
+(define (mes:arr   a b) (mes:~  a b))
+(define (mes:arr.b a b) (mes:~b a b))
+(define (mes:reg   a b) (mes::  a b))
+(define (mes:rnd   a)   (mes:?  a))
 
 (define (mes:_) '()) ; empty expr, pointing last stack value
 
