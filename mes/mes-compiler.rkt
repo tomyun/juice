@@ -160,7 +160,7 @@
 (define (mes:chr-raw c1 c2)
   (define c0 (hash-ref dict `(,c1 ,c2) #f))
   (map integer->char
-       (if c0
+       (if (and (cfg:compress) c0)
            `(,(+ c0 (cfg:dict)))
            `(,(- c1 #x20) ,c2))))
 

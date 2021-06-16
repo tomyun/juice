@@ -2,6 +2,7 @@
 
 (define cfg:dict (make-parameter #x80))
 (define cfg:protag (make-parameter #f))
+(define cfg:compress (make-parameter #t))
 
 (define (string->protag p)
   (if p
@@ -12,4 +13,5 @@
 
 (provide cfg:dict
          cfg:protag
+         cfg:compress
          string->protag)
