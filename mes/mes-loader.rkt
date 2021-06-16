@@ -4,6 +4,7 @@
 (require racket/function)
 (require racket/match)
 
+(require "mes-config.rkt")
 (require "mes-opener.rkt")
 (require "mes-parsack.rkt")
 
@@ -129,7 +130,8 @@
       ,fuse-logic
       ,(curry fuse-dic dict)
       ,(curry fuse-dic-header dict)
-      ,fuse-text))
+      ,fuse-text
+      ,fuse-protag))
   ((apply compose1 (reverse f)) l))
 
 (define (fuse-while l)
@@ -186,6 +188,16 @@
        [`((chr-raw ,c ...) ,r ...) (cons `(chr-raw ,@c) (:: r))]
        [a                          a]))
   (: l))
+
+(define (fuse-protag l)
+  (define p (cfg:protag))
+  (define (f x) (= x p))
+  (define (: x)
+      (match x
+        [`((text ,t1 ...) (proc ,(? f n)) (text ,t2 ...) ,r ...) (: (cons `(text ,@t1 ,n ,@t2) r))]
+        [`(,a ,r ...)                                            (cons (: a) (: r))]
+        [a                                                       a]))
+  (if p (: l) l))
 
 (provide load-mes
          load-mes-snippet)

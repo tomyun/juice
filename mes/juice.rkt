@@ -30,6 +30,8 @@
                          (exists 'replace)]
    [("--dict") b         "dictionary base (80* or D0)"
                          (cfg:dict (string->number b 16))]
+   [("--protag") p       "protagonist name proc (0, 3)"
+                         (cfg:protag (string->number p))]
    #:ps "<args> : filenames"
    #:args args
    args))
