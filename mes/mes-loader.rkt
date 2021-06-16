@@ -79,45 +79,53 @@
     [#x2F '?]))
 
 (define (resolve-cmd c)
-  (match (char->integer c)
-    [#x10 'text-color]
-    [#x11 'wait]
-    [#x12 'define-proc]
-    [#x13 'proc]
-    [#x14 'call]
-    [#x15 'print-number]
-    [#x16 'delay]
-    [#x17 'clear]
-    [#x18 'color]
-    [#x19 'util]
-    [#x1A 'animate]
-    [i (unknown-op-name 'cmd i)]))
+  (define i (char->integer c))
+  (define r (unknown-op-name 'cmd i))
+  (if (cfg:resolve)
+    (match i
+      [#x10 'text-color]
+      [#x11 'wait]
+      [#x12 'define-proc]
+      [#x13 'proc]
+      [#x14 'call]
+      [#x15 'print-number]
+      [#x16 'delay]
+      [#x17 'clear]
+      [#x18 'color]
+      [#x19 'util]
+      [#x1A 'animate]
+      [_    r])
+    r))
 
 (define (resolve-sys c [n #f])
+  (define i (char->integer c))
+  (define r (unknown-op-name 'sys i))
   (define s
-    (match (char->integer c)
-      [#x10 'while]
-      [#x11 'continue]
-      [#x12 'break]
-      [#x13 'menu-show]
-      [#x14 'menu-init]
-      [#x15 'mouse]
-      [#x16 'palette]
-      [#x17 'box]
-      [#x18 'box-inv]
-      [#x19 'blit]
-      [#x1A 'blit-swap]
-      [#x1B 'blit-mask]
-      [#x1C 'load-file]
-      [#x1D 'load-image]
-      [#x1E 'mes-jump]
-      [#x1F 'mes-call]
-      [#x21 'flag]
-      [#x22 'slot]
-      [#x23 'click]
-      [#x24 'sound]
-      [#x26 'field]
-      [i (unknown-op-name 'sys i)]))
+    (if (cfg:resolve)
+      (match i
+        [#x10 'while]
+        [#x11 'continue]
+        [#x12 'break]
+        [#x13 'menu-show]
+        [#x14 'menu-init]
+        [#x15 'mouse]
+        [#x16 'palette]
+        [#x17 'box]
+        [#x18 'box-inv]
+        [#x19 'blit]
+        [#x1A 'blit-swap]
+        [#x1B 'blit-mask]
+        [#x1C 'load-file]
+        [#x1D 'load-image]
+        [#x1E 'mes-jump]
+        [#x1F 'mes-call]
+        [#x21 'flag]
+        [#x22 'slot]
+        [#x23 'click]
+        [#x24 'sound]
+        [#x26 'field]
+        [_    r])
+      r))
   (cond [n    (match s [`(,l ...) `(,@l ,n)]
                        [s         `(,s ,n)])]
         [else                     s]))
