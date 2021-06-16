@@ -12,10 +12,15 @@
   (bytes-close-converter t)
   (bytes->list b))
 
+(define (sjis->integer l)
+  (match-define `(,c1 ,c2) l)
+  (+ (arithmetic-shift c1 8) c2))
+
 (define (integer->sjis i)
   (define c1 (arithmetic-shift (bitwise-and i #xFF00) -8))
   (define c2 (bitwise-and i #x00FF))
   `(,c1 ,c2))
 
 (provide char->sjis
+         sjis->integer
          integer->sjis)
