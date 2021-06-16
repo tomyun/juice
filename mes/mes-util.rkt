@@ -1,4 +1,6 @@
-#lang racket
+#lang racket/base
+
+(require racket/match)
 
 (define (char->sjis c)
   ; avoid iconv issue: https://github.com/racket/racket/issues/3876
