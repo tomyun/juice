@@ -120,6 +120,9 @@
 (define mes:util        (mes:cmd #x19))
 (define mes:animate     (mes:cmd #x1A))
 
+; compatibility
+(define mes:print-number mes:number)
+
 ;TODO: macro implementation
 (define mes:@ #\@)
 (define mes:A #\A)
