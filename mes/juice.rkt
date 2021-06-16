@@ -30,6 +30,8 @@
                          (exists 'replace)]
    [("--dict") b         "dictionary base (80*, D0)"
                          (cfg:dict (string->number b 16))]
+   [("--no-decode")      "[decompile] skip SJIS character decoding"
+                         (cfg:decode #f)]
    [("--no-resolve")     "[decompile] skip cmd/sys name resolution"
                          (cfg:resolve #f)]
    [("--no-compress")    "[compile] skip text compression with dict"

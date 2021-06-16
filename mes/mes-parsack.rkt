@@ -48,7 +48,10 @@
                                             "shift_jisx0213"
                                             (bytes)
                                             #t)))
-  (if (eof-object? c) `(chr-raw ,@m) `(chr ,c)))
+  (if (or (not (cfg:decode))
+          (eof-object? c))
+    `(chr-raw ,@m)
+    `(chr ,c)))
 
 (define (lex-dic c d) `(dic ,(- (char->integer c) d)))
 

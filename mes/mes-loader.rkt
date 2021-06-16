@@ -5,6 +5,7 @@
 (require racket/match)
 
 (require "mes-config.rkt")
+(require "mes-util.rkt")
 (require "mes-opener.rkt")
 (require "mes-parsack.rkt")
 
@@ -174,7 +175,9 @@
     (match x
       [`(dic ,i) (if (< i n)
                    (match (list-ref dict i)
-                     [(? char? c)  `(chr ,c)]
+                     [(? char? c)  (if (cfg:decode)
+                                     `(chr     ,c)
+                                     `(chr-raw ,@(char->sjis c)))]
                      [`'(,c1 ,c2)  `(chr-raw ,c1 ,c2)])
                    `(dic ,i))]
       [`(,a ...) (map : a)]
@@ -193,9 +196,9 @@
       [a                       a]))
   (define (:: x)
      (match x
-       [`((chr ,c) ..1 ,r ...)     (cons `(text ,(apply string c)) (:: r))]
-       [`((chr-raw ,c ...) ,r ...) (cons `(chr-raw ,@c) (:: r))]
-       [a                          a]))
+       [`((chr ,c) ..1 ,r ...)         `((text ,(apply string c)) ,@(:: r))]
+       [`((chr-raw ,n ...) ..1 ,r ...) `((text-raw ,@(map sjis->integer n)) ,@(:: r))]
+       [a                              a]))
   (: l))
 
 (define (fuse-text-color l)
