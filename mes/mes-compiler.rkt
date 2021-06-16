@@ -234,8 +234,7 @@
 (define (mes:text-raw s)
   (define (f c)
     (define i (char->integer c))
-    (define c1 (arithmetic-shift (bitwise-and i #xFF00) -8))
-    (define c2 (bitwise-and i #x00FF))
+    (match-define `(,c1 ,c2) (integer->sjis i))
     (map integer->char `(,(- c1 #x20) ,c2)))
   (flatten (map f (string->list s))))
 
