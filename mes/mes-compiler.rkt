@@ -2,6 +2,7 @@
 
 (require (for-syntax racket/base))
 (require racket/format)
+(require racket/include)
 (require racket/list)
 (require racket/match)
 (require syntax/parse (for-syntax syntax/parse))
@@ -102,12 +103,6 @@
 (define (mes:set-arr~  v i . e) `(,SETAW ,v ,(mes:expr i)  ,@(mes:exprs e)))
 (define (mes:set-arr~b v i . e) `(,SETAB ,v ,(mes:expr i)  ,@(mes:exprs e)))
 
-; compatibility
-(define (mes:set-reg   . l) (apply mes:set-reg:  l))
-(define (mes:set-reg*  . l) (apply mes:set-reg:: l))
-(define (mes:set-arr   . l) (apply mes:set-arr~  l))
-(define (mes:set-arr.b . l) (apply mes:set-arr~b l))
-
 (define (mes:if      c t)   `(,CND ,(mes:expr c) ,t))
 (define (mes:if-else c t e) `(,CND ,(mes:expr c) ,t ,CNT ,e))
 (define-syntax mes:cond
@@ -129,9 +124,6 @@
 (define mes:color       (mes:cmd #x18))
 (define mes:util        (mes:cmd #x19))
 (define mes:animate     (mes:cmd #x1A))
-
-; compatibility
-(define mes:print-number mes:number)
 
 ;TODO: macro implementation
 (define mes:@ #\@)
@@ -297,12 +289,6 @@
 (define (mes:::    a)   (mes:term1 a #\u2E))
 (define (mes:?     a)   (mes:term0 a #\u2F))
 
-; compatibility
-(define (mes:arr   a b) (mes:~  a b))
-(define (mes:arr.b a b) (mes:~b a b))
-(define (mes:reg   a)   (mes::  a))
-(define (mes:rnd   a)   (mes:?  a))
-
 (define (mes:_) '()) ; empty expr, pointing last stack value
 
 (define (mes:param p)
@@ -321,10 +307,6 @@
 (define (mes:<>  . l) `(,BEG ,@l ,END))
 (define (mes:<>* . l) `(,@l))
 
-; compatibility
-(define (mes:begin  . l) (apply mes:<> l))
-(define (mes:begin* . l) (apply mes:<>* l))
-
 (define (mes:block? b)
   (match b
    [`(,(? char? a) ,l ... ,(? char? b)) (and (char=? a BEG) (char=? b END))]
@@ -341,6 +323,9 @@
 (define (show-hex l) (string-join (map char->hex (flatten l))))
 
 (provide show-hex)
+
+;; compatibility
+(include "mes-compiler-compat.rkt")
 
 (provide (filtered-out
           (λ (n) (and (string-prefix? n "mes:") (string-replace n "mes:" "")))
