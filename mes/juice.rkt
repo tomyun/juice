@@ -49,7 +49,7 @@
   (or (string-suffix? filename (string-downcase ext))
       (string-suffix? filename (string-upcase ext))))
 
-(define (display-color c s)   (with-colors c (lambda () (display s))))
+(define (display-color   c s) (with-colors c (lambda () (display   s))))
 (define (displayln-color c s) (with-colors c (lambda () (displayln s))))
 
 (define (decompile filename)

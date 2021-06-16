@@ -41,22 +41,22 @@
 (define (fold-expr l)
   (define (: x)
     (match x
-      [`((,a ,b ,s ...)      (term2 ,f) ,r ...) (: (cons (cons `((exp ,f) ,b ,a) s) r))]
-      [`((,a ,s ...)         (term1 ,f) ,r ...) (: (cons (cons `((exp ,f) ,a) s) r))]
+      [`((,a ,b ,s ...)      (term2 ,f) ,r ...)    (: (cons (cons `((exp ,f) ,b ,a) s) r))]
+      [`((,a ,s ...)         (term1 ,f) ,r ...)    (: (cons (cons `((exp ,f) ,a) s) r))]
       [`((,s ...)            (term0 ,f) ,a ,r ...) (: (cons (cons `((exp ,f) ,a) s) r))]
-      [`((,s ...) ,a ,r ...) (: (cons (cons a s) r))]
-      [`((,s))               s]
-      [`(())                 `(_)])) ; empty expr in np2/MISATO.MES
+      [`((,s ...) ,a ,r ...)                       (: (cons (cons a s) r))]
+      [`((,s))                                     s]
+      [`(())                                       `(_)])) ; empty expr in np2/MISATO.MES
   (: (cons '() l)))
 
 (define (resolve l)
   (define (: x)
     (match x
-      [`(exp ,x) (resolve-exp x)]
-      [`(cmd ,x) (resolve-cmd x)]
+      [`(exp ,x)     (resolve-exp x)]
+      [`(cmd ,x)     (resolve-cmd x)]
       [`(sys ,c ...) (apply resolve-sys c)]
-      [`(,x ...) (map : x)]
-      [x x]))
+      [`(,x ...)     (map : x)]
+      [x             x]))
   (: l))
 
 (define (resolve-exp c)
@@ -172,17 +172,17 @@
   (define (: x)
     (match x
       [`(dic ,i) (if (< i n)
-                     (match (list-ref dict i)
-                       [(? char? c)  `(chr ,c)]
-                       [`'(,c1 ,c2)   `(chr-raw ,c1 ,c2)])
-                     `(dic ,i))]
+                   (match (list-ref dict i)
+                     [(? char? c)  `(chr ,c)]
+                     [`'(,c1 ,c2)  `(chr-raw ,c1 ,c2)])
+                   `(dic ,i))]
       [`(,a ...) (map : a)]
       [a         a]))
   (: l))
 
 (define (fuse-dic-header dict l)
   (match l
-   [`(mes ,r ...) `(mes (dict ,@dict) ,@r)]))
+    [`(mes ,r ...) `(mes (dict ,@dict) ,@r)]))
 
 (define (fuse-text l)
   (define (: x)
@@ -205,10 +205,10 @@
       [(? symbol?) `(call ,p)] ; Z: elle
       [_           p]))
   (define (: x)
-      (match x
-        [`((text ,t1 ...) ,(== f) (text ,t2 ...) ,r ...) (: (cons `(text ,@t1 ,p ,@t2) r))]
-        [`(,a ,r ...)                                    (cons (: a) (: r))]
-        [a                                               a]))
+    (match x
+      [`((text ,t1 ...) ,(== f) (text ,t2 ...) ,r ...) (: (cons `(text ,@t1 ,p ,@t2) r))]
+      [`(,a ,r ...)                                    (cons (: a) (: r))]
+      [a                                               a]))
   (: l))
 
 (provide load-mes

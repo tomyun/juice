@@ -82,12 +82,12 @@
   (define v1 ((apply compose1 (make-list p (λ (r) (: r 0)))) v))
   (map integer->char v1))
 
-(define (mes:set-reg:  v . e)
+(define (mes:set-reg:  v   . e)
   (match v
    [(? number? n)               `(,SETRC    ,(mes:num n)   ,@(mes:exprs e))]
    [(? mes:var? x)              `(,SETRE    ,(mes:expr x)  ,@(mes:exprs e))]
    [`(,l ...)                   `(,SETRE    ,(mes:expr l)  ,@(mes:exprs e))]))
-(define (mes:set-reg:* v . e)   `(,SETRE    ,(mes:expr v)  ,@(mes:exprs e)))
+(define (mes:set-reg:* v   . e) `(,SETRE    ,(mes:expr v)  ,@(mes:exprs e)))
 (define (mes:set-var   v e)     `(,SETV  ,v ,(mes:expr e)))
 (define (mes:set-arr~  v i . e) `(,SETAW ,v ,(mes:expr i)  ,@(mes:exprs e)))
 (define (mes:set-arr~b v i . e) `(,SETAB ,v ,(mes:expr i)  ,@(mes:exprs e)))
@@ -98,13 +98,13 @@
 (define (mes:set-arr   . l) (apply mes:set-arr~  l))
 (define (mes:set-arr.b . l) (apply mes:set-arr~b l))
 
-(define (mes:if c t)        `(,CND ,(mes:expr c) ,t))
+(define (mes:if      c t)   `(,CND ,(mes:expr c) ,t))
 (define (mes:if-else c t e) `(,CND ,(mes:expr c) ,t ,CNT ,e))
 (define-syntax mes:cond
   (syntax-rules (else)
-    [(_ [else e])    `(,e)]
-    [(_ [c t])       `(,(mes:if c t))]
-    [(_ [c t] l ...) `(,(mes:if c t) ,CNT ,(mes:cond l ...))]))
+    [(_ [else e])       `(,e)]
+    [(_ [c    t])       `(,(mes:if c t))]
+    [(_ [c    t] l ...) `(,(mes:if c t) ,CNT ,(mes:cond l ...))]))
 
 (define (mes:cmd i) (λ p `(,(integer->char i) ,@(mes:params p))))
 
@@ -312,7 +312,7 @@
 (define (mes:params . p)
   (define (f x)
     (match x
-      [`(() (,r ... ,a))       (f `((,(mes:param a)) ,r))]
+      [`(()       (,r ... ,a)) (f `((,(mes:param a)) ,r))]
       [`((,l ...) (,r ... ,a)) (f `(,(append `(,(mes:param a) ,CNT) l) ,r))]
       [`((,l ...) ())          l]))
   (f `(() ,@p)))
