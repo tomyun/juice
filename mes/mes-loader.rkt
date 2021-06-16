@@ -148,7 +148,7 @@
   (define (: x)
     (match x
       [`((while) (if ,c ,t) ,r ...) `((while ,(: c) ,(: t)) ,@(: r))]
-      [`(,a ,r ...)                 `(,(: a) ,@(: r))]
+      [`(,a ,r ...)                 `(,(: a)                ,@(: r))]
       [a                            a]))
   (: l))
 
@@ -196,7 +196,7 @@
       [a                       a]))
   (define (:: x)
      (match x
-       [`((chr ,c) ..1 ,r ...)         `((text ,(apply string c)) ,@(:: r))]
+       [`((chr ,c) ..1 ,r ...)         `((text     ,(apply string c))       ,@(:: r))]
        [`((chr-raw ,n ...) ..1 ,r ...) `((text-raw ,@(map sjis->integer n)) ,@(:: r))]
        [a                              a]))
   (: l))
@@ -206,7 +206,7 @@
   (define (: x)
     (match x
       [`((text-color ,c) (text ,t ...) ,r ...) `((text ,@(f c) ,@t) ,@(: r))]
-      [`(,a ,r ...)                            `(,(: a) ,@(: r))]
+      [`(,a ,r ...)                            `(,(: a)             ,@(: r))]
       [a                                       a]))
   (: l))
 
