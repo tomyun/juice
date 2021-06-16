@@ -28,10 +28,10 @@
    #:once-each
    [("--force" "-f")     "force overwriting output files"
                          (exists 'replace)]
-   [("--dict") b         "dictionary base (80* or D0)"
+   [("--dict") b         "[decompile] dictionary base (80*, D0)"
                          (cfg:dict (string->number b 16))]
-   [("--protag") p       "protagonist name proc (0, 3)"
-                         (cfg:protag (string->number p))]
+   [("--protag") p       "[decompile] protagonist name function (e.g. 0, 3)"
+                         (cfg:protag (string->protag p))]
    #:ps "<args> : filenames"
    #:args args
    args))
