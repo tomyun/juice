@@ -231,12 +231,11 @@
      [x                 x]))
   (f l))
 
-(define (mes:text-raw s)
-  (define (f c)
-    (define i (char->integer c))
+(define (mes:text-raw . l)
+  (define (f i)
     (match-define `(,c1 ,c2) (integer->sjis i))
     (map integer->char `(,(- c1 #x20) ,c2)))
-  (flatten (map f (string->list s))))
+  (flatten (map f l)))
 
 (define (mes:dict . l)
   (define (f d)
