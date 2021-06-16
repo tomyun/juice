@@ -140,7 +140,7 @@
       ,(curry fuse-dic-header dict)
       ,fuse-text
       ,fuse-text-color
-      ,fuse-protag))
+      ,fuse-text-proc-call))
   ((apply compose1 (reverse f)) l))
 
 (define (fuse-while l)
@@ -207,18 +207,12 @@
       [a                                       a]))
   (: l))
 
-(define (fuse-protag l)
-  (define p (cfg:protag))
-  (define f
-    (match p
-      [(? number?) `(proc ,p)] ; 0: nanpa1 & etc, 3: kakyu
-      [(? symbol?) `(call ,p)] ; Z: elle
-      [_           p]))
+(define (fuse-text-proc-call l)
   (define (: x)
     (match x
-      [`((text ,t1 ...) ,(== f) (text ,t2 ...) ,r ...) (: (cons `(text ,@t1 ,p ,@t2) r))]
-      [`(,a ,r ...)                                    (cons (: a) (: r))]
-      [a                                               a]))
+      [`((text ,t1 ...) (,(or 'proc 'call) ,p) (text ,t2 ...) ,r ...) (: `((text ,@t1 ,p ,@t2) ,@r))]
+      [`(,a ,r ...)                                                   `(,(: a) ,@(: r))]
+      [a                                                              a]))
   (: l))
 
 (provide load-mes

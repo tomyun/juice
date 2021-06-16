@@ -215,8 +215,8 @@
   (define (f t)
     (match t
       [(? string? s) (mes:text* s)]
-      [(? number? n) (mes:proc n)]
-      [(? char?   c) (mes:call c)]))
+      [(? number? n) (mes:proc n)]   ; 0: nanpa1 & etc, 3: kakyu
+      [(? char?   c) (mes:call c)])) ; Z: elle
   `(,@k ,@(map f l)))
 
 (define (mes:text* s)
