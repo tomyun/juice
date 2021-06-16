@@ -298,6 +298,7 @@
   (match a
     [(? number? n)      (mes:term0 n #\u2D)]
     [a                  (mes:term1 a #\u2E)]))
+(define (mes:::    a)   (mes:term1 a #\u2E))
 (define (mes:?     a)   (mes:term0 a #\u2F))
 
 ; compatibility

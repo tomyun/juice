@@ -75,7 +75,7 @@
     [#x2B '~]
     [#x2C '~b]
     [#x2D ':]
-    [#x2E ':]
+    [#x2E '::]
     [#x2F '?]))
 
 (define (resolve-cmd c)
