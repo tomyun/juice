@@ -139,6 +139,7 @@
       ,(curry fuse-dic dict)
       ,(curry fuse-dic-header dict)
       ,fuse-text
+      ,fuse-text-color
       ,fuse-protag))
   ((apply compose1 (reverse f)) l))
 
@@ -195,6 +196,15 @@
        [`((chr ,c) ..1 ,r ...)     (cons `(text ,(apply string c)) (:: r))]
        [`((chr-raw ,c ...) ,r ...) (cons `(chr-raw ,@c) (:: r))]
        [a                          a]))
+  (: l))
+
+(define (fuse-text-color l)
+  (define (f n) `(,(string->keyword "color") ,n))
+  (define (: x)
+    (match x
+      [`((text-color ,c) (text ,t ...) ,r ...) `((text ,@(f c) ,@t) ,@(: r))]
+      [`(,a ,r ...)                            `(,(: a) ,@(: r))]
+      [a                                       a]))
   (: l))
 
 (define (fuse-protag l)
