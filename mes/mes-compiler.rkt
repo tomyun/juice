@@ -208,7 +208,8 @@
   (define (f t)
     (match t
       [(? string? s) (mes:text* s)]
-      [(? number? n) (mes:proc n)]))
+      [(? number? n) (mes:proc n)]
+      [(? char?   c) (mes:call c)]))
   (map f l))
 
 (define (mes:text* s)

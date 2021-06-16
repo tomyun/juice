@@ -30,7 +30,7 @@
                          (exists 'replace)]
    [("--dict") b         "[decompile] dictionary base (80*, D0)"
                          (cfg:dict (string->number b 16))]
-   [("--protag") p       "[decompile] protagonist name function (e.g. 0, 3)"
+   [("--protag") p       "[decompile] protagonist name function (e.g. 0, 3, Z)"
                          (cfg:protag (string->protag p))]
    #:ps "<args> : filenames"
    #:args args

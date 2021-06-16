@@ -191,13 +191,17 @@
 
 (define (fuse-protag l)
   (define p (cfg:protag))
-  (define (f x) (= x p))
+  (define f
+    (match p
+      [(? number?) `(proc ,p)] ; 0: nanpa1 & etc, 3: kakyu
+      [(? symbol?) `(call ,p)] ; Z: elle
+      [_           p]))
   (define (: x)
       (match x
-        [`((text ,t1 ...) (proc ,(? f n)) (text ,t2 ...) ,r ...) (: (cons `(text ,@t1 ,n ,@t2) r))]
-        [`(,a ,r ...)                                            (cons (: a) (: r))]
-        [a                                                       a]))
-  (if p (: l) l))
+        [`((text ,t1 ...) ,(== f) (text ,t2 ...) ,r ...) (: (cons `(text ,@t1 ,p ,@t2) r))]
+        [`(,a ,r ...)                                    (cons (: a) (: r))]
+        [a                                               a]))
+  (: l))
 
 (provide load-mes
          load-mes-snippet)
