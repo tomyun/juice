@@ -82,15 +82,21 @@
   (define v1 ((apply compose1 (make-list p (λ (r) (: r 0)))) v))
   (map integer->char v1))
 
-(define (mes:set-reg v . e)
+(define (mes:set-reg:  v . e)
   (match v
    [(? number? n)               `(,SETRC    ,(mes:num n)   ,@(mes:exprs e))]
    [(? mes:var? x)              `(,SETRE    ,(mes:expr x)  ,@(mes:exprs e))]
    [`(,l ...)                   `(,SETRE    ,(mes:expr l)  ,@(mes:exprs e))]))
-(define (mes:set-reg* v . e)    `(,SETRE    ,(mes:expr v)  ,@(mes:exprs e)))
-(define (mes:set-var v e)       `(,SETV  ,v ,(mes:expr e)))
-(define (mes:set-arr v i . e)   `(,SETAW ,v ,(mes:expr i)  ,@(mes:exprs e)))
-(define (mes:set-arr.b v i . e) `(,SETAB ,v ,(mes:expr i)  ,@(mes:exprs e)))
+(define (mes:set-reg:* v . e)   `(,SETRE    ,(mes:expr v)  ,@(mes:exprs e)))
+(define (mes:set-var   v e)     `(,SETV  ,v ,(mes:expr e)))
+(define (mes:set-arr~  v i . e) `(,SETAW ,v ,(mes:expr i)  ,@(mes:exprs e)))
+(define (mes:set-arr~b v i . e) `(,SETAB ,v ,(mes:expr i)  ,@(mes:exprs e)))
+
+; compatibility
+(define (mes:set-reg   . l) (apply mes:set-reg:  l))
+(define (mes:set-reg*  . l) (apply mes:set-reg:* l))
+(define (mes:set-arr   . l) (apply mes:set-arr~  l))
+(define (mes:set-arr.b . l) (apply mes:set-arr~b l))
 
 (define (mes:if c t)        `(,CND ,(mes:expr c) ,t))
 (define (mes:if-else c t e) `(,CND ,(mes:expr c) ,t ,CNT ,e))

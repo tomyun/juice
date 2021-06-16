@@ -115,11 +115,11 @@
 
 (define op-sys  (:: SYS params))
 (define op-str  ($list 'str STR))
-(define op-set  (<or> ($cons 'set-reg   (:: (~ SETRC) NUM exprs))
-                      ($cons 'set-reg*  (:: (~ SETRE) expr exprs))
-                      ($cons 'set-var   (:: (~ SETV)  VAR expr))
-                      ($cons 'set-arr   (:: (~ SETAW) VAR expr exprs))
-                      ($cons 'set-arr.b (:: (~ SETAB) VAR expr exprs))))
+(define op-set  (<or> ($cons 'set-reg:  (:: (~ SETRC) NUM  exprs))
+                      ($cons 'set-reg:* (:: (~ SETRE) expr exprs))
+                      ($cons 'set-var   (:: (~ SETV)  VAR  expr))
+                      ($cons 'set-arr~  (:: (~ SETAW) VAR  expr  exprs))
+                      ($cons 'set-arr~b (:: (~ SETAB) VAR  expr  exprs))))
 (define cnd     (:: (~ CND) expr block))
 (define op-cnd1 (:% (a <- (try cnd))
                     (b <- (many (try (:~ CNT (~> cnd))))) ;TODO: check if `while` can be also used for np2/AZUMI9/12.MES
