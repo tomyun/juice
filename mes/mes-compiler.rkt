@@ -303,7 +303,7 @@
 ; compatibility
 (define (mes:arr   a b) (mes:~  a b))
 (define (mes:arr.b a b) (mes:~b a b))
-(define (mes:reg   a b) (mes::  a b))
+(define (mes:reg   a)   (mes::  a))
 (define (mes:rnd   a)   (mes:?  a))
 
 (define (mes:_) '()) ; empty expr, pointing last stack value
