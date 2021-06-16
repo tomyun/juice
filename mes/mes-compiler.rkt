@@ -9,6 +9,7 @@
 (require racket/string (for-syntax racket/string))
 
 (require "mes-config.rkt")
+(require "mes-util.rkt")
 
 ;; lexer
 
@@ -209,18 +210,6 @@
                     (add1 (remainder (+ (sub1 t) i) 94))))
     (hash-set! charset c j))
   '())
-
-(define (char->sjis c)
-  ; avoid iconv issue: https://github.com/racket/racket/issues/3876
-  (define s  (string c))
-  (define n8 (string-utf-8-length s))
-  (define b8 (string->bytes/utf-8 s))
-  (define b  (make-bytes 2))
-  (define t  (bytes-open-converter "utf-8" "shift_jisx0213"))
-  (bytes-convert t b8 0 n8 b 0 2)
-  (bytes-convert-end t b)
-  (bytes-close-converter t)
-  (bytes->list b))
 
 (define (mes:text #:color [c #f] . l)
   (define k (if c `(,(mes:text-color c)) '()))
