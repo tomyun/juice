@@ -167,7 +167,7 @@
            `(,(+ c0 (cfg:dict)))
            `(,(- c1 #x20) ,c2))))
 
-(define tbl (make-hash))
+(define charset (make-hash))
 
 (define (sjis k t)
   (define s1 (cond [(<=  1 k 62) (floor (/ (+ k 257) 2))]
@@ -193,12 +193,12 @@
 ;   (unless (and (eq? k k1) (eq? t t1))
 ;     (displayln (format "~a => ~a => ~a" `(,k ,t) `(,s1 ,s2) `(,k1 ,t2)))))
 
-(define (mes:tbl k t . l)
+(define (mes:charset k t . l)
   (for ([c l]
         [i (range (length l))])
     (define j (sjis (+ k (quotient (+ (sub1 t) i) 94))
                     (add1 (remainder (+ (sub1 t) i) 94))))
-    (hash-set! tbl c j))
+    (hash-set! charset c j))
   '())
 
 (define (char->sjis c)
@@ -224,7 +224,7 @@
 
 (define (mes:text* s)
   (define (: c)
-    (define c1 (hash-ref tbl c #f))
+    (define c1 (hash-ref charset c #f))
     (if c1 c1 (char->sjis c)))
   (define l (flatten (map : (string->list s))))
   (define (f l)
@@ -336,7 +336,7 @@
 
 (define (mes:init)
   (set! dict (hash))
-  (set! tbl (make-hash)))
+  (set! charset (make-hash)))
 
 ;; compiler-util
 
