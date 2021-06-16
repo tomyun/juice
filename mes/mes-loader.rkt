@@ -191,8 +191,8 @@
 (define (fuse-text l)
   (define (: x)
     (match x
-      [`((chrs ,c ...) ,r ...) (append (:: c) (: r))]
-      [`(,a ,r ...)            `(,(: a) ,@(: r))]
+      [`((chrs ,c ...) ,r ...) `(,@(:: c) ,@(: r))]
+      [`(,a ,r ...)            `(,(: a)   ,@(: r))]
       [a                       a]))
   (define (:: x)
      (match x

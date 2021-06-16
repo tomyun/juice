@@ -257,8 +257,8 @@
 (define (mes:exprs . e)
   (define (f x)
     (match x
-      [`(() (,r ... ,a))       (f `((,(mes:expr a)) ,r))]
-      [`((,l ...) (,r ... ,a)) (f `(,(append `(,(mes:expr a) ,CNT) l) ,r))]
+      [`(() (,r ... ,a))       (f `((,(mes:expr a))          ,r))]
+      [`((,l ...) (,r ... ,a)) (f `((,(mes:expr a) ,CNT ,@l) ,r))]
       [`((,l ...) ())          l]))
   (f `(() ,@e)))
 
@@ -313,8 +313,8 @@
 (define (mes:params . p)
   (define (f x)
     (match x
-      [`(()       (,r ... ,a)) (f `((,(mes:param a)) ,r))]
-      [`((,l ...) (,r ... ,a)) (f `(,(append `(,(mes:param a) ,CNT) l) ,r))]
+      [`(()       (,r ... ,a)) (f `((,(mes:param a))          ,r))]
+      [`((,l ...) (,r ... ,a)) (f `((,(mes:param a) ,CNT ,@l) ,r))]
       [`((,l ...) ())          l]))
   (f `(() ,@p)))
 
