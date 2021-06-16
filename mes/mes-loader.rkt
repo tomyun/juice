@@ -11,11 +11,11 @@
 (define (load-mes path)
   (define f (open-mes path))
   (match-define `(MES ,dict ,code) f)
-  (define r (parse-result (mes-parser) code))
+  (define r (parse-result (parser) code))
   (fuse (resolve (lower r)) dict))
 
-(define (load-mes-snippet h [p (mes-parser)])
-  (parse-result p (open-mes-snippet h)))
+(define (load-mes-snippet h [p p:<mes>])
+  (parse-result (parser p) (open-mes-snippet h)))
 
 (define (lower l)
   (define (: x)

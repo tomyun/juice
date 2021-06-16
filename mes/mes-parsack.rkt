@@ -141,11 +141,11 @@
 
 (define <mes> ($cons 'mes (:~ (~> stmts) (optional END) (optional $eof)))) ; many inconsistent endings
 
-(define (mes-parser)
-  (:% (setState 'dict (cfg:dict)) <mes>))
+(define (parser [p <mes>])
+  (:% (setState 'dict (cfg:dict)) p))
 
 (provide parse-result
          parse
-         mes-parser)
+         parser)
 
 (provide (prefix-out p: (all-defined-out)))
