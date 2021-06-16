@@ -88,7 +88,7 @@
       [#x12 'define-proc]
       [#x13 'proc]
       [#x14 'call]
-      [#x15 'print-number]
+      [#x15 'number]
       [#x16 'delay]
       [#x17 'clear]
       [#x18 'color]

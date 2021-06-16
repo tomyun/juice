@@ -108,17 +108,17 @@
 
 (define (mes:cmd i) (λ p `(,(integer->char i) ,@(mes:params p))))
 
-(define mes:text-color   (mes:cmd #x10))
-(define mes:wait         (mes:cmd #x11))
-(define mes:define-proc  (mes:cmd #x12))
-(define mes:proc         (mes:cmd #x13))
-(define mes:call         (mes:cmd #x14))
-(define mes:print-number (mes:cmd #x15)) 
-(define mes:delay        (mes:cmd #x16))
-(define mes:clear        (mes:cmd #x17))
-(define mes:color        (mes:cmd #x18))
-(define mes:util         (mes:cmd #x19))
-(define mes:animate      (mes:cmd #x1A))
+(define mes:text-color  (mes:cmd #x10))
+(define mes:wait        (mes:cmd #x11))
+(define mes:define-proc (mes:cmd #x12))
+(define mes:proc        (mes:cmd #x13))
+(define mes:call        (mes:cmd #x14))
+(define mes:number      (mes:cmd #x15)) 
+(define mes:delay       (mes:cmd #x16))
+(define mes:clear       (mes:cmd #x17))
+(define mes:color       (mes:cmd #x18))
+(define mes:util        (mes:cmd #x19))
+(define mes:animate     (mes:cmd #x1A))
 
 ;TODO: macro implementation
 (define mes:@ #\@)
