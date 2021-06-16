@@ -74,13 +74,13 @@
   (cond
    [(< n 0)         (error (format "negative number not supported:e ~a" n))]
    [(<= n #x0F)     (integer->char (+ n (char->integer NUM0)))] ; 15
-   [(<= n #x3F)     (cons NUM1 (num n))] ; 63
-   [(<= n #x0FFF)   (cons NUM2 (num n))] ; 4095
-   [(<= n #x03FFFF) (cons NUM3 (num n))] ; 262143
+   [(<= n #x3F)     `(,NUM1 ,@(num n))] ; 63
+   [(<= n #x0FFF)   `(,NUM2 ,@(num n))] ; 4095
+   [(<= n #x03FFFF) `(,NUM3 ,@(num n))] ; 262143
    [else            (error (format "too large number:e ~a" n))]))
 
 (define (num n [i 0])
-  (define (: r x) (cons (bitwise-ior (arithmetic-shift (bitwise-and x #x3F) 2) #x03) r))
+  (define (: r x) `(,(bitwise-ior (arithmetic-shift (bitwise-and x #x3F) 2) #x03) ,@r))
   (define (:: x)  (arithmetic-shift x -6))
   (define (f l)
     (match l

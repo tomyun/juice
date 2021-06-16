@@ -42,13 +42,13 @@
 (define (fold-expr l)
   (define (: x)
     (match x
-      [`((,a ,b ,s ...)      (term2 ,f) ,r ...)    (: (cons (cons `((exp ,f) ,b ,a) s) r))]
-      [`((,a ,s ...)         (term1 ,f) ,r ...)    (: (cons (cons `((exp ,f) ,a) s) r))]
-      [`((,s ...)            (term0 ,f) ,a ,r ...) (: (cons (cons `((exp ,f) ,a) s) r))]
-      [`((,s ...) ,a ,r ...)                       (: (cons (cons a s) r))]
+      [`((,a ,b ,s ...)      (term2 ,f) ,r ...)    (: `((((exp ,f) ,b ,a) ,@s) ,@r))]
+      [`((,a ,s ...)         (term1 ,f) ,r ...)    (: `((((exp ,f) ,a)    ,@s) ,@r))]
+      [`((,s ...)            (term0 ,f) ,a ,r ...) (: `((((exp ,f) ,a)    ,@s) ,@r))]
+      [`((,s ...) ,a ,r ...)                       (: `((,a               ,@s) ,@r))]
       [`((,s))                                     s]
       [`(())                                       `(_)])) ; empty expr in np2/MISATO.MES
-  (: (cons '() l)))
+  (: `(() ,@l)))
 
 (define (resolve l)
   (define (: x)
@@ -147,8 +147,8 @@
 (define (fuse-while l)
   (define (: x)
     (match x
-      [`((while) (if ,c ,t) ,r ...) (cons `(while ,(: c) ,(: t)) (: r))]
-      [`(,a ,r ...)                 (cons (: a) (: r))]
+      [`((while) (if ,c ,t) ,r ...) `((while ,(: c) ,(: t)) ,@(: r))]
+      [`(,a ,r ...)                 `(,(: a) ,@(: r))]
       [a                            a]))
   (: l))
 
@@ -192,7 +192,7 @@
   (define (: x)
     (match x
       [`((chrs ,c ...) ,r ...) (append (:: c) (: r))]
-      [`(,a ,r ...)            (cons (: a) (: r))]
+      [`(,a ,r ...)            `(,(: a) ,@(: r))]
       [a                       a]))
   (define (:: x)
      (match x
