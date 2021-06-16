@@ -58,7 +58,16 @@
 (define mes:sound       (mes:sys #x24))
 (define mes:field       (mes:sys #x26))
 
-(define (mes:str s) `(,STR ,@(string->list s) ,STR))
+;;HACK: counterpart for replacing enhanced (text ...) in translated scripts
+(define (mes:str #:color [c #f] . l)
+  (define k (if c `(,(mes:text-color c)) '()))
+  (define (f t)
+    (match t
+      [(? string? s) (mes:str* s)]
+      [(? number? n) (mes:proc n)]   ; 0: nanpa1 & etc, 3: kakyu
+      [(? char?   c) (mes:call c)])) ; Z: elle
+  `(,@k ,@(map f l)))
+(define (mes:str* s) `(,STR ,@(string->list s) ,STR))
 
 (define (mes:num n)
   (cond
