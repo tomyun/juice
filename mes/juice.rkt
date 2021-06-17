@@ -1,9 +1,11 @@
 #lang racket/base
 
 (require racket/cmdline)
+(require racket/file)
 (require racket/match)
 (require racket/pretty)
 (require racket/string)
+(require file/sha1)
 
 (require ansi-color)
 
@@ -19,23 +21,25 @@
   (command-line
    #:program "juice"
    #:once-any
-   [("--decompile""-d")  "decompile MES bytecode into rkt source"
-                         (command 'decompile)]
-   [("--compile" "-c")   "compile rkt source into MES bytecode"
-                         (command 'compile)]
-   [("--version" "-v")   "show version"
-                         (command 'version)]
+   [("--decompile" "-d")   "decompile MES bytecode into rkt source"
+                           (command 'decompile)]
+   [("--deduplicate" "-D") "deduplicate common procs in rkt source"
+                           (command 'deduplicate)]
+   [("--compile" "-c")     "compile rkt source into MES bytecode"
+                           (command 'compile)]
+   [("--version" "-v")     "show version"
+                           (command 'version)]
    #:once-each
-   [("--force" "-f")     "force overwriting output files"
-                         (exists 'replace)]
-   [("--dict") b         "dictionary base (80*, D0)"
-                         (cfg:dict (string->number b 16))]
-   [("--no-decode")      "[decompile] skip SJIS character decoding"
-                         (cfg:decode #f)]
-   [("--no-resolve")     "[decompile] skip cmd/sys name resolution"
-                         (cfg:resolve #f)]
-   [("--no-compress")    "[compile] skip text compression with dict"
-                         (cfg:compress #f)]
+   [("--force" "-f")       "force overwriting output files"
+                           (exists 'replace)]
+   [("--dict") b           "dictionary base (80*, D0)"
+                           (cfg:dict (string->number b 16))]
+   [("--no-decode")        "[decompile] skip SJIS character decoding"
+                           (cfg:decode #f)]
+   [("--no-resolve")       "[decompile] skip cmd/sys name resolution"
+                           (cfg:resolve #f)]
+   [("--no-compress")      "[compile] skip text compression with dict"
+                           (cfg:compress #f)]
    #:ps "<args> : filenames"
    #:args args
    args))
@@ -58,9 +62,54 @@
 (define (compile filename)
   (save-mes filename))
 
+(define (deduplicate)
+  ;; collect procs across all source files
+  (define (extract l)
+    (match l
+      [`((define-proc ,p ...) ,r ...) `((define-proc ,@p) ,@(extract r))]
+      [`(,a                   ,r ...) `(,@(extract r))]
+      [a                              a]))
+  (define h (make-hash))
+  (define (remember d) (hash-update! h d add1 0))
+  (for ([f filenames])
+    (map remember (extract (file->value f)))
+    (display ".")
+    (flush-output))
+  (displayln "")
+
+  ;; find out common procs shared 10 times or more
+  (define procs
+    (for/hash ([(k v) (in-hash h)] #:when (> v 10))
+      (match-define `(define-proc ,n ,b) k)
+      (define f (format "_proc_~a_~a"
+                        n
+                        (bytes->hex-string (integer->integer-bytes (equal-hash-code k) 8 #t))))
+      (save-proc-rkt f `(mes* ,k))
+      (values k `',(string->symbol f))))
+
+  ;; replace shared proc uses in the source files
+  (define (p n b) `(define-proc ,n ,b))
+  (define (patch l)
+    (match l
+      [`((define-proc ,n ,b) ,r ...) #:when (hash-has-key? procs (p n b))
+       `((include-proc ,(hash-ref procs (p n b))) ,@(patch r))]
+      [`(,a                  ,r ...)
+       `(,(patch a) ,@(patch r))]
+      [a a]))
+  (for ([f filenames])
+    (save-patched-rkt f (patch (file->value f)))))
+
 (define (save-rkt filename)
   (define (r f) (pretty-format (load-mes f) #:mode 'write))
   (save filename ".mes" ".rkt" r display 'b-green))
+
+(define (save-proc-rkt name mes)
+  (define (r f) (pretty-format mes #:mode 'write))
+  (save name "" ".rkt" r display 'b-magenta))
+
+(define (save-patched-rkt filename mes)
+  (define (r f) (pretty-format mes #:mode 'write))
+  (save filename ".rkt" ".rkt" r display 'b-cyan))
 
 (define (save-mes filename)
   (define (r f) (compile-mes f))
@@ -80,6 +129,7 @@
 
 (case (command)
  ['decompile   (work decompile)]
+ ['deduplicate (deduplicate)]
  ['compile     (work compile)]
  ['version     (displayln (format "juice ~a by tomyun" version))]
  [else         (displayln "type `juice -h` for help")])

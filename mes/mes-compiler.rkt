@@ -1,6 +1,7 @@
 #lang racket/base
 
 (require (for-syntax racket/base))
+(require racket/file)
 (require racket/format)
 (require racket/include)
 (require racket/list)
@@ -311,11 +312,17 @@
   (match b
    [`(,(? char? a) ,l ... ,(? char? b)) (and (char=? a BEG) (char=? b END))]
    [_                                   #f]))
-(define (mes:mes . l) (flatten `(,l ,END)))
+(define (mes:mes  . l) (flatten `(,l ,END)))
+(define (mes:mes* . l) (flatten l))
 
 (define (mes:init)
   (set! dict (hash))
   (set! charset (make-hash)))
+
+;; extension
+
+(define (mes:include-proc f)
+  (eval (file->value (format "~a.rkt" f))))
 
 ;; compiler-util
 
