@@ -53,34 +53,33 @@
 (define (displayln-color c s) (with-colors c (lambda () (displayln s))))
 
 (define (decompile filename)
+  (save-rkt filename))
+
+(define (compile filename)
+  (save-mes filename))
+
+(define (save-rkt filename)
+  (define (r f) (pretty-format (load-mes f) #:mode 'write))
+  (save filename ".mes" ".rkt" r display 'b-green))
+
+(define (save-mes filename)
+  (define (r f) (compile-mes f))
+  (save filename ".rkt" ".mes" r write-bytes 'b-blue))
+
+(define (save filename ext0 ext1 r w color)
   (display-color 'b-white filename)
   (flush-output)
   (cond
-   [(extension? filename ".mes")
-    (let* ([mes (load-mes filename)]
-           [src (pretty-format mes #:mode 'write)]
-           [outname (string-append filename ".rkt")])
+   [(extension? filename ext0)
+    (let ([outname (string-append filename ext1)])
       (with-output-to-file outname #:exists (exists)
-        (λ () (display src)))
-      (displayln-color 'b-green ".rkt"))]
+        (λ () (w (r filename))))
+      (displayln-color color ext1))]
    [else (displayln-color 'b-yellow "?")])
   (flush-output))
 
-(define (compile filename)
-  (display-color 'b-white filename)
-  (flush-output)
-  (cond
-   [(extension? filename ".rkt")
-    (let ([mes (compile-mes filename)]
-          [outname (string-append filename ".mes")])
-      (with-output-to-file outname #:exists (exists)
-        (λ () (write-bytes mes)))
-      (displayln-color 'b-blue ".mes"))]
-   [else (displayln-color 'b-yellow "?")])
-  (flush-output))
- 
 (case (command)
- ['decompile (work decompile)]
- ['compile   (work compile)]
- ['version   (displayln (format "juice ~a by tomyun" version))]
- [else       (displayln "type `juice -h` for help")])
+ ['decompile   (work decompile)]
+ ['compile     (work compile)]
+ ['version     (displayln (format "juice ~a by tomyun" version))]
+ [else         (displayln "type `juice -h` for help")])
