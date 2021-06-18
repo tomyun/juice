@@ -138,10 +138,10 @@
     `(,fuse-while
       ,fuse-logic
       ,(curry fuse-dic dict)
-      ,(curry fuse-dic-header dict)
       ,fuse-text
       ,fuse-text-color
       ,fuse-text-proc-call
+      ,(curry fuse-dict dict)
       ,fuse-meta))
   ((apply compose1 (reverse f)) l))
 
@@ -185,10 +185,6 @@
       [a         a]))
   (: l))
 
-(define (fuse-dic-header dict l)
-  (match l
-    [`(mes ,r ...) `(mes (dict ,@dict) ,@r)]))
-
 (define (fuse-text l)
   (define (: x)
     (match x
@@ -218,6 +214,10 @@
       [`(,a ,r ...)                                                   `(,(: a) ,@(: r))]
       [a                                                              a]))
   (: l))
+
+(define (fuse-dict dict l)
+  (match l
+    [`(mes ,r ...) `(mes (dict ,@dict) ,@r)]))
 
 (define (fuse-meta l)
   (define c
