@@ -32,8 +32,8 @@
    #:once-each
    [("--force" "-f")       "force overwriting output files"
                            (exists 'replace)]
-   [("--dict") b           "dictionary base (80*, D0)"
-                           (cfg:dict (string->number b 16))]
+   [("--dict-base") b      "dictionary base (80*, D0)"
+                           (cfg:dict-base (string->number b 16))]
    [("--no-decode")        "[decompile] skip SJIS character decoding"
                            (cfg:decode #f)]
    [("--no-resolve")       "[decompile] skip cmd/sys name resolution"

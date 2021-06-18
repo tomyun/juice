@@ -167,7 +167,7 @@
   (define c0 (hash-ref dict `(,c1 ,c2) #f))
   (map integer->char
        (if (and (cfg:compress) c0)
-           `(,(+ c0 (cfg:dict)))
+           `(,(+ c0 (cfg:dict-base)))
            `(,(- c1 #x20) ,c2))))
 
 (define charset (make-hash))
@@ -323,7 +323,7 @@
 
 (define (mes:meta . l) '())
 
-(define (mes:dict-base b) (cfg:dict b))
+(define (mes:dict-base b) (cfg:dict-base b))
 
 ;; extension
 

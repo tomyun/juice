@@ -220,7 +220,7 @@
 
 (define (inject l)
   (define c
-    `((dict-base ,(cfg:dict))))
+    `((dict-base ,(cfg:dict-base))))
   (match l
     [`(mes ,m ...) `(mes (meta ,@c) ,@m)]))
 

@@ -90,11 +90,11 @@
 (define TERM0 ($list 'term0 (<or> (char #\u2D) (char #\u2F))))
 (define NUM0  (:% (c <- (char-between #\u30 #\u3F)) (return (lex-num0 c))))
 (define VAR   ($list 'var (char-between #\u40 #\u5A)))
-(define CHR   (:% (d  <- (getState 'dict))
+(define CHR   (:% (d  <- (getState 'dict-base))
                   (c1 <- (char-between #\u60 (integer->char (sub1 d))))
                   (c2 <- (char-between #\u40 #\uFC))
                   (return (lex-chr c1 c2))))
-(define DIC   (:% (d <- (getState 'dict))
+(define DIC   (:% (d <- (getState 'dict-base))
                   (c <- (char-between (integer->char d) #\uFF)) (return (lex-dic c d))))
 
 ;; parser
@@ -145,7 +145,7 @@
 (define <mes> ($cons 'mes (:~ (~> stmts) (optional END) (optional $eof)))) ; many inconsistent endings
 
 (define (parser [p <mes>])
-  (:% (setState 'dict (cfg:dict)) p))
+  (:% (setState 'dict-base (cfg:dict-base)) p))
 
 (provide parse-result
          parse
