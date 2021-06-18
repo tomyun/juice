@@ -13,7 +13,7 @@
   (define f (open-mes path))
   (match-define `(MES ,dict ,code) f)
   (define r (parse-result (parser) code))
-  (fuse (resolve (lower r)) dict))
+  (inject (fuse (resolve (lower r)) dict)))
 
 (define (load-mes-snippet h [p p:<mes>])
   (parse-result (parser p) (open-mes-snippet h)))
@@ -217,6 +217,12 @@
       [`(,a ,r ...)                                                   `(,(: a) ,@(: r))]
       [a                                                              a]))
   (: l))
+
+(define (inject l)
+  (define c
+    `((dict-base ,(cfg:dict))))
+  (match l
+    [`(mes ,m ...) `(mes (meta ,@c) ,@m)]))
 
 (provide load-mes
          load-mes-snippet)

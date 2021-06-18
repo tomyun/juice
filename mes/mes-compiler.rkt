@@ -319,6 +319,12 @@
   (set! dict (hash))
   (set! charset (make-hash)))
 
+;; meta
+
+(define (mes:meta . l) '())
+
+(define (mes:dict-base b) (cfg:dict b))
+
 ;; extension
 
 (define (mes:include-proc f)
