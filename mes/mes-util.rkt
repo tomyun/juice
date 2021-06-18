@@ -23,6 +23,25 @@
   (define c2 (bitwise-and i #x00FF))
   `(,c1 ,c2))
 
+(define (sjis k t)
+  (define s1 (cond [(<=  1 k 62) (floor (/ (+ k 257) 2))]
+                   [(<= 63 k 94) (floor (/ (+ k 385) 2))]))
+  (define s2 (cond [(even? k)    (+ t 158)]
+                   [(<=  1 t 63) (+ t 63)]
+                   [(<= 64 t 94) (+ t 64)]))
+  `(,s1 ,s2))
+
+(define (jis s1 s2)
+  (define i (if (<= s2 158) 0 1))
+  (define k (+ i (cond [(<= 129 s1 159) (- (* s1 2) 257)]
+                       [(<= 224 s1 239) (- (* s1 2) 385)])))
+  (define t (cond [(even? k)            (- s2 158)]
+                  [(<= s2 126)          (- s2 63)]
+                  [(<= s2 158)          (- s2 64)]))
+  `(,k ,t))
+
 (provide char->sjis
          sjis->integer
-         integer->sjis)
+         integer->sjis
+         sjis
+         jis)
