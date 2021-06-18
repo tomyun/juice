@@ -161,24 +161,12 @@
   [(? char? c) (char<=? #\u40 c #\u5A)]
   [_           #f]))
 
-(define dict (hash))
-
 (define (mes:chr-raw c1 c2)
   (define c0 (hash-ref dict `(,c1 ,c2) #f))
   (map integer->char
        (if (and (cfg:compress) c0)
            `(,(+ c0 (cfg:dict-base)))
            `(,(- c1 #x20) ,c2))))
-
-(define charset (make-hash))
-
-(define (mes:charset k t . l)
-  (for ([c l]
-        [i (range (length l))])
-    (define j (sjis (+ k (quotient (+ (sub1 t) i) 94))
-                    (add1 (remainder (+ (sub1 t) i) 94))))
-    (hash-set! charset c j))
-  '())
 
 (define (mes:text #:color [c #f] . l)
   (define k (if c `(,(mes:text-color c)) '()))
@@ -291,6 +279,11 @@
 (define (mes:mes  . l) (flatten `(,l ,END)))
 (define (mes:mes* . l) (flatten l))
 
+;; state
+
+(define dict (hash))
+(define charset (make-hash))
+
 (define (mes:init)
   (set! dict (hash))
   (set! charset (make-hash)))
@@ -298,8 +291,13 @@
 ;; meta
 
 (define (mes:meta . l) '())
-
 (define (mes:dict-base b) (cfg:dict-base b))
+(define (mes:charset k t . l)
+  (for ([c l]
+        [i (range (length l))])
+    (define j (sjis (+ k (quotient (+ (sub1 t) i) 94))
+                    (add1 (remainder (+ (sub1 t) i) 94))))
+    (hash-set! charset c j)))
 
 ;; extension
 
