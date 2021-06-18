@@ -13,7 +13,7 @@
   (define f (open-mes path))
   (match-define `(MES ,dict ,code) f)
   (define r (parse-result (parser) code))
-  (inject (fuse (resolve (lower r)) dict)))
+  (fuse (resolve (lower r)) dict))
 
 (define (load-mes-snippet h [p p:<mes>])
   (parse-result (parser p) (open-mes-snippet h)))
@@ -141,7 +141,8 @@
       ,(curry fuse-dic-header dict)
       ,fuse-text
       ,fuse-text-color
-      ,fuse-text-proc-call))
+      ,fuse-text-proc-call
+      ,fuse-meta))
   ((apply compose1 (reverse f)) l))
 
 (define (fuse-while l)
@@ -218,11 +219,11 @@
       [a                                                              a]))
   (: l))
 
-(define (inject l)
+(define (fuse-meta l)
   (define c
     `((dict-base ,(cfg:dict-base))))
   (match l
-    [`(mes ,m ...) `(mes (meta ,@c) ,@m)]))
+    [`(mes ,r ...) `(mes (meta ,@c) ,@r)]))
 
 (provide load-mes
          load-mes-snippet)
