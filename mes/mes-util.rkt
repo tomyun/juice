@@ -1,8 +1,11 @@
 #lang racket/base
 
+(require racket/file)
 (require racket/list)
 (require racket/match)
 (require racket/port)
+
+(define-namespace-anchor nsa)
 
 (define charset-sjis->char (make-hash))
 (define charset-char->sjis (make-hash))
@@ -21,6 +24,9 @@
 (define (charset-has-char? c) (hash-has-key? charset-char->sjis c))
 (define (charset-ref-sjis j) (hash-ref charset-sjis->char j))
 (define (charset-ref-char c) (hash-ref charset-char->sjis c))
+(define (charset-include f)
+  (define ns (namespace-anchor->namespace nsa))
+  (eval `(begin ,@(file->list f)) ns))
 (define (charset k t . l) (apply charset-add k t l))
 
 (define (sjis->char j)
@@ -71,6 +77,7 @@
 
 (provide charset-reset
          charset-add
+         charset-include
          charset
          sjis->char
          char->sjis
