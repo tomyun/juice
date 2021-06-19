@@ -284,10 +284,12 @@
 
 ;; state
 
+(define src '())
 (define dict (hash))
 (define charset (make-hash))
 
-(define (mes:init)
+(define (mes:init l)
+  (set! src l)
   (set! dict (hash))
   (set! charset (make-hash)))
 

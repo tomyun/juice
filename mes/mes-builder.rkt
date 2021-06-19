@@ -9,7 +9,7 @@
 (define (compile-mes path)
   (define src (file->value path))
   (define ns (namespace-anchor->namespace nsa))
-  (eval (init) ns)
+  (eval `(init ',src) ns)
   (define mes (eval src ns))
   (list->bytes (map char->integer mes)))
 
