@@ -335,7 +335,7 @@
 
 ;; extension
 
-(define (mes:include-proc f)
+(define (mes:include f)
   (eval (file->value (format "~a.rkt" f))))
 
 ;; compiler-util

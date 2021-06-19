@@ -92,7 +92,7 @@
   (define (patch l)
     (match l
       [`((define-proc ,n ,b) ,r ...) #:when (hash-has-key? procs (p n b))
-       `((include-proc ,(hash-ref procs (p n b))) ,@(patch r))]
+       `((include ,(hash-ref procs (p n b))) ,@(patch r))]
       [`(,a                  ,r ...)
        `(,(patch a) ,@(patch r))]
       [a a]))
