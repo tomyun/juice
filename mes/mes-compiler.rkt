@@ -322,7 +322,7 @@
 
 (define (mes:meta . l) '())
 (define (mes:dict-base b) (cfg:dict-base b))
-(define (mes:charset k t . l) (charset-add k t l))
+(define (mes:charset k t . l) (apply charset-add k t l))
 
 ;; extension
 

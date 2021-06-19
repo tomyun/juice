@@ -9,7 +9,7 @@
 (define (charset-reset)
   (set! charset-sjis->char (make-hash))
   (set! charset-char->sjis (make-hash)))
-(define (charset-add k t l)
+(define (charset-add k t . l)
   (for ([c l]
         [i (range (length l))])
     (define j (sjis (+ k (quotient (+ (sub1 t) i) 94))
@@ -21,6 +21,7 @@
 (define (charset-has-char? c) (hash-has-key? charset-char->sjis c))
 (define (charset-ref-sjis j) (hash-ref charset-sjis->char j))
 (define (charset-ref-char c) (hash-ref charset-char->sjis c))
+(define (charset k t . l) (apply charset-add k t l))
 
 (define (sjis->char j)
   (if (charset-has-sjis? j)
@@ -70,6 +71,7 @@
 
 (provide charset-reset
          charset-add
+         charset
          sjis->char
          char->sjis
          sjis->integer
