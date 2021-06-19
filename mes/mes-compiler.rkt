@@ -326,8 +326,7 @@
 
 ;; extension
 
-(define (mes:include f)
-  (eval (file->value (format "~a.rkt" f))))
+(define (mes:include f) (eval `(mes* ,@(file->list f))))
 
 ;; compiler-util
 

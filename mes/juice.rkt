@@ -84,8 +84,8 @@
       (define f (format "_proc_~a_~a"
                         n
                         (bytes->hex-string (integer->integer-bytes (equal-hash-code k) 8 #t))))
-      (save-proc-rkt f `(mes* ,k))
-      (values k `',(string->symbol f))))
+      (save-proc-rkt f k)
+      (values k (format "~a.rkt" f))))
 
   ;; replace shared proc uses in the source files
   (define (p n b) `(define-proc ,n ,b))
