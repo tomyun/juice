@@ -211,6 +211,35 @@
   (define D (map integer->char (flatten K)))
   `(,s ,D))
 
+(define (mes:dict-build)
+  (define h (make-hash))
+  (define (fc j)
+    (cond
+      [(hash-has-key? h j) (hash-update! h j (λ (i) (add1 i)))]
+      [else                (hash-set!    h j 1)]))
+  (define (ft l)
+    (match l
+      [(? string? s) (map (compose1 fc char->sjis) (string->list s))]
+      [a             null]))
+  (define (: l)
+    (match l
+      [`(mes ,a ,r ...)            `(,(: a)        ,@(: r))]
+      [`((text    ,t ...)  ,r ...) `(,@(map ft t)  ,@(: r))]
+      [`((chr-raw ,c1 ,c2) ,r ...) `(,(fc (c1 c2)) ,@(: r))]
+      [`(,a                ,r ...) `(,(: a)        ,@(: r))]
+      [a                           a]))
+  (: src)
+  (define n (add1 (- #xFF (cfg:dict-base))))
+  (define K
+    (let* ([l (hash->list h)]
+           [l (filter (λ (x) (> (cdr x) 1)) l)]
+           [l (sort l (λ (x y) (> (cdr x) (cdr y))))]
+           [l (take l (min n (length l)))]
+           [l (map car l)])
+           ;[l (sort l (λ (x y) (< (sjis->integer x) (sjis->integer y))))])
+      l))
+  (apply mes:dict* K))
+
 (define (mes:cut) `(,CNT))
  
 (define (mes:expr e) `(,(mes:term e) ,VAL))
