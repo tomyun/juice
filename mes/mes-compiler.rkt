@@ -178,10 +178,7 @@
   `(,@k ,@(map f l)))
 
 (define (mes:text* s)
-  (define (: c)
-    (define c1 (hash-ref charset c #f))
-    (if c1 c1 (char->sjis c)))
-  (define l (flatten (map : (string->list s))))
+  (define l (flatten (map char->sjis (string->list s))))
   (define (f l)
     (match l
      [`(,c1 ,c2 ,r ...) `(,@(mes:chr-raw c1 c2) ,@(f r))]
@@ -315,23 +312,17 @@
 
 (define src '())
 (define dict (hash))
-(define charset (make-hash))
 
 (define (mes:init l)
   (set! src l)
   (set! dict (hash))
-  (set! charset (make-hash)))
+  (charset-reset))
 
 ;; meta
 
 (define (mes:meta . l) '())
 (define (mes:dict-base b) (cfg:dict-base b))
-(define (mes:charset k t . l)
-  (for ([c l]
-        [i (range (length l))])
-    (define j (sjis (+ k (quotient (+ (sub1 t) i) 94))
-                    (add1 (remainder (+ (sub1 t) i) 94))))
-    (hash-set! charset c j)))
+(define (mes:charset k t . l) (charset-add k t l))
 
 ;; extension
 

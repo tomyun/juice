@@ -1,18 +1,45 @@
 #lang racket/base
 
+(require racket/list)
 (require racket/match)
+(require racket/port)
+
+(define charset-sjis->char (make-hash))
+(define charset-char->sjis (make-hash))
+(define (charset-reset)
+  (set! charset-sjis->char (make-hash))
+  (set! charset-char->sjis (make-hash)))
+(define (charset-add k t l)
+  (for ([c l]
+        [i (range (length l))])
+    (define j (sjis (+ k (quotient (+ (sub1 t) i) 94))
+                    (add1 (remainder (+ (sub1 t) i) 94))))
+    (hash-set! charset-sjis->char j c)
+    (hash-set! charset-char->sjis c j)))
+(define (charset-has-sjis? j) (hash-has-key? charset-sjis->char j))
+(define (charset-has-char? c) (hash-has-key? charset-char->sjis c))
+(define (charset-ref-sjis j) (hash-ref charset-sjis->char j))
+(define (charset-ref-char c) (hash-ref charset-char->sjis c))
+
+(define (sjis->char j)
+  (if (charset-has-sjis? j)
+    (charset-ref-sjis j)
+    (let ([b (integer->integer-bytes (sjis->integer j) 2 #f #t)])
+      (read-char (reencode-input-port (open-input-bytes b) "sjis" (bytes) #t)))))
 
 (define (char->sjis c)
-  ; avoid iconv issue: https://github.com/racket/racket/issues/3876
-  (define s  (string c))
-  (define n8 (string-utf-8-length s))
-  (define b8 (string->bytes/utf-8 s))
-  (define b  (make-bytes 2))
-  (define t  (bytes-open-converter "utf-8" "shift_jisx0213"))
-  (bytes-convert t b8 0 n8 b 0 2)
-  (bytes-convert-end t b)
-  (bytes-close-converter t)
-  (bytes->list b))
+  (if (charset-has-char? c)
+    (charset-ref-char c)
+    (let* ([s  (string c)]
+           [n8 (string-utf-8-length s)]
+           [b8 (string->bytes/utf-8 s)]
+           [b  (make-bytes 2)]
+           [t  (bytes-open-converter "utf-8" "sjis")])
+      ;; avoid iconv issue: https://github.com/racket/racket/issues/3876
+      (bytes-convert t b8 0 n8 b 0 2)
+      (bytes-convert-end t b)
+      (bytes-close-converter t)
+      (bytes->list b))))
 
 (define (sjis->integer l)
   (match-define `(,c1 ,c2) l)
@@ -40,7 +67,10 @@
                   [(<= s2 158)          (- s2 64)]))
   `(,k ,t))
 
-(provide char->sjis
+(provide charset-reset
+         charset-add
+         sjis->char
+         char->sjis
          sjis->integer
          integer->sjis
          sjis

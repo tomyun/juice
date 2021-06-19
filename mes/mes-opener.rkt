@@ -17,13 +17,7 @@
     (flatten (match l
               [`(,a ,b ,c ...) `(,(bytes a b) ,(f c))]
               [_               '()])))
-  (define (g b)
-    (define c (read-char (reencode-input-port (open-input-bytes b)
-                                              "shift_jisx0213"
-                                              (bytes)
-                                              #t)))
-    (if (eof-object? c) `',(bytes->list b) c))
-  (map g (f l)))
+  (map bytes->list (f l)))
 (define (bit-code b) (bytes->string/latin-1 (bit-string->bytes b)))
 
 (define (open-mes-bytes b)

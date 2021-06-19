@@ -43,15 +43,7 @@
 (define (lex-chr c1 c2)
   (define i (map char->integer `(,c1 ,c2)))
   (define m (match i [`(,a ,b) `(,(+ a #x20) ,b)]))
-  (define b (list->bytes m))
-  (define c (read-char (reencode-input-port (open-input-bytes b)
-                                            "shift_jisx0213"
-                                            (bytes)
-                                            #t)))
-  (if (or (not (cfg:decode))
-          (eof-object? c))
-    `(chr-raw ,@m)
-    `(chr ,c)))
+  `(chr-raw ,@m))
 
 (define (lex-dic c d) `(dic ,(- (char->integer c) d)))
 

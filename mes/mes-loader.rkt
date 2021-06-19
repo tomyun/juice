@@ -23,6 +23,7 @@
     (match x
       [`(num ,n)                n]
       [`(var ,v)                (lower-var v)]
+      [`(chr-raw ,j ...)        (lower-chr j)]
       [`(exprs ,e ...)          (: e)]
       [`(,c ... (exprs ,e ...)) `(,@(: c) ,@(: e))]
       [`(expr ,e ...)           (fold-expr (: e))]
@@ -38,6 +39,11 @@
   (match v
     [(? char? c) (string->symbol (string v))]
     [a           a]))
+
+(define (lower-chr j)
+  (if (cfg:decode)
+    `(chr     ,(sjis->char j))
+    `(chr-raw ,(sjis->integer j))))
 
 (define (fold-expr l)
   (define (: x)
@@ -174,13 +180,7 @@
   (define n (length dict))
   (define (: x)
     (match x
-      [`(dic ,i) (if (< i n)
-                   (match (list-ref dict i)
-                     [(? char? c)  (if (cfg:decode)
-                                     `(chr     ,c)
-                                     `(chr-raw ,@(char->sjis c)))]
-                     [`'(,c1 ,c2)  `(chr-raw ,c1 ,c2)])
-                   `(dic ,i))]
+      [`(dic ,i) (lower-chr (list-ref dict i))]
       [`(,a ...) (map : a)]
       [a         a]))
   (: l))
@@ -217,7 +217,7 @@
 
 (define (fuse-dict dict l)
   (match l
-    [`(mes ,r ...) `(mes (dict ,@dict) ,@r)]))
+    [`(mes ,r ...) `(mes (dict ,@(map sjis->char dict)) ,@r)]))
 
 (define (fuse-meta l)
   (define c
