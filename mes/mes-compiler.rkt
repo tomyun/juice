@@ -200,7 +200,10 @@
      [(? char? c) (char->sjis c)]
      [`(,c1 ,c2)  `(,c1 ,c2)]))
   (define K (map f l))
-  (define n (length l))
+  (apply mes:dict* K))
+
+(define (mes:dict* . K)
+  (define n (length K))
   (define V (range n))
   (set! dict (make-hash (map cons K V)))
   (define (bytes->chars b) (map integer->char (bytes->list b)))
