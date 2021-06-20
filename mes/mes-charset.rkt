@@ -43,7 +43,7 @@
     (charset-ref-sjis j)
     (let* ([b (integer->integer-bytes (sjis->integer j) 2 #f #t)]
            [c (read-char (reencode-input-port (open-input-bytes b) "sjis" (bytes) #t))])
-      (if (eof-object? c) #f c))))
+      (if (or (sjis-nonstandard? j) (eof-object? c)) #f c))))
 
 (define (char->sjis c)
   (if (charset-has-char? c)
@@ -84,6 +84,11 @@
                   [(<= s2 126)          (- s2 63)]
                   [(<= s2 158)          (- s2 64)]))
   `(,k ,t))
+
+;;HACK: check if SJIS code pointing to ASCII chars in section 9 - 15 (PC-98 exclusive)
+(define (sjis-nonstandard? l)
+  (match-define `(,k ,t) (apply jis l))
+  (<= 9 k 15))
 
 (provide charset
          charset*
