@@ -1,6 +1,6 @@
 #lang racket
 
-(require "bmp-patcher.rkt")
+(require "bmp.rkt")
 
 (define ascii
  '(#\! #\" #\# #\$ #\% #\& #\' #\( #\) #\* #\+ #\, #\- #\. #\/
