@@ -42,6 +42,8 @@
                            (cfg:decode #f)]
    [("--no-resolve")       "[decompile] skip cmd/sys name resolution"
                            (cfg:resolve #f)]
+   [("--no-protag")        "[decompile] skip text fusion with protag proc/call"
+                           (cfg:protag #f)]
    [("--no-compress")      "[compile] skip text compression with dict"
                            (cfg:compress #f)]
    #:ps "<args> : filenames"

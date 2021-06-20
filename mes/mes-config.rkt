@@ -5,6 +5,7 @@
 (define cfg:extraop (make-parameter #f))
 (define cfg:decode (make-parameter #t))
 (define cfg:resolve (make-parameter #t))
+(define cfg:protag (make-parameter #t))
 (define cfg:compress (make-parameter #t))
 
 (provide cfg:charset
@@ -12,4 +13,5 @@
          cfg:extraop
          cfg:decode
          cfg:resolve
+         cfg:protag
          cfg:compress)

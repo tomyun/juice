@@ -214,7 +214,7 @@
       [`((text ,t1 ...) (,(or 'proc 'call) ,p) (text ,t2 ...) ,r ...) (: `((text ,@t1 ,p ,@t2) ,@r))]
       [`(,a ,r ...)                                                   `(,(: a) ,@(: r))]
       [a                                                              a]))
-  (: l))
+  (if (cfg:protag) (: l) l))
 
 (define (fuse-dict dict l)
   (match l
