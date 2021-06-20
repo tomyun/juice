@@ -5,6 +5,7 @@
 (require "bmp-copy.rkt")
 (require "bmp-fallback.rkt")
 (require "bmp-patch.rkt")
+(require "bmp-clear.rkt")
 (require "bmp-fnt.rkt")
 (require "bmp-korean.rkt")
 
@@ -17,6 +18,8 @@
          fallback*
          patch
          patch*
+         clear
+         clear*
          jisfont
          draw-korean
          draw-korean*
