@@ -5,7 +5,7 @@
 (require racket/match)
 
 (require "mes-config.rkt")
-(require "mes-util.rkt")
+(require "mes-charset.rkt")
 (require "mes-opener.rkt")
 (require "mes-parsack.rkt")
 
