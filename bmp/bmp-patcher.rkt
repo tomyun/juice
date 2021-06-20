@@ -94,16 +94,7 @@
 ;; patch!
 (define ref (read-bitmap "assets/unifont-13.0.06.bmp"))
 
-(define (patch c k t)
-  (displayln (format "~a ~a ~a" c k t))
-  (define u (char->integer c))
-  (define u1 (arithmetic-shift (bitwise-and u #xFF00) -8))
-  (define u2 (bitwise-and u #x00FF))
-  (define i k)
-  (define j (+ t 32))
-  (patch* u1 u2 i j))
-
-(define (patch* u1 u2 i j)
+(define (blit-patch u1 u2 i j)
   (define w 16)
   (define h 16)
   (let ([x (* (+ u2 2) w)]
@@ -113,7 +104,16 @@
         [y (* j h)])
     (send out set-argb-pixels x y w h buf)))
 
-(define (patch/list l k t)
+(define (patch c k t)
+  (displayln (format "~a ~a ~a" c k t))
+  (define u (char->integer c))
+  (define u1 (arithmetic-shift (bitwise-and u #xFF00) -8))
+  (define u2 (bitwise-and u #x00FF))
+  (define i k)
+  (define j (+ t 32))
+  (blit-patch u1 u2 i j))
+
+(define (patch* l k t)
   (define n (length l))
   (for ([c l]
         [i (range n)])
@@ -121,7 +121,7 @@
            (+ k (quotient (+ (sub1 t) i) 94))
            (add1 (remainder (+ (sub1 t) i) 94)))))
 
-;(patch* #x00 #xc0 9 55)
+;(blit-patch #x00 #xc0 9 55)
 ;(patch #\u00c0 9 22)
 
 (define ascii
@@ -132,7 +132,7 @@
    #\[ #\\ #\] #\^ #\_ #\`
    #\a #\b #\c #\d #\e #\f #\g #\h #\i #\j #\k #\l #\m #\n #\o #\p #\q #\r #\s #\t #\u #\v #\w #\x #\y #\z
    #\{ #\| #\} #\~))
-(patch/list ascii 48 1)
+(patch* ascii 48 1)
 
 ;(include "patch-table.rkt")
 ;(include "patch-table-full.rkt")
@@ -151,7 +151,7 @@
    #\ĉ #\ĝ #\ĥ #\ĵ #\ŝ #\ŭ
    #\ɱ #\ʋ #\ɾ #\ʃ #\ʒ #\ɬ #\ɮ #\ɹ #\ʈ #\ɖ #\ɳ #\ɽ #\ʂ #\ʐ #\ɻ #\ɭ #\ɟ #\ɲ #\ʝ #\ʎ #\ɡ #\ŋ #\ɰ #\ʁ #\ħ #\ʕ #\ʔ #\ɦ #\ʘ #\ǂ #\ɓ #\ɗ #\ʄ #\ɠ #\Ɠ #\œ #\Œ #\ɨ #\ʉ #\ɘ #\ɵ #\ə #\ɜ #\ɞ #\ɐ #\ɯ #\ʊ #\ɤ #\ʌ #\ɔ #\ɑ #\ɒ #\ʍ #\ɥ #\ʢ #\ʡ #\ɕ #\ʑ #\ɺ #\ɧ #\ɚ
    #\æ #\ǽ #\ὰ #\ά #\ɔ #\ɔ #\ʌ #\ʌ #\ə #\ə #\ɚ #\ɚ #\ὲ #\έ))
-(patch/list diac 49 1)
+(patch* diac 49 1)
 
 (define (sjis k t)
   (define s1 (cond [(<=  1 k 62) (floor (/ (+ k 257) 2))]
