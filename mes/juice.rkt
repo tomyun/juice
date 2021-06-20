@@ -36,7 +36,7 @@
                            (cfg:charset c)]
    [("--dictbase") b       "dictionary base (80*, D0)"
                            (cfg:dictbase (string->number b 16))]
-   [("--extraop")          "support incompatible opcodes found in later games"
+   [("--extraop")          "support incompatible opcodes found in some games"
                            (cfg:extraop #t)]
    [("--no-decode")        "[decompile] skip SJIS character decoding"
                            (cfg:decode #f)]
