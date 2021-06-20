@@ -4,6 +4,8 @@
 
 (require "bmp-common.rkt")
 
+(define buf (make-bytes (* 16 16 4)))
+
 (define (blit w h X Y)
   (define dst (out))
   (for* ([x X]

@@ -6,10 +6,12 @@
 
 (define ref (read-bitmap "assets/unifont-13.0.06.bmp"))
 
+(define w 16)
+(define h 16)
+(define buf (make-bytes (* w h 4)))
+
 (define (blit-patch u1 u2 i j)
   (define dst (out))
-  (define w 16)
-  (define h 16)
   (let ([x (* (+ u2 2) w)]
         [y (* (+ u1 4) h)])
     (send ref get-argb-pixels x y w h buf))

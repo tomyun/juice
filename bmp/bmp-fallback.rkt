@@ -10,6 +10,8 @@
 (define 4x4-chars "abcdefghijklmnopqrstuvwxyz!?.()'\",:<>1234567890#■□█ ")
 (define 4x4-dict  (make-hash (map cons (string->list 4x4-chars) (range (string-length 4x4-chars)))))
 
+(define buf (make-bytes (* 16 16 4)))
+
 (define (blit-fallback c x y)
   (define dst (out))
   (define i (dict-ref 4x4-dict c))

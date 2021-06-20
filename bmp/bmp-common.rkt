@@ -8,7 +8,6 @@
 
 (define src (read-bitmap "assets/FREECG98.BMP"))
 (define out (make-parameter (new)))
-(define buf (make-bytes (* 16 16 4)))
 
 (define (save outname)
   (define dst (out))
@@ -20,5 +19,4 @@
          new
          src
          out
-         buf
          save)
