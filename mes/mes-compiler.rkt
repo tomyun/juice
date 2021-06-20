@@ -322,7 +322,8 @@
 
 (define (mes:meta . l) '())
 (define (mes:charset f) (charset f))
-(define (mes:charset* k t . l) (apply charset* k t l))
+(define (mes:charset*  k t . l) (apply charset* k t l))
+(define (mes:charset** k t s)   (charset** k t s))
 (define (mes:dictbase b) (cfg:dictbase b))
 (define (mes:extraop x) (cfg:extraop x))
 

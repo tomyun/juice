@@ -32,6 +32,7 @@
     (hash-set! charset-sjis->char j c)
     (hash-set! charset-char->sjis c j))
   '())
+(define (charset** k t s) (apply charset* k t (string->list s)))
 (define (charset-has-sjis? j) (hash-has-key? charset-sjis->char j))
 (define (charset-has-char? c) (hash-has-key? charset-char->sjis c))
 (define (charset-ref-sjis j) (hash-ref charset-sjis->char j))
@@ -85,6 +86,7 @@
 
 (provide charset
          charset*
+         charset**
          sjis->char
          char->sjis
          sjis->integer
