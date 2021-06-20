@@ -8,6 +8,8 @@
 (define (mes:arr   a b) (mes:~  a b))
 (define (mes:arr.b a b) (mes:~b a b))
 (define (mes:reg   a)   (mes::  a))
+(define (mes:& . l)     (apply mes:&& l))
+(define (mes:! . l)     (apply mes:// l))
 (define (mes:rnd   a)   (mes:?  a))
 
 (define (mes:begin  . l) (apply mes:<> l))

@@ -262,14 +262,14 @@
 (define (mes:*     a b) (mes:term2 a b #\u22))
 (define (mes:/     a b) (mes:term2 a b #\u23))
 (define (mes:%     a b) (mes:term2 a b #\u24))
-(define (mes:! . l)
+(define (mes:// . l)
   (match l
    [`(,a ,b)            (mes:term2 a b #\u25)]
-   [`(,r ... ,a)        (mes:! (apply mes:! r) a)]))
-(define (mes:& . l)
+   [`(,r ... ,a)        (mes:// (apply mes:// r) a)]))
+(define (mes:&& . l)
   (match l
    [`(,a ,b)            (mes:term2 a b #\u26)]
-   [`(,r ... ,a)        (mes:& (apply mes:& r) a)]))
+   [`(,r ... ,a)        (mes:&& (apply mes:&& r) a)]))
 (define (mes:==    a b) (mes:term2 a b #\u27))
 (define (mes:!=    a b) (mes:term2 a b #\u28))
 (define (mes:>     a b) (mes:term2 a b #\u29))
