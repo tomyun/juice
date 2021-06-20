@@ -182,7 +182,9 @@
 ;(displayln diac-tbl)
 
 ;; save
-(define outname "font.bmp")
-(define dst (out))
-(send dst save-file outname 'bmp)
-(system (format "convert -monochrome ~a bmp3:~a" outname outname))
+(define (save outname)
+  (define dst (out))
+  (send dst save-file outname 'bmp)
+  (system (format "convert -monochrome ~a bmp3:~a" outname outname)))
+
+(save "font.bmp")
