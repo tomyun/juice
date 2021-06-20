@@ -168,14 +168,20 @@
            `(,(+ c0 (cfg:dictbase)))
            `(,(- c1 #x20) ,c2))))
 
-(define (mes:text #:color [c #f] . l)
+(define (mes:text #:color   [c #f]
+                  #:newline [n #f]
+                  . l)
   (define k (if c `(,(mes:text-color c)) '()))
+  ;;HACK: experimental support for newline inside text
+  (define x (if n `(,(mes:set-arr~ #\@ 17 (mes:~ #\@ 13)
+                                          (mes:+ (mes:~ #\@ 18) (mes:&& (mes:~ #\@ 21) #xFF))))
+                  '()))
   (define (f t)
     (match t
       [(? string? s) (mes:text* s)]
       [(? number? n) (mes:proc n)]   ; 0: nanpa1 & etc, 3: kakyu
       [(? char?   c) (mes:call c)])) ; Z: elle
-  `(,@k ,@(map f l)))
+  `(,@k ,@(map f l) ,@x))
 
 (define (mes:text* s)
   (define l (flatten (map char->sjis (string->list s))))
