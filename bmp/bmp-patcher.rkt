@@ -7,14 +7,15 @@
 (define H 2048)
 
 (define src (read-bitmap "assets/FREECG98.BMP"))
-(define out (make-bitmap W H))
+(define out (make-parameter (make-bitmap W H)))
 (define buf (make-bytes (* 16 16 4)))
 
-(define (blit w h X Y)  
+(define (blit w h X Y)
+  (define dst (out))
   (for* ([x X]
          [y Y])
     (send src get-argb-pixels x y w h buf)
-    (send out set-argb-pixels x y w h buf)))
+    (send dst set-argb-pixels x y w h buf)))
 
 (define (init)
   ;; copy half-width glyphs in the first line
@@ -38,12 +39,13 @@
 ;; copy extra!
 
 (define (copy k0 t0 k1 t1)
+  (define dst (out))
   (define w 16)
   (define h 16)
   (define (x k) (* k w))
   (define (y t) (* (+ t 32) h))
   (send src get-argb-pixels (x k0) (y t0) w h buf)
-  (send out set-argb-pixels (x k1) (y t1) w h buf))
+  (send dst set-argb-pixels (x k1) (y t1) w h buf))
 
 (define (nk k t [i 0]) (+ k (quotient (+ (sub1 t) i) 94)))
 (define (nt t [i 0])   (add1 (remainder (+ (sub1 t) i) 94)))
@@ -65,9 +67,10 @@
 (define 4x4-dict  (make-hash (map cons (string->list 4x4-chars) (range (string-length 4x4-chars)))))
 
 (define (blit-fallback c x y)
+  (define dst (out))
   (define i (dict-ref 4x4-dict c))
   (send 4x4-image get-argb-pixels (* i 4) 0 4 4 buf)
-  (send out set-argb-pixels x y 4 4 buf))
+  (send dst set-argb-pixels x y 4 4 buf))
 
 (define (fallback k t)
   (define x (* 16 k))
@@ -98,6 +101,7 @@
 (define ref (read-bitmap "assets/unifont-13.0.06.bmp"))
 
 (define (blit-patch u1 u2 i j)
+  (define dst (out))
   (define w 16)
   (define h 16)
   (let ([x (* (+ u2 2) w)]
@@ -105,7 +109,7 @@
     (send ref get-argb-pixels x y w h buf))
   (let ([x (* i w)]
         [y (* j h)])
-    (send out set-argb-pixels x y w h buf)))
+    (send dst set-argb-pixels x y w h buf)))
 
 (define (patch c k t)
   (displayln (format "~a ~a ~a" c k t))
@@ -178,5 +182,6 @@
 
 ;; save
 (define outname "font.bmp")
-(send out save-file outname 'bmp)
+(define dst (out))
+(send dst save-file outname 'bmp)
 (system (format "convert -monochrome ~a bmp3:~a" outname outname))
