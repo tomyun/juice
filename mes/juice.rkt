@@ -70,9 +70,9 @@
   ;; collect procs across all source files
   (define (extract l)
     (match l
-      [`((define-proc ,p ...) ,r ...) `((define-proc ,@p) ,@(extract r))]
-      [`(,a                   ,r ...) `(,@(extract r))]
-      [a                              a]))
+      [`((define-proc ,n ,b) ,r ...) #:when (not (equal? b '(<>))) `((define-proc ,n ,b) ,@(extract r))]
+      [`(,a                  ,r ...)                               `(,@(extract r))]
+      [a                                                           a]))
   (define h (make-hash))
   (define (remember d) (hash-update! h d add1 0))
   (for ([f filenames])
