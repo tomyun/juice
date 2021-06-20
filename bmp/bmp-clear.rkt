@@ -15,12 +15,10 @@
   (define y (* (+ t 32) h))
   (send dst set-argb-pixels x y w h buf))
 
-(define (clear* k0 t0 k1 t1 n)
+(define (clear* k t n)
   (for ([i (range n)])
-    (clear (nk k0 t0 i)
-          (nt t0 i)
-          (nk k1 t1 i)
-          (nt t1 i))))
+    (clear (nk k t i)
+           (nt t i))))
 
 (provide clear
          clear*)
