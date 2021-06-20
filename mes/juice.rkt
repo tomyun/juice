@@ -81,9 +81,9 @@
     (flush-output))
   (displayln "")
 
-  ;; find out common procs shared 10 times or more
+  ;; find out common procs shared more than once
   (define procs
-    (for/hash ([(k v) (in-hash h)] #:when (> v 10))
+    (for/hash ([(k v) (in-hash h)] #:when (> v 1))
       (match-define `(define-proc ,n ,b) k)
       (define f (format "_proc_~a_~a"
                         n
