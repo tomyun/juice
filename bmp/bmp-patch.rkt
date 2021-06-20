@@ -10,7 +10,7 @@
 (define h 16)
 (define buf (make-bytes (* w h 4)))
 
-(define (blit-patch u1 u2 i j)
+(define (blit u1 u2 i j)
   (define dst (out))
   (let ([x (* (+ u2 2) w)]
         [y (* (+ u1 4) h)])
@@ -26,7 +26,7 @@
   (define u2 (bitwise-and u #x00FF))
   (define i k)
   (define j (+ t 32))
-  (blit-patch u1 u2 i j))
+  (blit u1 u2 i j))
 
 (define (patch* l k t)
   (define n (length l))
@@ -36,7 +36,7 @@
            (+ k (quotient (+ (sub1 t) i) 94))
            (add1 (remainder (+ (sub1 t) i) 94)))))
 
-;(blit-patch #x00 #xc0 9 55)
+;(blit #x00 #xc0 9 55)
 ;(patch #\u00c0 9 22)
 
 ;(include "patch-table.rkt")

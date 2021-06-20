@@ -35,7 +35,7 @@
         (display (if (zero? p) " " "█"))))
     (displayln "")))
 
-(define (blit-fnt i k t)
+(define (blit i k t)
   (define dst (out))
   (define dx (* k w))
   (define dy (* (+ t 32) h))
@@ -62,7 +62,7 @@
     (define k (nk k0 t0 n))
     (define t (nt t0 n))
     (displayln (format "n=~a k=~a t=~a" n k t))
-    (blit-fnt (+ i n) k t)))
+    (blit (+ i n) k t)))
 
 ;(jisfont 1804 2350 45 1)
 
