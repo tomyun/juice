@@ -20,6 +20,8 @@
          patch*
          clear
          clear*
+         read-fnt
+         fnt
          jisfont
          draw-korean
          draw-korean*

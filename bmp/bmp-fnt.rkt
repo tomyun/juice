@@ -16,13 +16,13 @@
   (define b (read-bytes n f))
   (close-input-port f)
   b)
-(define fnt (read-fnt "assets/JIS.FNT"))
+(define fnt (make-parameter (read-fnt "assets/JIS.FNT")))
 
 (define (get-glyph i w h)
   (define u (/ (* w h) 8))
   (define i0 (* i u))
   (define i1 (+ i0 u))
-  (subbytes fnt i0 i1))
+  (subbytes (fnt) i0 i1))
 
 (define (print-glyph i w h)
   (define g (get-glyph i w h))
@@ -66,5 +66,7 @@
 
 ;(jisfont 1804 2350 45 1)
 
-(provide jisfont)
+(provide read-fnt
+         fnt
+         jisfont)
  
