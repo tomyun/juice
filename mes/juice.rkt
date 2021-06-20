@@ -34,8 +34,8 @@
                            (exists 'replace)]
    [("--charset") c        "specify charset encoding (pc98*, europe)"
                            (cfg:charset c)]
-   [("--dict-base") b      "dictionary base (80*, D0)"
-                           (cfg:dict-base (string->number b 16))]
+   [("--dictbase") b       "dictionary base (80*, D0)"
+                           (cfg:dictbase (string->number b 16))]
    [("--extraop")          "support incompatible opcodes found in later games"
                            (cfg:extraop #t)]
    [("--no-decode")        "[decompile] skip SJIS character decoding"

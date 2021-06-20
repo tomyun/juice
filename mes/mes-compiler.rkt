@@ -165,7 +165,7 @@
   (define c0 (hash-ref dict `(,c1 ,c2) #f))
   (map integer->char
        (if (and (cfg:compress) c0)
-           `(,(+ c0 (cfg:dict-base)))
+           `(,(+ c0 (cfg:dictbase)))
            `(,(- c1 #x20) ,c2))))
 
 (define (mes:text #:color [c #f] . l)
@@ -226,7 +226,7 @@
       [`(,a                ,r ...) `(,(: a)        ,@(: r))]
       [a                           a]))
   (: src)
-  (define n (add1 (- #xFF (cfg:dict-base))))
+  (define n (add1 (- #xFF (cfg:dictbase))))
   (define K
     (let* ([l (hash->list h)]
            [l (filter (λ (x) (> (cdr x) 1)) l)]
@@ -323,7 +323,7 @@
 (define (mes:meta . l) '())
 (define (mes:charset f) (charset f))
 (define (mes:charset* k t . l) (apply charset* k t l))
-(define (mes:dict-base b) (cfg:dict-base b))
+(define (mes:dictbase b) (cfg:dictbase b))
 (define (mes:extraop x) (cfg:extraop x))
 
 ;; extension
