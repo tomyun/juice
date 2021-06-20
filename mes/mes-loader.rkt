@@ -223,7 +223,8 @@
 (define (fuse-meta l)
   (define m
     `((charset   ,(cfg:charset))
-      (dict-base ,(cfg:dict-base))))
+      (dict-base ,(cfg:dict-base))
+      (extraop   ,(cfg:extraop))))
   (match l
     [`(mes ,r ...) `(mes (meta ,@m) ,@r)]))
 

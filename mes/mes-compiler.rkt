@@ -324,6 +324,7 @@
 (define (mes:charset f) (charset f))
 (define (mes:charset* k t . l) (apply charset* k t l))
 (define (mes:dict-base b) (cfg:dict-base b))
+(define (mes:extraop x) (cfg:extraop x))
 
 ;; extension
 
