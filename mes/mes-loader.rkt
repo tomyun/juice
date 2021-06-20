@@ -42,9 +42,10 @@
     [a           a]))
 
 (define (lower-chr j)
-  (if (cfg:decode)
-    `(chr     ,(sjis->char j))
-    `(chr-raw ,(sjis->integer j))))
+  (define c (sjis->char j))
+  (if (and c (cfg:decode))
+    `(chr     ,c)
+    `(chr-raw ,@j)))
 
 (define (fold-expr l)
   (define (: x)
