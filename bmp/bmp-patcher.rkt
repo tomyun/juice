@@ -5,9 +5,10 @@
 
 (define W 2048)
 (define H 2048)
+(define (new) (make-bitmap W H))
 
 (define src (read-bitmap "assets/FREECG98.BMP"))
-(define out (make-parameter (make-bitmap W H)))
+(define out (make-parameter (new)))
 (define buf (make-bytes (* 16 16 4)))
 
 (define (blit w h X Y)
