@@ -32,6 +32,8 @@
    #:once-each
    [("--force" "-f")       "force overwriting output files"
                            (exists 'replace)]
+   [("--charset") c        "specify charset encoding (pc98*, europe)"
+                           (cfg:charset c)]
    [("--dict-base") b      "dictionary base (80*, D0)"
                            (cfg:dict-base (string->number b 16))]
    [("--no-decode")        "[decompile] skip SJIS character decoding"

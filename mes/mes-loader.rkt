@@ -10,6 +10,7 @@
 (require "mes-parsack.rkt")
 
 (define (load-mes path)
+  (charset (cfg:charset))
   (define f (open-mes path))
   (match-define `(MES ,dict ,code) f)
   (define r (parse-result (parser) code))
@@ -220,10 +221,11 @@
     [`(mes ,r ...) `(mes (dict ,@(map sjis->char dict)) ,@r)]))
 
 (define (fuse-meta l)
-  (define c
-    `((dict-base ,(cfg:dict-base))))
+  (define m
+    `((charset   ,(cfg:charset))
+      (dict-base ,(cfg:dict-base))))
   (match l
-    [`(mes ,r ...) `(mes (meta ,@c) ,@r)]))
+    [`(mes ,r ...) `(mes (meta ,@m) ,@r)]))
 
 (provide load-mes
          load-mes-snippet)

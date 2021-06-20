@@ -4,15 +4,27 @@
 (require racket/list)
 (require racket/match)
 (require racket/port)
+(require racket/runtime-path)
+(require racket/string)
 
 (define-namespace-anchor nsa)
+
+(define-runtime-path charset-collection "./charset/")
+(define (charset-path s)
+  (cond
+    [(string-suffix? s ".rkt") s]
+    [else                      (build-path charset-collection (format "_charset_~a.rkt" s))]))
+(define (charset n)
+  (charset-reset)
+  (define ns (namespace-anchor->namespace nsa))
+  (eval `(begin ,@(file->list (charset-path n))) ns))
 
 (define charset-sjis->char (make-hash))
 (define charset-char->sjis (make-hash))
 (define (charset-reset)
   (set! charset-sjis->char (make-hash))
   (set! charset-char->sjis (make-hash)))
-(define (charset-add k t . l)
+(define (charset* k t . l)
   (for ([c l]
         [i (range (length l))])
     (define j (sjis (+ k (quotient (+ (sub1 t) i) 94))
@@ -24,10 +36,6 @@
 (define (charset-has-char? c) (hash-has-key? charset-char->sjis c))
 (define (charset-ref-sjis j) (hash-ref charset-sjis->char j))
 (define (charset-ref-char c) (hash-ref charset-char->sjis c))
-(define (charset-include f)
-  (define ns (namespace-anchor->namespace nsa))
-  (eval `(begin ,@(file->list f)) ns))
-(define (charset k t . l) (apply charset-add k t l))
 
 (define (sjis->char j)
   (if (charset-has-sjis? j)
@@ -75,10 +83,8 @@
                   [(<= s2 158)          (- s2 64)]))
   `(,k ,t))
 
-(provide charset-reset
-         charset-add
-         charset-include
-         charset
+(provide charset
+         charset*
          sjis->char
          char->sjis
          sjis->integer

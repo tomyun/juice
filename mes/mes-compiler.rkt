@@ -316,13 +316,14 @@
 (define (mes:init l)
   (set! src l)
   (set! dict (hash))
-  (charset-reset))
+  (charset (cfg:charset)))
 
 ;; meta
 
 (define (mes:meta . l) '())
+(define (mes:charset f) (charset f))
+(define (mes:charset* k t . l) (apply charset* k t l))
 (define (mes:dict-base b) (cfg:dict-base b))
-(define (mes:charset k t . l) (apply charset-add k t l))
 
 ;; extension
 
