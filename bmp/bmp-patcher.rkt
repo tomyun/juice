@@ -188,3 +188,14 @@
   (system (format "convert -monochrome ~a bmp3:~a" outname outname)))
 
 (save "font.bmp")
+
+(provide out
+         new
+         init
+         copy
+         copy*
+         fallback
+         fallback*
+         patch
+         patch*
+         save)
