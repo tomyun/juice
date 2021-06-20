@@ -5,7 +5,7 @@
 (define W 2048)
 (define H 2048)
 
-(define src (read-bitmap "FREECG98.BMP"))
+(define src (read-bitmap "assets/FREECG98.BMP"))
 (define out (make-bitmap W H))
 (define buf (make-bytes (* 16 16 4)))
 
@@ -55,7 +55,7 @@
 ;(copy* 9 1 85 1 94)
 
 ;; patch!
-(define ref (read-bitmap "unifont-13.0.06.bmp"))
+(define ref (read-bitmap "assets/unifont-13.0.06.bmp"))
 
 (define (patch c k t)
   (displayln (format "~a ~a ~a" c k t))
