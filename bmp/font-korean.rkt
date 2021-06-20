@@ -11,7 +11,7 @@
 (define ksx1001-letter "ㄱㄲㄳㄴㄵㄶㄷㄸㄹㄺㄻㄼㄽㄾㄿㅀㅁㅂㅃㅄㅅㅆㅇㅈㅉㅊㅋㅌㅍㅎㅏㅐㅑㅒㅓㅔㅕㅖㅗㅘㅙㅚㅛㅜㅝㅞㅟㅠㅡㅢㅣㅤㅥㅦㅧㅨㅩㅪㅫㅬㅭㅮㅯㅰㅱㅲㅳㅴㅵㅶㅷㅸㅹㅺㅻㅼㅽㅾㅿㆀㆁㆂㆃㆄㆅㆆㆇㆈㆉㆊㆋㆌㆍㆎ")
 
 (parameterize ([out (new)])
-  ;(init)
+  (init)
   (draw-korean/string ksx1001-syllable 45 1)
   (draw-korean/string ksx1001-ascii 70 1)
   (draw-korean/string ksx1001-letter 71 1)

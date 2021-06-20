@@ -4,6 +4,7 @@
 
 (require "bmp-common.rkt")
 (require "bmp-charset.rkt")
+(require "bmp-clear.rkt")
 
 (define w 16)
 (define h 16)
@@ -40,6 +41,7 @@
   `(,c1 ,c2))
 
 (define (draw-korean c k t)
+  (clear k t)
   (define dst (out))
   (define dc (send dst make-dc))
   (define f (make-font #:size 16
