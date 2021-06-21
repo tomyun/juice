@@ -207,22 +207,21 @@
           `(,@(map (curryr fill w) (drop-right fs 1)) ,(last fs)))))
     `(,s)))
 
-(define (mes:text #:color   [c #f]
-                  #:wrap    [wrap #t]
+(define (mes:text #:color [color #f]
+                  #:wrap  [wrap  #t]
                   . l)
-  (define k (if c `(,(mes:text-color c)) '()))
-  (define w
-    (cond
-      [(number? wrap) wrap]
-      [wrap           (cfg:wordwrap)]
-      [(not wrap)     #f]))
-  (define (f t)
+  (define c (if color `(,(mes:text-color color)) '()))
+  (define w (cond
+              [(number? wrap) wrap]
+              [wrap           (cfg:wordwrap)]
+              [(not wrap)     #f]))
+  (define (: t)
     (match t
       [(? string? s) (mes:text* s)]
       [(? symbol? s) (mes:text-func s)]
       [(? number? n) (mes:proc n)]   ; 0: nanpa1 & etc, 3: kakyu
       [(? char?   c) (mes:call c)])) ; Z: elle
-  `(,@k ,@(map f (text-wrap l w))))
+  `(,@c ,@(map : (text-wrap l w))))
 
 (define (mes:text-func s)
   (match s
