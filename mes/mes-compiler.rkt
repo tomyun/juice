@@ -3,6 +3,7 @@
 (require (for-syntax racket/base))
 (require racket/file)
 (require racket/format)
+(require racket/function)
 (require racket/include)
 (require racket/list)
 (require racket/match)
@@ -379,6 +380,7 @@
 (define (mes:charset** k t s)   (charset** k t s))
 (define (mes:dictbase b) (cfg:dictbase b))
 (define (mes:extraop x) (cfg:extraop x))
+(define (mes:wordwrap w) (cfg:wordwrap w))
 
 ;; extension
 
