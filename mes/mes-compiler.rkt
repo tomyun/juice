@@ -194,16 +194,17 @@
     (match l
       [`(,s ... ())       s]
       [`(,s ... (,r ...)) (: `(,@s ,@(chop r w)) w)]))
+  (define spc (cfg:charspc))
+  (define (join s) (string-join s (string spc)))
   (define (fill s w)
     (define n (measure s))
-    (define c #\ ) ;TODO: support DBCS space via cfg:space
-    (define f (make-string (max (- w n) 0) c))
+    (define f (make-string (max (- w n) 0) spc))
     (string-append s f))
   (if w
     (let* ([l (string-split s)]
            [n (apply max (map measure l))])
       (if (> w (add1 n))
-        (let ([fs (map string-join (: `(,l) (* (quotient w 2) 2)))])
+        (let ([fs (map join (: `(,l) (* (quotient w 2) 2)))])
           `(,@(map (curryr fill w) (drop-right fs 1)) ,(last fs)))
         `(,s)))
     `(,s)))
