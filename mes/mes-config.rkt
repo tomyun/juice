@@ -1,6 +1,7 @@
 #lang racket/base
 
 (define cfg:charset (make-parameter "pc98"))
+(define cfg:charspc (make-parameter #\u3000))
 (define cfg:fontwidth (make-parameter 2))
 (define cfg:dictbase (make-parameter #x80))
 (define cfg:extraop (make-parameter #f))
@@ -11,6 +12,7 @@
 (define cfg:compress (make-parameter #t))
 
 (provide cfg:charset
+         cfg:charspc
          cfg:fontwidth
          cfg:dictbase
          cfg:extraop

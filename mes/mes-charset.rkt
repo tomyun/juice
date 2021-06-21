@@ -92,6 +92,7 @@
   (match-define `(,k ,t) (apply jis l))
   (<= 9 k 15))
 
+(define (charspc c) (cfg:charspc c))
 (define (fontwidth w) (cfg:fontwidth w))
 
 (provide charset
@@ -103,4 +104,5 @@
          integer->sjis
          sjis
          jis
+         charspc
          fontwidth)
