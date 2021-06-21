@@ -201,10 +201,10 @@
   (if w
     (let* ([l (string-split s)]
            [n (apply max (map string-length l))])
-      (if (<= w (add1 n))
-        (raise (format "wordwrap threshold ~a is too small: ~a" w s))
+      (if (> w (add1 n))
         (let ([fs (map string-join (: `(,l) (* (quotient w 2) 2)))])
-          `(,@(map (curryr fill w) (drop-right fs 1)) ,(last fs)))))
+          `(,@(map (curryr fill w) (drop-right fs 1)) ,(last fs)))
+        `(,s)))
     `(,s)))
 
 (define (mes:text #:color [color #f]
