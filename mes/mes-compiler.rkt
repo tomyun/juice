@@ -177,22 +177,21 @@
   (: l))
 
 (define (text-wrap* s w)
-  (define (f l w)
-    (for/fold ([i  1]
-               [c  0]
-               [wl '()]
-               [rl l])
-              ([s l]
-               [n (map (compose1 add1 string-length) l)]
-               #:break (< w (+ c n)))
-      (values (add1 i) (+ c n) `(,@wl ,s) (drop rl 1))))
-  (define (g l w)
-    (let-values ([(i c wl rl) (f l w)])
+  (define (chop l w)
+    (let-values ([(i c wl rl)
+                  (for/fold ([i  1]
+                             [c  0]
+                             [wl '()]
+                             [rl l])
+                            ([s l]
+                             [n (map (compose1 add1 string-length) l)]
+                             #:break (< w (+ c n)))
+                    (values (add1 i) (+ c n) `(,@wl ,s) (drop rl 1)))])
       `(,wl ,rl)))
   (define (: l w)
     (match l
       [`(,s ... ())       s]
-      [`(,s ... (,r ...)) (: `(,@s ,@(g r w)) w)]))
+      [`(,s ... (,r ...)) (: `(,@s ,@(chop r w)) w)]))
   (define (fill s w)
     (define n (string-length s))
     (define c #\ ) ;TODO: support DBCS space via cfg:space
