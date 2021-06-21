@@ -7,6 +7,8 @@
 (require racket/runtime-path)
 (require racket/string)
 
+(require "mes-config.rkt")
+
 (define-namespace-anchor nsa)
 
 (define-runtime-path charset-collection "./charset/")
@@ -90,6 +92,8 @@
   (match-define `(,k ,t) (apply jis l))
   (<= 9 k 15))
 
+(define (fontwidth w) (cfg:fontwidth w))
+
 (provide charset
          charset*
          charset**
@@ -98,4 +102,5 @@
          sjis->integer
          integer->sjis
          sjis
-         jis)
+         jis
+         fontwidth)
