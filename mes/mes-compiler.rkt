@@ -178,6 +178,7 @@
   (: l))
 
 (define (text-wrap* s w)
+  (define (measure s) (* (string-length s) (cfg:fontwidth)))
   (define (chop l w)
     (let-values ([(i c wl rl)
                   (for/fold ([i  1]
@@ -185,7 +186,7 @@
                              [wl '()]
                              [rl l])
                             ([s l]
-                             [n (map (compose1 add1 string-length) l)]
+                             [n (map (compose1 add1 measure) l)]
                              #:break (< w (+ c n)))
                     (values (add1 i) (+ c n) `(,@wl ,s) (drop rl 1)))])
       `(,wl ,rl)))
@@ -194,13 +195,13 @@
       [`(,s ... ())       s]
       [`(,s ... (,r ...)) (: `(,@s ,@(chop r w)) w)]))
   (define (fill s w)
-    (define n (string-length s))
+    (define n (measure s))
     (define c #\ ) ;TODO: support DBCS space via cfg:space
     (define f (make-string (max (- w n) 0) c))
     (string-append s f))
   (if w
     (let* ([l (string-split s)]
-           [n (apply max (map string-length l))])
+           [n (apply max (map measure l))])
       (if (> w (add1 n))
         (let ([fs (map string-join (: `(,l) (* (quotient w 2) 2)))])
           `(,@(map (curryr fill w) (drop-right fs 1)) ,(last fs)))
