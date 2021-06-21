@@ -6,6 +6,7 @@
 (define cfg:decode (make-parameter #t))
 (define cfg:resolve (make-parameter #t))
 (define cfg:protag (make-parameter #t))
+(define cfg:wordwrap (make-parameter #f))
 (define cfg:compress (make-parameter #t))
 
 (provide cfg:charset
@@ -14,4 +15,5 @@
          cfg:decode
          cfg:resolve
          cfg:protag
+         cfg:wordwrap
          cfg:compress)

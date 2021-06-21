@@ -44,6 +44,8 @@
                            (cfg:resolve #f)]
    [("--no-protag")        "[decompile] skip text fusion with protag proc/call"
                            (cfg:protag #f)]
+   [("--wordwrap") w       "[compile] set threshold for word wrapping"
+                           (cfg:wordwrap (string->number w))]
    [("--no-compress")      "[compile] skip text compression with dict"
                            (cfg:compress #f)]
    #:ps "<args> : filenames"

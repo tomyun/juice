@@ -168,19 +168,64 @@
            `(,(+ c0 (cfg:dictbase)))
            `(,(- c1 #x20) ,c2))))
 
+(define (text-wrap l w)
+  (define (: l)
+    (match l
+      [`(,(? string? s) ,r ...) `(,@(text-wrap* s w) ,@(: r))]
+      [`(,a             ,r ...) `(,a                 ,@(: r))]
+      [a                        a]))
+  (: l))
+
+(define (text-wrap* s w)
+  (define (f l w)
+    (for/fold ([i  1]
+               [c  0]
+               [wl '()]
+               [rl l])
+              ([s l]
+               [n (map (compose1 add1 string-length) l)]
+               #:break (< w (+ c n)))
+      (values (add1 i) (+ c n) `(,@wl ,s) (drop rl 1))))
+  (define (g l w)
+    (let-values ([(i c wl rl) (f l w)])
+      `(,wl ,rl)))
+  (define (: l w)
+    (match l
+      [`(,s ... ())       s]
+      [`(,s ... (,r ...)) (: `(,@s ,@(g r w)) w)]))
+  (define (fill s w)
+    (define n (string-length s))
+    (define c #\ ) ;TODO: support DBCS space via cfg:space
+    (define f (make-string (max (- w n) 0) c))
+    (string-append s f))
+  (if w
+    (let* ([l (string-split s)]
+           [n (apply max (map string-length l))])
+      (if (<= w (add1 n))
+        (raise (format "wordwrap threshold ~a is too small: ~a" w s))
+        (let ([fs (map string-join (: `(,l) (* (quotient w 2) 2)))])
+          `(,@(map (curryr fill w) (drop-right fs 1)) ,(last fs)))))
+    `(,s)))
+
 (define (mes:text #:color   [c #f]
                   #:newline [n #f]
+                  #:wrap    [wrap #t]
                   . l)
   (define k (if c `(,(mes:text-color c)) '()))
   ;;HACK: experimental support for newline inside text
   (define x (if n `(,(mes:text-newline)) '()))
+  (define w
+    (cond
+      [(number? wrap) wrap]
+      [wrap           (cfg:wordwrap)]
+      [(not wrap)     #f]))
   (define (f t)
     (match t
       [(? string? s) (mes:text* s)]
       [(? symbol? s) (mes:text-func s)]
       [(? number? n) (mes:proc n)]   ; 0: nanpa1 & etc, 3: kakyu
       [(? char?   c) (mes:call c)])) ; Z: elle
-  `(,@k ,@(map f l) ,@x))
+  `(,@k ,@(map f (text-wrap l w)) ,@x))
 
 (define (mes:text-func s)
   (match s
