@@ -208,12 +208,9 @@
     `(,s)))
 
 (define (mes:text #:color   [c #f]
-                  #:newline [n #f]
                   #:wrap    [wrap #t]
                   . l)
   (define k (if c `(,(mes:text-color c)) '()))
-  ;;HACK: experimental support for newline inside text
-  (define x (if n `(,(mes:text-newline)) '()))
   (define w
     (cond
       [(number? wrap) wrap]
@@ -225,7 +222,7 @@
       [(? symbol? s) (mes:text-func s)]
       [(? number? n) (mes:proc n)]   ; 0: nanpa1 & etc, 3: kakyu
       [(? char?   c) (mes:call c)])) ; Z: elle
-  `(,@k ,@(map f (text-wrap l w)) ,@x))
+  `(,@k ,@(map f (text-wrap l w))))
 
 (define (mes:text-func s)
   (match s
