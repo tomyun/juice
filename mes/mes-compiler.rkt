@@ -379,7 +379,7 @@
 (define (mes:meta . l) '())
 (define (mes:charset f) (charset f))
 (define (mes:charset*  k t . l) (apply charset* k t l))
-(define (mes:charset** k t s)   (charset** k t s))
+(define (mes:charset** k t . l) (apply charset** k t l))
 (define (mes:charspc c) (cfg:charspc c))
 (define (mes:fontwidth w) (cfg:fontwidth w))
 (define (mes:dictbase b) (cfg:dictbase b))
