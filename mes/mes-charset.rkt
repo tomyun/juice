@@ -84,8 +84,9 @@
 
 (define (jis s1 s2)
   (define i (if (<= s2 158) 0 1))
-  (define k (+ i (cond [(<= 129 s1 159) (- (* s1 2) 257)]
-                       [(<= 224 s1 239) (- (* s1 2) 385)])))
+  ;;HACK: support irregular SJIS code
+  (define k (+ i (cond [(<= #|129|# s1 159) (- (* s1 2) 257)]
+                       [(<= 224 s1 #|239|#) (- (* s1 2) 385)])))
   (define t (cond [(even? k)            (- s2 158)]
                   [(<= s2 126)          (- s2 63)]
                   [(<= s2 158)          (- s2 64)]))
