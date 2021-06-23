@@ -49,7 +49,11 @@
     (charset-ref-sjis j)
     (let* ([b (integer->integer-bytes (sjis->integer j) 2 #f #t)]
            [c (read-char (reencode-input-port (open-input-bytes b) "sjis" (bytes) #t))])
-      (if (or (sjis-nonstandard? j) (eof-object? c)) #f c))))
+      (if (or (sjis-irregular? j)
+              (sjis-nonstandard? j)
+              (eof-object? c))
+        #f
+        c))))
 
 (define (char->sjis c)
   (if (charset-has-char? c)
