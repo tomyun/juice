@@ -218,8 +218,11 @@
   (if (cfg:protag) (: l) l))
 
 (define (fuse-dict dict l)
+  (define (f j)
+    (define c (sjis->char j))
+    (if (and c (cfg:decode)) c `',j))
   (match l
-    [`(mes ,r ...) `(mes (dict ,@(map sjis->char dict)) ,@r)]))
+    [`(mes ,r ...) `(mes (dict ,@(map f dict)) ,@r)]))
 
 (define (fuse-meta l)
   (define m
