@@ -46,4 +46,4 @@
 ;(charset! #x839B "은/는")
 ;(charset! #x839C "과/와")
 (fontwidth 2)
-(charspc #\u3000)
+(charspc #\ )
