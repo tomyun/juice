@@ -49,12 +49,17 @@
 ; (charset** 45 1
 ;  "　、。·‥…¨〃–―∥＼∼‘’“”〔〕〈〉《》「」『』【】±×÷≠≤≥∞∴°′″℃Å￠￡￥♂♀∠⊥⌒∂∇≡≒§※☆★○●◎◇◆□■△▲▽▼→←↑↓↔〓≪≫√∽∝∵∫∬∈∋⊆⊇⊂⊃∪∩∧∨￢⇒⇔∀∃´～ˇ˘˝˚˙¸˛¡¿ː∮∑∏¤℉‰◁◀▷▶♤♠♡♥♧♣⊙◈▣◐◑▒▤▥▨▧▦▩♨☏☎☜☞¶†‡↕↗↙↖↘♭♩♪♬㉿㈜№㏇™㏂㏘℡")
 
-;;HACK: automatic josa dispatch not supported
-;(charset! #x8398 "이/가")
-;(charset! #x8399 "을/를")
-;(charset! #x839A "아/야")
-;(charset! #x839B "은/는")
-;(charset! #x839C "과/와")
+;;HACK: include josa dispatch control code
+;; "이/가" => 'ᅁ'
+;; "을/를" => 'ᄛ'
+;; "아/야" => 'ᆙ'
+;; "은/는" => 'ᆫ'
+;; "와/과" => 'ᅪ'
+(charset! #x8398 #\ᅁ)
+(charset! #x8399 #\ᄛ)
+(charset! #x839A #\ᆙ)
+(charset! #x839B #\ᆫ)
+(charset! #x839C #\ᅪ)
 
 (fontwidth 2)
 (charspc #\ )
