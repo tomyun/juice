@@ -244,7 +244,7 @@
 (define (mes:text-raw . l)
   (define (f i)
     (match-define `(,c1 ,c2) (integer->sjis i))
-    (map integer->char `(,(- c1 #x20) ,c2)))
+    (mes:chr-raw c1 c2))
   (flatten (map f l)))
 
 (define (mes:dict . l)
