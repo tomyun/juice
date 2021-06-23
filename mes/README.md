@@ -175,6 +175,8 @@ In addition to that, by supplying a proper custom charset mapping, we can easily
 - `english`: `pc98` extended with ASCII characters mapped to row 9 which was another PC-98 exclusive assigned for half-width ASCII. Requires no custom font.
 - `europe`: `pc98` extended with many combinations of diacritics mapped to row 48 and 49. Requires a custom font.
 - `korean-kk`: `pc98` extended with Korean syllables mapped to row 19. Used in Korean translation of Shangrlia 2, Jack, Elle, and YU-NO by K.K; Ushinawareta Rakuen, Dragon Knight 4, and Shangrlia by edenrock.
+- `korean-hannuri`: `pc98` extended with custom mapping used by Team Hannuri for Doukyuusei 1/2.
+- `korean-gamebox`: custom mapping found in official Korean localization of Doukyuusei 2.
 
 You can create a custom charset file, e.g., "_charset_chinese.rkt", yourself if you want. The charset file may contain a series of charset-related instructions. For example, bundled "_charset_english.rkt" looks like below.
 
