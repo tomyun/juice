@@ -38,6 +38,7 @@
     (charset!! j c))
   '())
 (define (charset** k t . l) (apply charset* k t (flatten (map string->list l))))
+(define (charset*** k t n c) (charset** k t (make-string n c)))
 (define (charset-has-sjis? j) (hash-has-key? charset-sjis->char j))
 (define (charset-has-char? c) (hash-has-key? charset-char->sjis c))
 (define (charset-ref-sjis j) (hash-ref charset-sjis->char j))
