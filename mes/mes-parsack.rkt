@@ -85,7 +85,8 @@
 (define VAR   ($list 'var (char-between #\u40 #\u5A)))
 (define CHR   (:% (d  <- (getState 'dictbase))
                   (c1 <- (char-between #\u60 (integer->char (sub1 d))))
-                  (c2 <- (char-between #\u40 #\uFC))
+                  ;(c2 <- (char-between #\u40 #\uFC))
+                  (c2 <- $anyChar) ;HACK: irregular SJIS code used by korean-hannuri charset
                   (return (lex-chr c1 c2))))
 (define DIC   (:% (d <- (getState 'dictbase))
                   (c <- (char-between (integer->char d) #\uFF)) (return (lex-dic c d))))
