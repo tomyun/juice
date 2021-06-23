@@ -97,6 +97,15 @@
   (match-define `(,k ,t) (apply jis l))
   (<= 9 k 15))
 
+(define (sjis-regular? l)
+  (match-define `(,s1 ,s2) l)
+  (and (or (<= #x81 s1 #x9F)
+           (<= #xE0 s1 #xEF))
+       (or (<= #x40 s2 #x7E)
+           (<= #x80 s2 #x9E)
+           (<= #x9F s2 #xFC))))
+(define (sjis-irregular? l) (not (sjis-regular? l)))
+ 
 (define (charspc c) (cfg:charspc c))
 (define (fontwidth w) (cfg:fontwidth w))
 
