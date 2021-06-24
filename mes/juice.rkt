@@ -2,9 +2,12 @@
 
 (require racket/cmdline)
 (require racket/file)
+(require racket/list)
 (require racket/match)
+(require racket/path)
 (require racket/pretty)
 (require racket/string)
+(require file/glob)
 (require file/sha1)
 
 (require ansi-color)
@@ -52,23 +55,25 @@
    #:args args
    args))
 
-(define (work proc)
-  (for ([f filenames])
-    (with-handlers ([exn:fail? (λ (v) (displayln-color 'b-red "!") (displayln (exn-message v)))])
-      (proc f))))
+(define paths (flatten (map glob filenames)))
 
-(define (extension? filename ext)
-  (or (string-suffix? filename (string-downcase ext))
-      (string-suffix? filename (string-upcase ext))))
+(define (work proc)
+  (for ([p paths])
+    (with-handlers ([exn:fail? (λ (v) (displayln-color 'b-red "!") (displayln (exn-message v)))])
+      (proc p))))
+
+(define (extension? path ext)
+  (or (path-has-extension? path (string-downcase ext))
+      (path-has-extension? path (string-upcase ext))))
 
 (define (display-color   c s) (with-colors c (lambda () (display   s))))
 (define (displayln-color c s) (with-colors c (lambda () (displayln s))))
 
-(define (decompile filename)
-  (save-rkt filename))
+(define (decompile path)
+  (save-rkt path))
 
-(define (compile filename)
-  (save-mes filename))
+(define (compile path)
+  (save-mes path))
 
 (define (deduplicate)
   ;; collect procs across all source files
@@ -79,8 +84,8 @@
       [a                                                           a]))
   (define h (make-hash))
   (define (remember d) (hash-update! h d add1 0))
-  (for ([f filenames])
-    (map remember (extract (file->value f)))
+  (for ([p paths])
+    (map remember (extract (file->value p)))
     (display ".")
     (flush-output))
   (displayln "")
@@ -104,33 +109,34 @@
       [`(,a                  ,r ...)
        `(,(patch a) ,@(patch r))]
       [a a]))
-  (for ([f filenames])
-    (save-patched-rkt f (patch (file->value f)))))
+  (for ([p paths])
+    (save-patched-rkt p (patch (file->value p)))))
 
-(define (save-rkt filename)
+(define (save-rkt path)
   (define (r f) (pretty-format (load-mes f) #:mode 'write))
-  (save filename ".mes" ".rkt" r display 'b-green))
+  (save path ".mes" ".rkt" r display 'b-green))
 
 (define (save-proc-rkt name mes)
   (define (r f) (pretty-format mes #:mode 'write))
   (save name "" ".rkt" r display 'b-magenta))
 
-(define (save-patched-rkt filename mes)
+(define (save-patched-rkt path mes)
   (define (r f) (pretty-format mes #:mode 'write))
-  (save filename ".rkt" ".rkt" r display 'b-cyan))
+  (save path ".rkt" ".rkt" r display 'b-cyan))
 
-(define (save-mes filename)
+(define (save-mes path)
   (define (r f) (compile-mes f))
-  (save filename ".rkt" ".mes" r write-bytes 'b-blue))
+  (save path ".rkt" ".mes" r write-bytes 'b-blue))
 
-(define (save filename ext0 ext1 r w color)
-  (display-color 'b-white filename)
+(define (save path ext0 ext1 r w color)
+  (let-values ([(b f d) (split-path path)])
+    (display-color 'b-white f))
   (flush-output)
   (cond
-   [(extension? filename ext0)
-    (let ([outname (string-append filename ext1)])
+   [(extension? path ext0)
+    (let ([outname (path-add-extension path ext1 ".")])
       (with-output-to-file outname #:exists (exists)
-        (λ () (w (r filename))))
+        (λ () (w (r path))))
       (displayln-color color ext1))]
    [else (displayln-color 'b-yellow "?")])
   (flush-output))
