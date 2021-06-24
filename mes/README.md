@@ -1,6 +1,6 @@
 # Juice
 
-Juice is a command line utility for parsing MES script used in most games developed by Elf and Silky's in 90s. It can decompile MES bytecodes into a textual source format and then compile it back to bytecodes. By allowing code modification at the source level, the tool is well suited for producing language translation patches for these games. Juice is currently compatible with AI5 (and AI4) engine.
+Juice is a command line utility for parsing MES script used in most games developed by Elf and Silky's in 90s. It can decompile MES bytecodes into a textual source format and then compile it back to bytecodes. By allowing code modification at the source level, the tool is well suited for producing language translation patches for these games. Juice is currently compatible with AI5 engine. AI4 engine is also supported with a little caveat.
 
 ## How to use
 
@@ -22,7 +22,7 @@ To compile bytecodes from source files we just generated,
 $ ./juice -c *.MES.rkt
 ```
 
-will generate script files with MES.rkt.mes. For example, `START.MES` would be decompiled to `START.MES.rkt` which would be compiled back to `START.MES.rkt.mes`. Ideally, the latter should be identical to the original file.
+will generate script files with MES.rkt.mes. For example, `START.MES` would be decompiled to `START.MES.rkt` which would be compiled back to `START.MES.rkt.mes`. Ideally, the latter should be identical to the original file. `cmp` command on macOS and `fc` command on Windows would allow a simple comparison between binary files.
 
 ```
 $ cmp START.MES START.MES.rkt.mes
@@ -44,7 +44,7 @@ Then for compiling, you'd need to run `juice -c *.MES.rkt.rkt` (note extension) 
 
 Type `juice -h` to see a list of available commands and options.
 
-- `--version`, `-v` : show version.
+- `--version`, `-v` : show version
 - `--force`, `-f` : force overwriting output files
 - `--charset <c>` : specify charset encoding (**pc98**, europe)
 - `--dictbase <b>` : dictionary base (**80**, D0)
@@ -289,4 +289,4 @@ The syntax used in source file came from underlying Racket language. Enabling sy
 
 If you have any questions, please come to #pc-98_translation_discussion channel on PC-9800 Series Central Discord.
 
-Last edited: 2021-06-21
+Last edited: 2021-06-23
