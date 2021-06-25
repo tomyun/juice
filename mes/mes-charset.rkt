@@ -87,13 +87,13 @@
   `(,s1 ,s2))
 
 (define (jis s1 s2)
-  (define i (if (<= s2 158) 0 1))
+  (define i (if (<= s2 #x9E) 0 1))
   ;;HACK: support irregular SJIS code
-  (define k (+ i (cond [(<= #|129|# s1 159) (- (* s1 2) 257)]
-                       [(<= 224 s1 #|239|#) (- (* s1 2) 385)])))
-  (define t (cond [(even? k)            (- s2 158)]
-                  [(<= s2 126)          (- s2 63)]
-                  [(<= s2 158)          (- s2 64)]))
+  (define k (+ i (cond [(<= #|#x81|# s1 #x9F)     (- (* s1 2) 257)]
+                       [(<= #xE0     s1 #|#xEF|#) (- (* s1 2) 385)])))
+  (define t      (cond [(even? k)                 (- s2 158)]
+                       [(<= s2 #x7E)              (- s2 63)]
+                       [(<= s2 #x9E)              (- s2 64)]))
   `(,k ,t))
 
 ;;HACK: check if SJIS code pointing to ASCII chars in section 9 - 15 (PC-98 exclusive)
