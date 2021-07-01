@@ -144,7 +144,7 @@
 (define (fuse l dict)
   (define f
     `(,fuse-while
-      ,fuse-logic
+      ,fuse-operator
       ,(curry fuse-dic dict)
       ,fuse-text
       ,fuse-text-color
@@ -161,11 +161,15 @@
       [a                            a]))
   (: l))
 
-(define (fuse-logic l)
+(define (fuse-operator l)
   (define (: x)
     (match x
       [`(&& (&& ,a ,b) ,c) `(&& ,@(:&& a) ,(: b) ,(: c))]
       [`(// (// ,a ,b) ,c) `(// ,@(:// a) ,(: b) ,(: c))]
+      [`(+  (+  ,a ,b) ,c) `(+  ,@(:+  a) ,(: b) ,(: c))]
+      [`(-  (-  ,a ,b) ,c) `(-  ,@(:-  a) ,(: b) ,(: c))]
+      [`(*  (*  ,a ,b) ,c) `(*  ,@(:*  a) ,(: b) ,(: c))]
+      [`(/  (/  ,a ,b) ,c) `(/  ,@(:/  a) ,(: b) ,(: c))]
       [`(,a ...)           (map : a)]
       [a                   a]))
   (define (:&& x)
@@ -175,6 +179,22 @@
   (define (:// x)
     (match x
       [`(// ,a ,b) `(,@(:// a) ,@(:// b))]
+      [e           `(,e)]))
+  (define (:+ x)
+    (match x
+      [`(+  ,a ,b) `(,@(:+  a) ,@(:+  b))]
+      [e           `(,e)]))
+  (define (:- x)
+    (match x
+      [`(-  ,a ,b) `(,@(:-  a) ,@(:-  b))]
+      [e           `(,e)]))
+  (define (:* x)
+    (match x
+      [`(*  ,a ,b) `(,@(:*  a) ,@(:*  b))]
+      [e           `(,e)]))
+  (define (:/ x)
+    (match x
+      [`(/  ,a ,b) `(,@(:/  a) ,@(:/  b))]
       [e           `(,e)]))
   (: l))
 

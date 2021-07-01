@@ -313,10 +313,23 @@
 (define (mes:term1 a c)   `(,(mes:term a) ,c))
 (define (mes:term0 a c)   `(,c ,(mes:term a)))
 
-(define (mes:+     a b) (mes:term2 a b #\u20))
-(define (mes:-     a b) (mes:term2 a b #\u21))
-(define (mes:*     a b) (mes:term2 a b #\u22))
-(define (mes:/     a b) (mes:term2 a b #\u23))
+;;TODO: use macro to reduce repetition
+(define (mes:+  . l)
+  (match l
+   [`(,a ,b)            (mes:term2 a b #\u20)]
+   [`(,r ... ,a)        (mes:+ (apply mes:+ r) a)]))
+(define (mes:-  . l)
+  (match l
+   [`(,a ,b)            (mes:term2 a b #\u21)]
+   [`(,r ... ,a)        (mes:+ (apply mes:- r) a)]))
+(define (mes:*  . l)
+  (match l
+   [`(,a ,b)            (mes:term2 a b #\u22)]
+   [`(,r ... ,a)        (mes:+ (apply mes:* r) a)]))
+(define (mes:/  . l)
+  (match l
+   [`(,a ,b)            (mes:term2 a b #\u23)]
+   [`(,r ... ,a)        (mes:+ (apply mes:/ r) a)]))
 (define (mes:%     a b) (mes:term2 a b #\u24))
 (define (mes:// . l)
   (match l
