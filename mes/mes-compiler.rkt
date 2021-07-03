@@ -75,12 +75,12 @@
 
 (define (mes:num n)
   (cond
-   [(< n 0)         (error (format "negative number not supported:e ~a" n))]
+   [(< n 0)         (error (format "negative number not supported: ~a" n))]
    [(<= n #x0F)     (integer->char (+ n (char->integer NUM0)))] ; 15
    [(<= n #x3F)     `(,NUM1 ,@(num n))] ; 63
    [(<= n #x0FFF)   `(,NUM2 ,@(num n))] ; 4095
    [(<= n #x03FFFF) `(,NUM3 ,@(num n))] ; 262143
-   [else            (error (format "too large number:e ~a" n))]))
+   [else            (error (format "too large number: ~a" n))]))
 
 (define (num n [i 0])
   (define (: r x) `(,(bitwise-ior (arithmetic-shift (bitwise-and x #x3F) 2) #x03) ,@r))
