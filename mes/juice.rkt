@@ -35,7 +35,7 @@
    #:once-each
    [("--force" "-f")       "force overwriting output files"
                            (exists 'replace)]
-   [("--charset") c        "specify charset encoding (pc98*, europe)"
+   [("--charset") c        "specify charset encoding (pc98*, english, europe, korean-..)"
                            (cfg:charset c)]
    [("--dictbase") b       "dictionary base (80*, D0)"
                            (cfg:dictbase (string->number b 16))]
