@@ -50,7 +50,7 @@ $ ./juice -D *.MES.rkt
 - `--dictbase <b>` : 대사 압축용 사전의 기준 인덱스 (**80**, D0)
 - `--extraop` : 일부 게임에서 사용하는 비표준 실행코드 지원
 - `--no-decode` : *(디컴파일)* SJIS 문자 디코딩 하지 않기
-- `--no-resolve` : *(디컴파일* cmd/sys 명령에 이름 붙이지 않기
+- `--no-resolve` : *(디컴파일)* cmd/sys 명령에 이름 붙이지 않기
 - `--no-protag` : *(디컴파일)* 이름 표시용 proc/call을 대사에 합치지 않기
 - `--wordwrap <w>` : *(컴파일)* 대사 자동 줄바꿈 기준 길이
 - `--no-compress` : *(컴파일)* 대사 압축하지 않기
