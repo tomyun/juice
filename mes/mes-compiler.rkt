@@ -321,15 +321,15 @@
 (define (mes:-  . l)
   (match l
    [`(,a ,b)            (mes:term2 a b #\u21)]
-   [`(,r ... ,a)        (mes:+ (apply mes:- r) a)]))
+   [`(,r ... ,a)        (mes:- (apply mes:- r) a)]))
 (define (mes:*  . l)
   (match l
    [`(,a ,b)            (mes:term2 a b #\u22)]
-   [`(,r ... ,a)        (mes:+ (apply mes:* r) a)]))
+   [`(,r ... ,a)        (mes:* (apply mes:* r) a)]))
 (define (mes:/  . l)
   (match l
    [`(,a ,b)            (mes:term2 a b #\u23)]
-   [`(,r ... ,a)        (mes:+ (apply mes:/ r) a)]))
+   [`(,r ... ,a)        (mes:/ (apply mes:/ r) a)]))
 (define (mes:%     a b) (mes:term2 a b #\u24))
 (define (mes:// . l)
   (match l
