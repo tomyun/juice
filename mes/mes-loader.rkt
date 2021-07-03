@@ -200,9 +200,13 @@
 
 (define (fuse-dic dict l)
   (define n (length dict))
+  (define (f i)
+    (if (< i n)
+      (list-ref dict i)
+      (error (format "dict index ~a >= dict size ~a; try `--dictbase D0`" i n))))
   (define (: x)
     (match x
-      [`(dic ,i) (lower-chr (list-ref dict i))]
+      [`(dic ,i) (lower-chr (f i))]
       [`(,a ...) (map : a)]
       [a         a]))
   (: l))

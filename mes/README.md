@@ -83,7 +83,7 @@ You would want to replace it with `(dict-build)` to regenerate a dictionary for 
   (dict-build))
 ```
 
-Some games published in later years opted to use a wider region of SJIS codes, leaving a smaller space for dictionary. `--dictbase` is an option to specify two variants of base offset for dictionary index; `80` (128) for many earlier games and `D0` (208) for later games including Jack, Isaku, Kakyuusei, and YU-NO. If `0xD0` was not set for these games, you would likely see an error message saying "list-ref: index too large for list". Since the value of `dictbase` is stored in `meta` section of the decompiled source, you don't have to provide one again for compiling.
+Some games published in later years opted to use a wider region of SJIS codes, leaving a smaller space for dictionary. `--dictbase` is an option to specify two variants of base offset for dictionary index; `80` (128) for many earlier games and `D0` (208) for later games including Jack, Isaku, Kakyuusei, and YU-NO. If `0xD0` was not set for these games, you would likely see an error message like "dict index 86 >= dict size 48". Since the value of `dictbase` is stored in `meta` section of the decompiled source, you don't have to provide one again for compiling.
 
 ```
 juice -df --dictbase D0 *.MES
