@@ -67,7 +67,8 @@
       (bytes-convert t b8 0 n8 b 0 2)
       (bytes-convert-end t b)
       (bytes-close-converter t)
-      (bytes->list b))))
+      (define j (bytes->list b))
+      (if (sjis-regular? j) j (error (format "SJIS decoding error: ~v => ~a" c j))))))
 
 (define (sjis->integer l)
   (match-define `(,c1 ,c2) l)

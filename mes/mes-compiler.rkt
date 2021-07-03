@@ -234,7 +234,9 @@
                        (mes:+ (mes:~ #\@ 18) (mes:&& (mes:~ #\@ 21) #xFF))))
 
 (define (mes:text* s)
-  (define l (flatten (map char->sjis (string->list s))))
+  (define l
+    (with-handlers ([exn:fail? (λ (v) (error (format "(text ~v) got ~a" s (exn-message v))))])
+      (flatten (map char->sjis (string->list s)))))
   (define (f l)
     (match l
      [`(,c1 ,c2 ,r ...) `(,@(mes:chr-raw c1 c2) ,@(f r))]
