@@ -236,10 +236,11 @@
 (define (fuse-text-proc-call l)
   (define (: x)
     (match x
-      [`((text ,t1 ...) (,(or 'proc 'call) ,p) (text ,t2 ...) ,r ...) (: `((text ,@t1 ,p ,@t2) ,@r))]
+      [`((text ,t1 ...) (,(or 'proc 'call) ,p) (text ,t2 ...) ,r ...)
+       #:when (protag? p)                                             (: `((text ,@t1 ,p ,@t2) ,@r))]
       [`(,a ,r ...)                                                   `(,(: a) ,@(: r))]
       [a                                                              a]))
-  (if (cfg:protag) (: l) l))
+  (: l))
 
 (define (fuse-dict dict l)
   (define (f j)
