@@ -107,3 +107,4 @@
 
 (fontwidth 2)
 (charspc #\u3000)
+(char-newline #\%)

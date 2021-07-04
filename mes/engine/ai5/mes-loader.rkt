@@ -42,7 +42,10 @@
     [a           a]))
 
 (define (lower-chr j)
-  (define c (sjis->char j))
+  (define c
+    (match (sjis->char j)
+      [c #:when (eq? c (cfg:char-newline)) #\newline]
+      [c                                   c]))
   (if (and c (cfg:decode))
     `(chr     ,c)
     `(chr-raw ,@j)))

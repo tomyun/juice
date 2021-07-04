@@ -112,7 +112,8 @@
            (<= #x9F s2 #xFC))))
 (define (sjis-irregular? l) (not (sjis-regular? l)))
  
-(define (charspc c) (cfg:charspc c))
+(define (char-space c) (cfg:char-space c))
+(define (char-newline c) (cfg:char-newline c) (charset!! (char->sjis c) #\newline))
 (define (fontwidth w) (cfg:fontwidth w))
 
 (provide charset
@@ -125,4 +126,5 @@
          sjis
          jis
          charspc
+         char-newline
          fontwidth)

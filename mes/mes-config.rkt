@@ -9,6 +9,7 @@
 (define cfg:engine    (make-parameter 'AI5))
 (define cfg:charset   (make-parameter "pc98"))
 (define cfg:charspc   (make-parameter #\u3000))
+(define cfg:char-newline (make-parameter #\％))
 (define cfg:fontwidth (make-parameter 2))
 (define cfg:dictbase  (make-parameter #x80))
 (define cfg:extraop   (make-parameter #f))
@@ -21,6 +22,7 @@
 (provide cfg:engine
          cfg:charset
          cfg:charspc
+         cfg:char-newline
          cfg:fontwidth
          cfg:dictbase
          cfg:extraop
