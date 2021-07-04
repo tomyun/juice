@@ -10,6 +10,16 @@
 (require (prefix-in ai5: "engine/ai5/mes-loader.rkt"))
 (require (prefix-in ai5: "engine/ai5/mes-builder.rkt"))
 
+(define (set-engine e)
+  (cfg:engine
+    (match e
+      ['AI2    'AI1]
+      ['AI4    'AI5]
+      ['AI5X   (cfg:dictbase #xD0)
+               (cfg:extraop  #t)
+               'AI5]
+      [a       a])))
+
 (define (load-mes path)
   (match (cfg:engine)
     ['AI1 (ai1:load-mes path)]
@@ -24,5 +34,6 @@
   (match engine
     ['AI5 (ai5:build-mes path)]))
 
-(provide load-mes
+(provide set-engine
+         load-mes
          build-mes)
