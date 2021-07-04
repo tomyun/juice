@@ -16,6 +16,18 @@
 (define cfg:wordwrap (make-parameter #f))
 (define cfg:compress (make-parameter #t))
 
+;; engine
+
+(define (set-engine e)
+  (cfg:engine
+    (match e
+      ['AI2    'AI1]
+      ['AI4    'AI5]
+      ['AI5X   (cfg:dictbase #xD0)
+               (cfg:extraop  #t)
+               'AI5]
+      [e       e])))
+
 ;; protag
 
 (define (set-protag p)
@@ -51,5 +63,6 @@
          cfg:protag
          cfg:wordwrap
          cfg:compress
+         set-engine
          set-protag
          protag?)
