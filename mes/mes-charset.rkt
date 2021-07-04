@@ -113,7 +113,9 @@
 (define (sjis-irregular? l) (not (sjis-regular? l)))
  
 (define (char-space c) (cfg:char-space c))
-(define (char-newline c) (cfg:char-newline c) (charset!! (char->sjis c) #\newline))
+(define (char-newline c) (cfg:char-newline c)  (charset!! (char->sjis c) #\newline))
+(define (char-cotinue c) (cfg:char-continue c) (charset!! (char->sjis c) #\tab))
+(define (char-break c)   (cfg:char-break c)    (charset!! (char->sjis c) #\backspace))
 (define (fontwidth w) (cfg:fontwidth w))
 
 (provide charset

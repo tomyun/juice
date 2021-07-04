@@ -44,7 +44,9 @@
 (define (lower-chr j)
   (define c
     (match (sjis->char j)
-      [c #:when (eq? c (cfg:char-newline)) #\newline]
+      [c #:when (eq? c (cfg:char-newline))  #\newline]   ; \n
+      [c #:when (eq? c (cfg:char-continue)) #\tab]       ; \t
+      [c #:when (eq? c (cfg:char-break))    #\backspace] ; \b
       [c                                   c]))
   (if (and c (cfg:decode))
     `(chr     ,c)

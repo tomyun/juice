@@ -9,7 +9,10 @@
 (define cfg:engine    (make-parameter 'AI5))
 (define cfg:charset   (make-parameter "pc98"))
 (define cfg:char-space   (make-parameter #\u3000))
-(define cfg:char-newline (make-parameter #\％))
+;;TODO: make default char-* to be #f (need to be set through charset update)
+(define cfg:char-newline  (make-parameter #\％))
+(define cfg:char-continue (make-parameter #\＠))
+(define cfg:char-break    (make-parameter #\＃))
 (define cfg:fontwidth (make-parameter 2))
 (define cfg:dictbase  (make-parameter #x80))
 (define cfg:extraop   (make-parameter #f))
@@ -23,6 +26,8 @@
          cfg:charset
          cfg:char-space
          cfg:char-newline
+         cfg:char-continue
+         cfg:char-break
          cfg:fontwidth
          cfg:dictbase
          cfg:extraop
