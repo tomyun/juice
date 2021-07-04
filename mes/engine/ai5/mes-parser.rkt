@@ -6,7 +6,7 @@
 
 (require parsack)
 
-(require "mes-config.rkt")
+(require "../../mes-config.rkt")
 
 ;; parsack
 

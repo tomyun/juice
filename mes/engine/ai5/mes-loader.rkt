@@ -4,10 +4,10 @@
 (require racket/function)
 (require racket/match)
 
-(require "mes-config.rkt")
-(require "mes-charset.rkt")
+(require "../../mes-config.rkt")
+(require "../../mes-charset.rkt")
 (require "mes-opener.rkt")
-(require "mes-parsack.rkt")
+(require "mes-parser.rkt")
 
 (define (load-mes path)
   (charset (cfg:charset))

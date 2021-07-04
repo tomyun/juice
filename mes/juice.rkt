@@ -13,8 +13,7 @@
 (require ansi-color)
 
 (require "mes-config.rkt")
-(require "mes-loader.rkt")
-(require "mes-builder.rkt")
+(require "mes-engine.rkt")
 
 (define version "v0.0.6-DEV+20210702")
 (define command (make-parameter null))
@@ -35,6 +34,8 @@
    #:once-each
    [("--force" "-f")       "force overwriting output files"
                            (exists 'replace)]
+   [("--engine") e         "specify engine version (ai5*)"
+                           (cfg:engine (string->symbol (string-downcase e)))]
    [("--charset") c        "specify charset encoding (pc98*, english, europe, korean-..)"
                            (cfg:charset c)]
    [("--dictbase") b       "dictionary base (80*, D0)"

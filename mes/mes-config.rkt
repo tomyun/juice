@@ -1,5 +1,6 @@
 #lang racket/base
 
+(define cfg:engine (make-parameter 'ai5))
 (define cfg:charset (make-parameter "pc98"))
 (define cfg:charspc (make-parameter #\u3000))
 (define cfg:fontwidth (make-parameter 2))
@@ -11,7 +12,8 @@
 (define cfg:wordwrap (make-parameter #f))
 (define cfg:compress (make-parameter #t))
 
-(provide cfg:charset
+(provide cfg:engine
+         cfg:charset
          cfg:charspc
          cfg:fontwidth
          cfg:dictbase

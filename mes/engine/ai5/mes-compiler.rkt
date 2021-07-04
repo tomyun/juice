@@ -11,8 +11,8 @@
 (require racket/provide)
 (require racket/string (for-syntax racket/string))
 
-(require "mes-config.rkt")
-(require "mes-charset.rkt")
+(require "../../mes-config.rkt")
+(require "../../mes-charset.rkt")
 
 ;; lexer
 
