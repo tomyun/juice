@@ -34,8 +34,8 @@
    #:once-each
    [("--force" "-f")       "force overwriting output files"
                            (exists 'replace)]
-   [("--engine") e         "specify engine version (ai5*)"
-                           (cfg:engine (string->symbol (string-downcase e)))]
+   [("--engine") e         "specify engine version (AI5*, AI1)"
+                           (cfg:engine (string->symbol (string-upcase e)))]
    [("--charset") c        "specify charset encoding (pc98*, english, europe, korean-..)"
                            (cfg:charset c)]
    [("--dictbase") b       "dictionary base (80*, D0)"

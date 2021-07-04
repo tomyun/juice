@@ -12,8 +12,8 @@
 
 (define (load-mes path)
   (match (cfg:engine)
-    ['ai1 (ai1:load-mes path)]
-    ['ai5 (ai5:load-mes path)]))
+    ['AI1 (ai1:load-mes path)]
+    ['AI5 (ai5:load-mes path)]))
 
 (define (compile-mes path)
   (define src (file->value path))
@@ -22,7 +22,7 @@
       [`(mes (meta (engine ,e) ,m ..) ,r ..) e]
       [a                                     (cfg:engine)]))
   (match engine
-    ['ai5 (ai5:compile-mes path)]))
+    ['AI5 (ai5:compile-mes path)]))
 
 (provide load-mes
          compile-mes)
