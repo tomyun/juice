@@ -50,18 +50,21 @@
                 (char #\u22)
                 (return (list->string c))))
 
-(define TERM2 ($list 'term2 (<or> (char #\u21)
-                                  (char-between #\u23 #\u2B)
-                                  (char-between #\u2D #\u2F)
-                                  (char-between #\u3C #\u3E)
-                                  (char #\u5C)
-                                  (char #\u7C)
-                                  (char-between #\u30 #\u3B) ;FIXME: remove
-                                  (char #\u5B) ;FIXME: remove
-                                  (char-between #\u5D #\u7A) ;FIXME: remove
-                                  (char-between #\u19 #\u20) ;FIXME: remove
-                                  (char #\uFF))))
-(define TERM0 ($list 'term0 (<or> (char #\u3F))))
+(define TERM2 ($list 'term2 (<or> (char #\u21)    ; !=
+                                  (char #\u23)    ; ~b
+                                  (char #\u25)    ; %
+                                  (char #\u26)    ; &&
+                                  (char #\u2A)    ; *
+                                  (char #\u2B)    ; +
+                                  (char #\u2D)    ; -
+                                  (char #\u2F)    ; /
+                                  (char #\u3C)    ; <
+                                  (char #\u3D)    ; ==
+                                  (char #\u3E)    ; >
+                                  (char #\u5C)    ; ~
+                                  (char #\u5E)    ; ^
+                                  (char #\u7C)))) ; //
+(define TERM0 ($list 'term0 (<or> (char #\u3F)))) ; ?
                             
 (define CNT (char #\u2C))
 

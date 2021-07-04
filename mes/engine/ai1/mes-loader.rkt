@@ -70,23 +70,19 @@
 (define (resolve-exp c)
   (match (char->integer c)
     [#x21 '!=]
-    [#x23 '?ex23?]
-    [#x24 '?ex24?]
+    [#x23 '~b]
     [#x25 '%]
     [#x26 '&&]
-    [#x27 '?ex27?]
-    [#x28 '?ex28?]
-    [#x29 '?ex29?]
     [#x2A '*]
     [#x2B '+]
     [#x2D '-]
-    [#x2E '?ex2E?]
     [#x2F '/]
     [#x3C '<]
     [#x3D '==]
     [#x3E '>]
     [#x3F '?]
     [#x5C '~]
+    [#x5E '^]
     [#x7C '//]))
 
 (define (resolve-cmd c)
