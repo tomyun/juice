@@ -4,17 +4,31 @@
 (require racket/set)
 (require racket/string)
 
-(define cfg:engine (make-parameter 'AI5))
-(define cfg:charset (make-parameter "pc98"))
-(define cfg:charspc (make-parameter #\u3000))
+;; config
+
+(define cfg:engine    (make-parameter 'AI5))
+(define cfg:charset   (make-parameter "pc98"))
+(define cfg:charspc   (make-parameter #\u3000))
 (define cfg:fontwidth (make-parameter 2))
-(define cfg:dictbase (make-parameter #x80))
-(define cfg:extraop (make-parameter #f))
-(define cfg:decode (make-parameter #t))
-(define cfg:resolve (make-parameter #t))
-(define cfg:protag (make-parameter #f))
-(define cfg:wordwrap (make-parameter #f))
-(define cfg:compress (make-parameter #t))
+(define cfg:dictbase  (make-parameter #x80))
+(define cfg:extraop   (make-parameter #f))
+(define cfg:decode    (make-parameter #t))
+(define cfg:resolve   (make-parameter #t))
+(define cfg:protag    (make-parameter #f))
+(define cfg:wordwrap  (make-parameter #f))
+(define cfg:compress  (make-parameter #t))
+
+(provide cfg:engine
+         cfg:charset
+         cfg:charspc
+         cfg:fontwidth
+         cfg:dictbase
+         cfg:extraop
+         cfg:decode
+         cfg:resolve
+         cfg:protag
+         cfg:wordwrap
+         cfg:compress)
 
 ;; engine
 
@@ -52,17 +66,6 @@
     [#f #f]
     [p  (set-member? p x)]))
 
-(provide cfg:engine
-         cfg:charset
-         cfg:charspc
-         cfg:fontwidth
-         cfg:dictbase
-         cfg:extraop
-         cfg:decode
-         cfg:resolve
-         cfg:protag
-         cfg:wordwrap
-         cfg:compress
-         set-engine
+(provide set-engine
          set-protag
          protag?)
