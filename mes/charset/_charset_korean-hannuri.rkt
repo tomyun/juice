@@ -62,4 +62,4 @@
 (charset! #x839C #\ᅪ)
 
 (fontwidth 2)
-(charspc #\ )
+(char-space #\ )

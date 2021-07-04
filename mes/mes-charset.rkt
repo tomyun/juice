@@ -125,6 +125,6 @@
          integer->sjis
          sjis
          jis
-         charspc
+         char-space
          char-newline
          fontwidth)

@@ -194,7 +194,7 @@
     (match l
       [`(,s ... ())       s]
       [`(,s ... (,r ...)) (: `(,@s ,@(chop r w)) w)]))
-  (define spc (cfg:charspc))
+  (define spc (cfg:char-space))
   (define (join s) (string-join s (string spc)))
   (define (fill s w)
     (define n (measure s))
@@ -396,7 +396,7 @@
 (define (mes:charset f) (charset f))
 (define (mes:charset*  k t . l) (apply charset* k t l))
 (define (mes:charset** k t . l) (apply charset** k t l))
-(define (mes:charspc c) (cfg:charspc c))
+(define (mes:char-space c) (cfg:char-space c))
 (define (mes:fontwidth w) (cfg:fontwidth w))
 (define (mes:dictbase b) (cfg:dictbase b))
 (define (mes:extraop x) (cfg:extraop x))
