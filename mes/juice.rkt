@@ -32,25 +32,25 @@
    [("--version" "-v")     "show version"
                            (command 'version)]
    #:once-each
-   [("--force" "-f")       "force overwriting output files"
+   [("--force" "-f")       "force overwrite output files"
                            (exists 'replace)]
-   [("--engine") e         "specify engine version (AI5*, AI1)"
+   [("--engine") e         "engine type (AI5*, AI1)"
                            (set-engine (string->symbol (string-upcase e)))]
-   [("--charset") c        "specify charset encoding (pc98*, english, europe, korean-..)"
+   [("--charset") c        "charset encoding (pc98*, english, europe, korean-..)"
                            (cfg:charset c)]
-   [("--dictbase") b       "dictionary base (80*, D0)"
+   [("--dictbase") b       "[AI5] dictionary base (80*, D0)"
                            (cfg:dictbase (string->number b 16))]
-   [("--extraop")          "support incompatible opcodes found in some games"
+   [("--extraop")          "[AI5] support incompatible opcodes found in some games"
                            (cfg:extraop #t)]
-   [("--no-decode")        "[decompile] skip SJIS character decoding"
+   [("--no-decode")        "{decompile} skip SJIS character decoding"
                            (cfg:decode #f)]
-   [("--no-resolve")       "[decompile] skip cmd/sys name resolution"
+   [("--no-resolve")       "{decompile} skip cmd/sys name resolution"
                            (cfg:resolve #f)]
-   [("--protag") p         "[decompile] choose proc/call(s) fused in text (none*, all, 0, 3, Z, ..)"
+   [("--protag") p         "{decompile} proc/call(s) fused in text (none*, all, 0, 3, Z, ..)"
                            (set-protag p)]
-   [("--wordwrap") w       "[compile] set threshold for word wrapping"
+   [("--wordwrap") w       "{compile} threshold for word wrapping"
                            (cfg:wordwrap (string->number w))]
-   [("--no-compress")      "[compile] skip text compression with dict"
+   [("--no-compress")      "{compile} skip text compression with dict"
                            (cfg:compress #f)]
    #:ps "<args> : filenames"
    #:args args
