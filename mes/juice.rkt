@@ -126,7 +126,7 @@
   (save path ".rkt" ".rkt" r display 'b-cyan))
 
 (define (save-mes path)
-  (define (r f) (compile-mes f))
+  (define (r f) (build-mes f))
   (save path ".rkt" ".mes" r write-bytes 'b-blue))
 
 (define (save path ext0 ext1 r w color)
