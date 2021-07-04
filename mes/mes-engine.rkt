@@ -1,5 +1,6 @@
 #lang racket/base
 
+(require racket/file)
 (require racket/match)
 
 (require "mes-config.rkt")
@@ -15,7 +16,12 @@
     ['ai5 (ai5:load-mes path)]))
 
 (define (compile-mes path)
-  (match (cfg:engine)
+  (define src (file->value path))
+  (define engine
+    (match src
+      [`(mes (meta (engine ,e) ,m ..) ,r ..) e]
+      [a                                     (cfg:engine)]))
+  (match engine
     ['ai5 (ai5:compile-mes path)]))
 
 (provide load-mes

@@ -392,6 +392,7 @@
 ;; meta
 
 (define (mes:meta . l) '())
+(define (mes:engine e) (unless (eq? e 'ai5) (error (format "[ai5] unsupported engine: ~v" e))))
 (define (mes:charset f) (charset f))
 (define (mes:charset*  k t . l) (apply charset* k t l))
 (define (mes:charset** k t . l) (apply charset** k t l))

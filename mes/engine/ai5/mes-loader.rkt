@@ -250,7 +250,8 @@
 
 (define (fuse-meta l)
   (define m
-    `((charset  ,(cfg:charset))
+    `((engine   ',(cfg:engine))
+      (charset  ,(cfg:charset))
       (dictbase ,(cfg:dictbase))
       (extraop  ,(cfg:extraop))))
   (match l
