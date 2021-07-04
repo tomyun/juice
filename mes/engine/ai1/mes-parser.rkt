@@ -1,0 +1,139 @@
+#lang racket/base
+
+(require racket/list)
+(require racket/match)
+(require racket/port)
+
+(require parsack)
+
+(require "../../mes-config.rkt")
+
+;; parsack
+
+(define-syntax-rule (@ p) (λ (x) (p x)))
+(define-syntax-rule (:: p ...) (parser-seq p ...))
+(define-syntax-rule (:~ p ...) (parser-one p ...))
+(define-syntax-rule (:% p ...) (parser-compose p ...))
+(define ($list t p) (>>= p (λ (x) (return (list t x)))))
+(define ($cons t p) (>>= p (λ (x) (return (cons t x)))))
+
+(define (char-between a b) (satisfy (λ (c) (char<=? a c b))))
+(define (optional p) (:% (<or> p (return '()))))
+
+;; lexer-util
+
+(define (lex-num0 c) `(num ,(- (char->integer c) #x11)))
+(define (lex-num1 c) `(num ,(char->integer c)))
+(define (lex-num2 c1 c2)
+  (match-define `(,i1 ,i2) (map char->integer `(,c1 ,c2)))
+  `(num ,(+ (arithmetic-shift i1 8) i2)))
+
+(define (lex-chr c1 c2) `(chr-raw ,@(map char->integer `(,c1 ,c2))))
+
+(define (lex-proc c) `(proc ,(- (char->integer c) #xC0)))
+
+;; lexer
+
+(define REG1 (:% (char #\u00) (c <- $anyChar) (return `(: ,(lex-num1 c)))))
+(define REG0 (:% (c <- (char-between #\u01 #\u07)) (return `(: ,(lex-num0 c)))))
+(define REG2 (:% (char #\u08) (c1 <- $anyChar) (c2 <- $anyChar) (return `(: ,(lex-num2 c1 c2)))))
+
+(define NUM1 (:% (char #\u10) (c <- $anyChar) (return (lex-num1 c))))
+(define NUM0 (:% (c <- (char-between #\u11 #\u17)) (return (lex-num0 c))))
+(define NUM2 (:% (char #\u18) (c1 <- $anyChar) (c2 <- $anyChar) (return (lex-num2 c1 c2))))
+
+(define STR (:% (char #\u22)
+                (c <- (many (<or> (char-between #\u20 #\u21)
+                                  (char-between #\u23 #\u7E)
+                                  (char-between #\u80 #\uA0) ;HACK: SJIS code in (str ..) from DK1/BAT.MES
+                                  (char-between #\uA1 #\uDF))))
+                (char #\u22)
+                (return (list->string c))))
+
+(define TERM2 ($list 'term2 (<or> (char #\u21)
+                                  (char-between #\u23 #\u2B)
+                                  (char-between #\u2D #\u2F)
+                                  (char-between #\u3C #\u3E)
+                                  (char #\u5C)
+                                  (char #\u7C)
+                                  (char-between #\u30 #\u3B) ;FIXME: remove
+                                  (char #\u5B) ;FIXME: remove
+                                  (char-between #\u5D #\u7A) ;FIXME: remove
+                                  (char-between #\u19 #\u20) ;FIXME: remove
+                                  (char #\uFF))))
+(define TERM0 ($list 'term0 (<or> (char #\u3F))))
+                            
+(define CNT (char #\u2C))
+
+(define VAR ($list 'var (char-between #\u40 #\u5A)))
+
+(define BEG (char #\u7B))
+(define END (char #\u7D))
+
+(define CHR (:% (c1 <- (char-between #\u80 #\u98))
+                (c2 <- (char-between #\u40 #\uFC))
+                (return (lex-chr c1 c2))))
+
+; (define SETR  (char #\u99))
+; (define SETV  (char #\u9A))
+; (define SETAW (char #\u9B))
+; (define SETAB (char #\u9C)) ;;TODO: check
+;(define SET ($list 'set (char-between #\u99 #\u9C)))
+(define CND (char #\u9D)) ;TODO: include in CMD?
+(define CMD ($list 'cmd (<or> (char-between #\u99 #\u9C)
+                              (char-between #\u9E #\uBF))))
+
+(define PROC (:% (c <- (char-between #\uC0 #\uFF)) (return (lex-proc c))))
+
+;; parser
+
+(define REG   (<or> REG0 REG1 REG2))
+(define NUM   (<or> NUM0 NUM1 NUM2))
+(define term  (<or> REG NUM VAR TERM0 TERM2))
+(define expr  ($cons 'expr (many1 term)))
+
+(define param  ($list 'param (<or> (@ block) STR expr)))
+;(define params ($cons 'params (sepBy param CNT)))
+(define params ($cons 'params (optional (:% (p <- param)
+                                            (l <- (many (try (:~ CNT (~> param)))))
+                                            (return `(,p ,@l))))))
+
+(define chr  CHR)
+(define chrs ($cons 'chrs (many1 chr)))
+
+(define cut (>> CNT (return `(cut))))
+
+(define op-str  ($list 'str STR))
+;(define op-set  (:: SET params))
+(define cnd     (:: (~ CND) expr block))
+(define op-cnd1 (:% (a <- (try cnd))
+                    (b <- (many (try (:~ CNT (~> cnd)))))
+                    ;(c <- (optional (:~ CNT (~> block))))
+                    (c <- (optional (:~ CNT (~> (optional block))))) ; missing else in pp1/C1.MES
+                    (return (cond [(and (empty? b) (empty? c)) `(if ,@a)]
+                                  [(empty? b)                  `(if-else ,@a ,c)]
+                                  [(empty? c)                  `(cond ,a ,@b)]
+                                  [else                        `(cond ,a ,@b (else ,c))]))))
+(define op-cnd2 ($cons 'if (:: (~ CND) expr block*))) ;TODO: check if `else` is not used in deja2/015A.MES
+(define op-cnd  (<or> op-cnd1 op-cnd2))
+(define op-cmd  (:: CMD params))
+(define op-proc PROC)
+;;FIXME: really need NUM?
+;(define op      (<or> op-str op-set op-cnd op-cmd NUM))
+;(define op      (<or> op-str op-cnd op-cmd op-proc NUM))
+(define op      (<or> op-str op-cnd op-cmd op-proc))
+
+(define block  ($cons '<> (:~ BEG (~> stmts) END)))
+(define block* ($cons '<>* (many (<or> op chrs)))) ; many instead of many1 for dr3/SHOP.MES
+(define stmt  (<or> cut op expr chrs))
+(define stmts (many stmt))
+
+(define <mes> ($cons 'mes (:~ (~> stmts) END $eof)))
+
+(define (parser [p <mes>]) p)
+
+(provide parse-result
+         parse
+         parser)
+
+(provide (prefix-out p: (all-defined-out)))
