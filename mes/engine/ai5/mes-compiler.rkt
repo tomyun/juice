@@ -370,7 +370,7 @@
   (f `(() ,@p)))
 
 (define (mes:<>  . l) `(,BEG ,@l ,END))
-(define (mes:<>* . l) `(,@l))
+(define (mes:<*> . l) `(,@l))
 
 (define (mes:block? b)
   (match b
