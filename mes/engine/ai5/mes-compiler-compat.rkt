@@ -14,3 +14,6 @@
 
 (define (mes:begin  . l) (apply mes:<> l))
 (define (mes:begin* . l) (apply mes:<>* l))
+
+(define (mes:load-file  . l) (apply mes:load l))
+(define (mes:load-image . l) (apply mes:image l))
