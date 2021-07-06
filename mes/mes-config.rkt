@@ -1,8 +1,11 @@
 #lang racket/base
 
+(require racket/format)
 (require racket/match)
 (require racket/set)
 (require racket/string)
+
+(require "mes-color.rkt")
 
 ;; config
 
@@ -36,6 +39,94 @@
          cfg:protag
          cfg:wordwrap
          cfg:compress)
+
+;; preset
+(define (show-preset)
+  (define P
+    '((angel  "Angel Hearts")
+      (aishi  "Ai Shimai")
+      (cre    "Crescent")
+      (coc    "Curse of Castle")
+      (deja   "De-Ja")
+      (deja2  "De-Ja 2")
+      (nanpa  "Doukyuusei")
+      (nanpa2 "Doukyuusei 2")
+      (dk     "Dragon Knight")
+      (dk2    "Dragon Knight 2")
+      (dk3    "Dragon Knight 3")
+      (dk4    "Dragon Knight 4")
+      (elle   "ELLE")
+      (foxy   "Foxy")
+      (foxy2  "Foxy 2")
+      (isaku  "Isaku")
+      (jack   "Jack")
+      (jan    "Jan Jaka Jan")
+      (kakyu  "Kakyuusei")
+      (kawa   "Kawarazaki-ke no Ichizoku")
+      (yuno   "Kono Yo no Hate de Koi o Utau Shoujo YU-NO")
+      (metal  "Metal Eye")
+      (metal2 "Metal Eye 2")
+      (mobius "Mobius Roid")
+      (nono   "Nonomura Byouin no Hitobito")
+      (pinky  "Pinky Ponky 1/2/3")
+      (pre    "Premium")
+      (pre2   "Premium 2")
+      (raygun "RAY-GUN")
+      (reira  "Reira Slave Doll")
+      (syan   "Shangrlia")
+      (syan2  "Shangrlia 2")
+      (ten    "Tenshin Ranma")
+      (shima  "Ushinawareta Rakuen")
+      (ww     "Words Worth")))
+  (for ([p P])
+    (match-define `(,g ,d) p)
+    (display-color 'b-white (~a g #:width 6))
+    (displayln (format " : ~a" d))))
+
+(define (use-preset p)
+  (match (string-downcase p)
+    ;["angel"   (cfg:engine 'AI1)]
+    ["aishi"   (void)]
+    ["cre"     (void)]
+    ["coc"     (void)]
+    ["deja"    (cfg:engine 'AI1)]
+    ["deja2"   (void)]
+    ["nanpa"   (cfg:protag '(0))]
+    ["nanpa2"  (cfg:protag '(0))]
+    ["dk"      (cfg:engine 'AI1)
+               (cfg:protag '((+ (~ @ 36) (* 120 2)) (+ M (* (~ J 0) 50))))]
+    ["dk2"     (cfg:engine 'AI1)
+               (cfg:protag '(G))]
+    ["dk3"     (cfg:protag '(26))]
+    ["dk4"     (void)]
+    ["elle"    (cfg:protag '(Z))]
+    ;["foxy"    (void)]
+    ["foxy2"   (void)]
+    ["isaku"   (cfg:dictbase #xD0)
+               (cfg:extraop #t)]
+    ["jack"    (cfg:dictbase #xD0)]
+    ["jan"     (cfg:protag '(51))]
+    ["kakyu"   (cfg:dictbase #xD0)
+               (cfg:protag '(3))]
+    ["kawa"    (void)]
+    ["yuno"    (cfg:dictbase #xD0)
+               (cfg:extraop #t)
+               (cfg:protag '(0))]
+    ["metal"   (void)]
+    ["metal2"  (void)]
+    ["mobius"  (cfg:dictbase #xD0)]
+    ["nono"    (void)]
+    ["pinky"   (cfg:engine 'AI1)
+               (cfg:protag '(N))]
+    ["pre"     (void)]
+    ;["pre2"    (void)]
+    ["raygun"  (cfg:engine 'AI1)]
+    ["reira"   (void)]
+    ["syan"    (void)]
+    ["syan2"   (void)]
+    ["ten"     (void)]
+    ["shima"   (void)]
+    ["ww"      (cfg:protag '(0))]))
 
 ;; engine
 
@@ -73,6 +164,8 @@
     [#f #f]
     [p  (set-member? p x)]))
 
-(provide set-engine
+(provide show-preset
+         use-preset
+         set-engine
          set-protag
          protag?)

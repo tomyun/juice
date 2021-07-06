@@ -28,11 +28,15 @@
                            (command 'deduplicate)]
    [("--compile" "-c")     "compile rkt source into MES bytecode"
                            (command 'compile)]
+   [("--show-preset" "-P") "show supported presets"
+                           (command 'preset)]
    [("--version" "-v")     "show version"
                            (command 'version)]
    #:once-each
    [("--force" "-f")       "force overwrite output files"
                            (exists 'replace)]
+   [("--preset" "-p") p    "preset for a specific game; see `--show-preset`"
+                           (use-preset p)]
    [("--engine") e         "engine type (AI5*, AI1)"
                            (set-engine (string->symbol (string-upcase e)))]
    [("--charset") c        "charset encoding (pc98*, english, europe, korean-..)"
@@ -142,5 +146,6 @@
  ['decompile   (work decompile)]
  ['deduplicate (deduplicate)]
  ['compile     (work compile)]
+ ['preset      (show-preset)]
  ['version     (displayln (format "juice ~a by tomyun" version))]
  [else         (displayln "type `juice -h` for help")])
