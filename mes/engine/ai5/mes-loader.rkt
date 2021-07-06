@@ -2,6 +2,7 @@
 
 (require racket/format)
 (require racket/function)
+(require racket/list)
 (require racket/match)
 
 (require "../../mes-config.rkt")
@@ -223,9 +224,15 @@
       [a                       a]))
   (define (:: x)
      (match x
-       [`((chr ,c) ..1 ,r ...)         `((text     ,(apply string c))       ,@(:: r))]
+       [`((chr ,c) ..1 ,r ...)         `(,@(:/ (apply string c))            ,@(:: r))]
        [`((chr-raw ,n ...) ..1 ,r ...) `((text-raw ,@(map sjis->integer n)) ,@(:: r))]
        [a                              a]))
+  (define (:/ s)
+    (define r (regexp-match-positions* #rx"\n+|$" s))
+    (define n (remove-duplicates (map cdr r)))
+    (for/list ([i `(0 ,@(drop-right n 1))]
+               [j n])
+      `(text ,(substring s i j))))
   (: l))
 
 (define (fuse-text-color l)
