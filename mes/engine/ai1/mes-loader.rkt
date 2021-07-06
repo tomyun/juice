@@ -200,10 +200,10 @@
       [`(,a ,r ...)            `(,(: a)   ,@(: r))]
       [a                       a]))
   (define (:: x)
-     (match x
-       [`((chr ,c) ..1 ,r ...)         `(,@(:/ (apply string c))            ,@(:: r))]
-       [`((chr-raw ,n ...) ..1 ,r ...) `((text-raw ,@(map sjis->integer n)) ,@(:: r))]
-       [a                              a]))
+    (match x
+      [`((chr ,c) ..1 ,r ...)         `(,@(:/ (apply string c))            ,@(:: r))]
+      [`((chr-raw ,n ...) ..1 ,r ...) `((text-raw ,@(map sjis->integer n)) ,@(:: r))]
+      [a                              a]))
   (define (:/ s)
     (define r (regexp-match-positions* #rx"\n+|$" s))
     (define n (remove-duplicates (map cdr r)))
