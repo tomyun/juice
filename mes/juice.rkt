@@ -10,8 +10,7 @@
 (require file/glob)
 (require file/sha1)
 
-(require ansi-color)
-
+(require "mes-color.rkt")
 (require "mes-config.rkt")
 (require "mes-engine.rkt")
 
@@ -66,9 +65,6 @@
 (define (extension? path ext)
   (or (path-has-extension? path (string-downcase ext))
       (path-has-extension? path (string-upcase ext))))
-
-(define (display-color   c s) (with-colors c (lambda () (display   s))))
-(define (displayln-color c s) (with-colors c (lambda () (displayln s))))
 
 (define (decompile path)
   (save-rkt path))
