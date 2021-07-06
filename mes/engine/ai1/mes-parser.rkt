@@ -131,7 +131,7 @@
 (define stmt  (<or> block cut op expr chrs))
 (define stmts (many stmt))
 
-(define <mes> ($cons 'mes (:~ (~> stmts) END $eof)))
+(define <mes> ($cons 'mes (:~ (~> stmts) END (optional $eof)))) ; garbage before EOF in raygun/FL2-5|6.MES
 
 (define (parser [p <mes>]) p)
 
