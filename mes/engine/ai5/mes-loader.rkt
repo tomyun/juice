@@ -4,6 +4,7 @@
 (require racket/function)
 (require racket/list)
 (require racket/match)
+(require racket/string)
 
 (require "../../mes-config.rkt")
 (require "../../mes-charset.rkt")
@@ -245,12 +246,16 @@
   (: l))
 
 (define (fuse-text-proc-call l)
+  (define (sameline? t)
+    (not (and (string? t) (string-suffix? t "\n"))))
   (define (: x)
     (match x
-      [`((text ,t1 ...) (,(or 'proc 'call) ,p) (text ,t2 ...) ,r ...)
-       #:when (protag? p)                                             (: `((text ,@t1 ,p ,@t2) ,@r))]
-      [`(,a ,r ...)                                                   `(,(: a) ,@(: r))]
-      [a                                                              a]))
+      [`((text ,t1 ... ,t) (,(or 'proc 'call) ,p) (text ,t2 ...) ,r ...)
+       #:when (and (sameline? t) (protag? p))                            (: `((text ,@t1 ,t ,p ,@t2) ,@r))]
+      [`((,(or 'proc 'call) ,p) (text ,t2 ...) ,r ...)
+       #:when (protag? p)                                                (: `((text ,p ,@t2)         ,@r))]
+      [`(,a ,r ...)                                                      `(,(: a) ,@(: r))]
+      [x                                                                 x]))
   (: l))
 
 (define (fuse-menu-block l)
