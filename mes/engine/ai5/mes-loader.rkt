@@ -307,10 +307,10 @@
 
 (define (fuse-meta l)
   (define m
-    `((engine   ',(cfg:engine))
-      (charset  ,(cfg:charset))
-      (dictbase ,(cfg:dictbase))
-      (extraop  ,(cfg:extraop))))
+    (remove (void) `((engine   ',(cfg:engine))
+                     (charset  ,(cfg:charset))
+                     (dictbase ,(cfg:dictbase))
+                     ,(when (cfg:extraop) `(extraop ,(cfg:extraop))))))
   (match l
     [`(mes ,r ...) `(mes (meta ,@m) ,@r)]))
 
