@@ -112,7 +112,7 @@
 (define op-cnd1 (:% (a <- (try cnd))
                     (b <- (many (try (:~ CNT (~> cnd)))))
                     ;(c <- (optional (:~ CNT (~> block))))
-                    (c <- (optional (:~ CNT (~> (optional block))))) ; missing else in pp1/C1.MES
+                    (c <- (optional (:~ (optional CNT) (~> (optional block))))) ; missing else in pp1/C1.MES, missing CNT in dk1/FLOOR4.MES
                     (return (cond [(and (empty? b) (empty? c)) `(if ,@a)]
                                   [(empty? b)                  `(if-else ,@a ,c)]
                                   [(empty? c)                  `(cond ,a ,@b)]
