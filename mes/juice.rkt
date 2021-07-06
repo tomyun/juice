@@ -49,7 +49,7 @@
                            (cfg:decode #f)]
    [("--no-resolve")       "{decompile} skip cmd/sys name resolution"
                            (cfg:resolve #f)]
-   [("--protag") p         "{decompile} proc/call(s) fused in text (none*, all, 0, 3, Z, ..)"
+   [("--protag") p         "{decompile} proc/call(s) fused in text (none*, all, 0, Z, ..)"
                            (set-protag p)]
    [("--wordwrap") w       "{compile} threshold for word wrapping"
                            (cfg:wordwrap (string->number w))]
