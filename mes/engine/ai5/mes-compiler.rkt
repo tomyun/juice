@@ -226,6 +226,7 @@
       [t             t]))
   `(,@c ,@(map : (text-wrap l w))))
 
+;;TODO: remove custom newline function; use "\n" instead
 (define (mes:text-func s)
   (match s
     [(or 'n 'newline) (mes:text-newline)]))
