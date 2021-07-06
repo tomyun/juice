@@ -152,6 +152,7 @@
       ,fuse-text
       ,fuse-text-color
       ,fuse-text-proc-call
+      ,fuse-menu-block
       ,(curry fuse-dict dict)
       ,fuse-meta))
   ((apply compose1 (reverse f)) l))
@@ -243,6 +244,28 @@
        #:when (protag? p)                                             (: `((text ,@t1 ,p ,@t2) ,@r))]
       [`(,a ,r ...)                                                   `(,(: a) ,@(: r))]
       [a                                                              a]))
+  (: l))
+
+(define (fuse-menu-block l)
+  ;;TODO: simplify pattern matching?
+  (define (!? x) (not (equal? x '(cut))))
+  (define (: x)
+    (match x
+      [`(<> ,r ...)              (let ([m (:: r)])  (if m `(<?> ,@m) `(<> ,@(: r))))]
+      [`(,a ,r ...)              `(,(: a) ,@(: r))]
+      [x                         x]))
+  (define (:: x)
+    (match x
+      [`(,(? !? a) (cut) ,r ...) (let ([m (::: r)]) (if m `(,a  ,@m) #f))]
+      [`(          (cut) ,r ...) (let ([m (::: r)]) (if m `((_) ,@m) #f))]
+      [x                         #f]))
+  (define (::: x)
+    (match x
+      [`(,(? !? a) (cut) ,r ...) (let ([m (::: r)]) (if m `(,a  ,@m) #f))]
+      [`(          (cut) ,r ...) (let ([m (::: r)]) (if m `((_) ,@m) #f))]
+      [`(,a)                     `(,a)]
+      [`()                       `((_))]
+      [x                         #f]))
   (: l))
 
 (define (fuse-dict dict l)

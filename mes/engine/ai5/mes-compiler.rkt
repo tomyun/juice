@@ -371,6 +371,12 @@
 
 (define (mes:<>  . l) `(,BEG ,@l ,END))
 (define (mes:<*> . l) `(,@l))
+(define (mes:<?> . l)
+  (define (: x)
+    (match x
+      [`(,a)        `(,a)]
+      [`(,a ,r ...) `(,a ,(mes:cut) ,@(: r))]))
+  (apply mes:<> (: l)))
 
 (define (mes:block? b)
   (match b
