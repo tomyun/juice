@@ -228,9 +228,9 @@
 (define (fuse-text-number l)
   (define (: x)
     (match x
-      [`((number ,n) (text ,t ...) ,r ...) `((text (number ,n) ,@t) ,@(: r))]
-      [`(,a ,r ...)                        `(,(: a)    ,@(: r))]
-      [x                                   x]))
+      [`((number ,n) ,r ...) `((text (number ,n)) ,@(: r))]
+      [`(,a ,r ...)          `(,(: a)    ,@(: r))]
+      [x                     x]))
   (: l))
 
 (define (fuse-text-multiple l)
