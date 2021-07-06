@@ -240,9 +240,12 @@
 (define (fuse-text-proc-call l)
   (define (: x)
     (match x
-      [`((,(or 'proc 'call) ,p) ,r ...) #:when (protag? p) `((text ,p) ,@(: r))]
-      [`(,a ,r ...)                                        `(,(: a)    ,@(: r))]
-      [x                                                   x]))
+      [`((proc ,(? number? p)) ,r ...) #:when (protag? p) `((text ,p)        ,@(: r))]
+      [`((proc ,p) ,r ...)             #:when (protag? p) `((text (proc ,p)) ,@(: r))]
+      [`((call ,(? symbol? p)) ,r ...) #:when (protag? p) `((text ,p)        ,@(: r))]
+      [`((call ,p) ,r ...)             #:when (protag? p) `((text (call ,p)) ,@(: r))]
+      [`(,a ,r ...)                                       `(,(: a)    ,@(: r))]
+      [x                                                  x]))
   (: l))
 
 (define (fuse-text-multiple l)
