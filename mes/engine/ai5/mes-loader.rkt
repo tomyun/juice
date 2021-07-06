@@ -152,8 +152,8 @@
       ,fuse-operator
       ,(curry fuse-dic dict)
       ,fuse-text
-      ,fuse-text-color
       ,fuse-text-proc-call
+      ,fuse-text-color
       ,fuse-menu-block
       ,(curry fuse-dict dict)
       ,fuse-meta))
@@ -236,15 +236,6 @@
       `(text ,(substring s i j))))
   (: l))
 
-(define (fuse-text-color l)
-  (define (f n) `(,(string->keyword "color") ,n))
-  (define (: x)
-    (match x
-      [`((text-color ,c) (text ,t ...) ,r ...) `((text ,@(f c) ,@t) ,@(: r))]
-      [`(,a ,r ...)                            `(,(: a)             ,@(: r))]
-      [a                                       a]))
-  (: l))
-
 (define (fuse-text-proc-call l)
   (define (sameline? t)
     (not (and (string? t) (string-suffix? t "\n"))))
@@ -256,6 +247,15 @@
        #:when (protag? p)                                                (: `((text ,p ,@t2)         ,@r))]
       [`(,a ,r ...)                                                      `(,(: a) ,@(: r))]
       [x                                                                 x]))
+  (: l))
+
+(define (fuse-text-color l)
+  (define (f n) `(,(string->keyword "color") ,n))
+  (define (: x)
+    (match x
+      [`((text-color ,c) (text ,t ...) ,r ...) `((text ,@(f c) ,@t) ,@(: r))]
+      [`(,a ,r ...)                            `(,(: a)             ,@(: r))]
+      [a                                       a]))
   (: l))
 
 (define (fuse-menu-block l)
