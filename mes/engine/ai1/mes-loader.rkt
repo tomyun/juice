@@ -143,6 +143,7 @@
       ,fuse-operator
       ,fuse-text
       ,fuse-text-proc-call
+      ,fuse-text-multiple
       ,fuse-text-color
       ,fuse-menu-block
       ,fuse-meta))
@@ -213,16 +214,21 @@
   (: l))
 
 (define (fuse-text-proc-call l)
+  (define (: x)
+    (match x
+      [`((,(or 'proc 'call) ,p) ,r ...) #:when (protag? p) `((text ,p) ,@(: r))]
+      [`(,a ,r ...)                                        `(,(: a)    ,@(: r))]
+      [x                                                   x]))
+  (: l))
+
+(define (fuse-text-multiple l)
   (define (sameline? t)
     (not (and (string? t) (string-suffix? t "\n"))))
   (define (: x)
     (match x
-      [`((text ,t1 ... ,t) (,(or 'proc 'call) ,p) (text ,t2 ...) ,r ...)
-       #:when (and (sameline? t) (protag? p))                            (: `((text ,@t1 ,t ,p ,@t2) ,@r))]
-      [`((,(or 'proc 'call) ,p) (text ,t2 ...) ,r ...)
-       #:when (protag? p)                                                (: `((text ,p ,@t2)         ,@r))]
-      [`(,a ,r ...)                                                      `(,(: a) ,@(: r))]
-      [x                                                                 x]))
+      [`((text ,t1 ... ,t) (text ,t2 ...) ,r ...) #:when (sameline? t) (: `((text ,@t1 ,t ,@t2) ,@r))]
+      [`(,a ,r ...)                                                    `(,(: a) ,@(: r))]
+      [x                                                               x]))
   (: l))
 
 (define (fuse-text-color l)
