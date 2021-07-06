@@ -222,7 +222,8 @@
       [(? string? s) (mes:text* s)]
       [(? symbol? s) (mes:text-func s)]
       [(? number? n) (mes:proc n)]   ; 0: nanpa1 & etc, 3: kakyu
-      [(? char?   c) (mes:call c)])) ; Z: elle
+      [(? char?   c) (mes:call c)]   ; Z: elle
+      [t             t]))
   `(,@c ,@(map : (text-wrap l w))))
 
 (define (mes:text-func s)
