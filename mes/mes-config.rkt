@@ -57,7 +57,7 @@
     (define (: s)
       (match s
         [(regexp #rx"[0-9]+") (string->number s)]
-        [(regexp #rx"[A-Z]")  (string-ref s 0)]
+        [(regexp #rx"[A-Z]")  (string->symbol s)]
         [s                    (error (format "unsupported protag proc/call: ~a" s))]))
     (map : l))
   (cfg:protag
