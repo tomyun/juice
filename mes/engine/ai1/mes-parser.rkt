@@ -77,11 +77,6 @@
                 (c2 <- (char-between #\u40 #\uFC))
                 (return (lex-chr c1 c2))))
 
-; (define SETR  (char #\u99))
-; (define SETV  (char #\u9A))
-; (define SETAW (char #\u9B))
-; (define SETAB (char #\u9C)) ;;TODO: check
-;(define SET ($list 'set (char-between #\u99 #\u9C)))
 (define CND (char #\u9D)) ;TODO: include in CMD?
 (define CMD ($list 'cmd (<or> (char-between #\u99 #\u9C)
                               (char-between #\u9E #\uBF))))
@@ -107,7 +102,6 @@
 (define cut (>> CNT (return `(cut))))
 
 (define op-str  ($list 'str STR))
-;(define op-set  (:: SET params))
 (define cnd     (:: (~ CND) expr block))
 (define op-cnd1 (:% (a <- (try cnd))
                     (b <- (many (try (:~ CNT (~> cnd)))))
@@ -117,18 +111,15 @@
                                   [(empty? b)                  `(if-else ,@a ,c)]
                                   [(empty? c)                  `(cond ,a ,@b)]
                                   [else                        `(cond ,a ,@b (else ,c))]))))
-(define op-cnd2 ($cons 'if (:: (~ CND) expr block*))) ;TODO: check if `else` is not used in deja2/015A.MES
+(define op-cnd2 ($cons 'if (:: (~ CND) expr block*)))
 (define op-cnd  (<or> op-cnd1 op-cnd2))
 (define op-cmd  (:: CMD params))
 (define op-proc PROC)
-;;FIXME: really need NUM?
-;(define op      (<or> op-str op-set op-cnd op-cmd NUM))
-;(define op      (<or> op-str op-cnd op-cmd op-proc NUM))
 (define op      (<or> op-str op-cnd op-cmd op-proc))
 
 (define block  ($cons '<> (:~ BEG (~> stmts) END)))
 (define block* ($cons '<*> (many (<or> op chrs)))) ; many instead of many1 for dr3/SHOP.MES
-(define stmt  (<or> block cut op expr chrs))
+(define stmt  (<or> block cut op expr chrs)) ;TODO: check use of expr in set-mem for dk2/OPEN.MES
 (define stmts (many stmt))
 
 (define <mes> ($cons 'mes (:~ (~> stmts) END (optional $eof)))) ; garbage before EOF in raygun/FL2-5|6.MES
