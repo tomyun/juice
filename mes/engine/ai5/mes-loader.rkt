@@ -281,7 +281,7 @@
   (define (!? x) (not (equal? x '(cut))))
   (define (: x)
     (match x
-      [`(<> ,r ...)              (let ([m (:: r)])  (if m `(<?> ,@m) `(<> ,@(: r))))]
+      [`(<> ,r ...)              (let ([m (:: r)])  (if m `(<.> ,@m) `(<> ,@(: r))))]
       [`(,a ,r ...)              `(,(: a) ,@(: r))]
       [x                         x]))
   (define (:: x)
