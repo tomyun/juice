@@ -19,8 +19,8 @@
   (define src (file->value path))
   (define engine
     (match src
-      [`(mes (meta (engine ,e) ,m ..) ,r ..) e]
-      [a                                     (cfg:engine)]))
+      [`(mes (meta (engine ',e) ,m ...) ,r ...) e]
+      [a                                       (cfg:engine)]))
   (match engine
     ['AI5 (ai5:build-mes path)]))
 
