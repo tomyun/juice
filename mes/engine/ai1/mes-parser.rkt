@@ -109,8 +109,9 @@
 (define cnd     (:: (~ CND) expr block))
 (define op-cnd1 (:% (a <- (try cnd))
                     (b <- (many (try (:~ CNT (~> cnd)))))
-                    ;(c <- (optional (:~ CNT (~> block))))
-                    (c <- (optional (:~ (optional CNT) (~> (optional block))))) ; missing else in pp1/C1.MES, missing CNT in dk1/FLOOR4.MES
+                    (c <- (optional (<or> (:% CNT (<or> block             ; missing else in pp1/C1.MES
+                                                        (return '(<*>)))) ; dangling CNT with missing else in dk2/TOWER.MES
+                                          (:~ (~> block)))))              ; missing CNT in dk1/FLOOR4.MES
                     (return (cond [(and (empty? b) (empty? c)) `(if ,@a)]
                                   [(empty? b)                  `(if-else ,@a ,c)]
                                   [(empty? c)                  `(cond ,a ,@b)]
