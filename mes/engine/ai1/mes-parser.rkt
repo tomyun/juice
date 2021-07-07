@@ -22,6 +22,10 @@
 
 ;; lexer-util
 
+(define (lex-reg0 c) `(num ,(- (char->integer c) #x01)))
+(define (lex-reg1 c) (lex-num1 c))
+(define (lex-reg2 c1 c2) (lex-num2 c1 c2))
+
 (define (lex-num0 c) `(num ,(- (char->integer c) #x11)))
 (define (lex-num1 c) `(num ,(char->integer c)))
 (define (lex-num2 c1 c2)
@@ -34,9 +38,9 @@
 
 ;; lexer
 
-(define REG1 (:% (char #\u00) (c <- $anyChar) (return `(: ,(lex-num1 c)))))
-(define REG0 (:% (c <- (char-between #\u01 #\u07)) (return `(: ,(lex-num0 c)))))
-(define REG2 (:% (char #\u08) (c1 <- $anyChar) (c2 <- $anyChar) (return `(: ,(lex-num2 c1 c2)))))
+(define REG1 (:% (char #\u00) (c <- $anyChar) (return `(: ,(lex-reg1 c)))))
+(define REG0 (:% (c <- (char-between #\u01 #\u07)) (return `(: ,(lex-reg0 c)))))
+(define REG2 (:% (char #\u08) (c1 <- $anyChar) (c2 <- $anyChar) (return `(: ,(lex-reg2 c1 c2)))))
 
 (define NUM1 (:% (char #\u10) (c <- $anyChar) (return (lex-num1 c))))
 (define NUM0 (:% (c <- (char-between #\u11 #\u17)) (return (lex-num0 c))))
