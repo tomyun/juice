@@ -6,6 +6,7 @@
 (require "mes-config.rkt")
 
 (require (prefix-in ai1: "engine/ai1/mes-loader.rkt"))
+(require (prefix-in ai1: "engine/ai1/mes-builder.rkt"))
 
 (require (prefix-in ai5: "engine/ai5/mes-loader.rkt"))
 (require (prefix-in ai5: "engine/ai5/mes-builder.rkt"))
@@ -22,6 +23,7 @@
       [`(mes (meta (engine ',e) ,m ...) ,r ...) e]
       [a                                       (cfg:engine)]))
   (match engine
+    ['AI1 (ai1:build-mes path)]
     ['AI5 (ai5:build-mes path)]))
 
 (provide load-mes
