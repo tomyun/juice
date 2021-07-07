@@ -164,9 +164,10 @@
 (define (fuse-while l)
   (define (: x)
     (match x
-      [`((while) (if ,c ,t) ,r ...) `((while ,(: c) ,(: t)) ,@(: r))]
-      [`(,a ,r ...)                 `(,(: a)                ,@(: r))]
-      [a                            a]))
+      [`((while) (if      ,c ,t)       ,r ...) `((while ,(: c) ,(: t)) ,@(: r))]
+      [`((while) (if-else ,c ,t (<*>)) ,r ...) `((while ,(: c) ,(: t)) ,@(: r))] ; dangling if-else in ww/TOWN.MES
+      [`(,a ,r ...)                            `(,(: a)                ,@(: r))]
+      [x                                       x]))
   (: l))
 
 (define (fuse-operator l)
