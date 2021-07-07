@@ -120,8 +120,8 @@
 (define cnd     (:: (~ CND) expr block))
 (define op-cnd1 (:% (a <- (try cnd))
                     (b <- (many (try (:~ CNT (~> cnd))))) ;TODO: check if `while` can be also used for np2/AZUMI9/12.MES
-                    ;(c <- (optional (:~ CNT (~> block))))
-                    (c <- (optional (:~ CNT (~> (optional block))))) ; missing else in np2/TOWN1.MES
+                    (c <- (optional (:% CNT (<or> block               ; missing else in np2/TOWN1.MES
+                                                  (return '(<*>)))))) ; dangling CNT with missing else in ww/FLOOR09.MES
                     (return (cond [(and (empty? b) (empty? c)) `(if ,@a)]
                                   [(empty? b)                  `(if-else ,@a ,c)]
                                   [(empty? c)                  `(cond ,a ,@b)]
