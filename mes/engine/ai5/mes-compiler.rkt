@@ -311,7 +311,6 @@
 (define (mes:term x) ; HACK: handle num, var, expr
   (match x
     [(? number? n) (mes:num n)]
-    [(? string? s) (mes:str s)]
     [x             x]))
 (define (mes:term2 a b c) `(,(mes:term a) ,(mes:term b) ,c))
 (define (mes:term1 a c)   `(,(mes:term a) ,c))
