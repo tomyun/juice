@@ -89,7 +89,8 @@
     ["aishi"   (void)]
     ["cre"     (void)]
     ["coc"     (void)]
-    ["deja"    (cfg:engine 'AI1)]
+    ["deja"    (cfg:engine 'AI1)
+               (cfg:protag '(Y))]
     ["deja2"   (void)]
     ["nanpa"   (cfg:protag '(0))]
     ["nanpa2"  (cfg:protag '(0))]
