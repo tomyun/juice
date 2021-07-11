@@ -144,12 +144,31 @@
   (map integer->char `(,c1 ,c2)))
 
 (define (text-wrap l w)
+  (define (rearrange l)
+    (define (slice s)
+      (define r (regexp-match-positions* #rx"\n+|$" s))
+      (define n (remove-duplicates (map cdr r)))
+      (for/list ([i `(0 ,@(drop-right n 1))]
+                 [j n])
+        (substring s i j)))
+    (define (:/ x)
+      (match x
+        [`(,(? string? s) ,r ...) `(,@(slice s) ,@(:/ r))]
+        [`(,a ,r ...)             `(,(:/ a) ,@(:/ r))]
+        [x                        x]))
+    (define (sameline? s) (not (string-suffix? s "\n")))
+    (define (:* x)
+      (match x
+        [`(,(? string? s1) ,(? string? s2) ,r ...) #:when (sameline? s1) (:* `(,(string-append s1 s2) ,@r))]
+        [`(,a ,r ...)                                                    `(,(:* a) ,@(:* r))]
+        [x                                                               x]))
+    (:* (:/ l)))
   (define (: l)
     (match l
       [`(,(? string? s) ,r ...) `(,@(text-wrap* s w) ,@(: r))]
       [`(,a             ,r ...) `(,a                 ,@(: r))]
       [a                        a]))
-  (: l))
+  (: (rearrange l)))
 
 (define (text-wrap* s w)
   (define (measure s) (* (string-length s) (cfg:fontwidth)))
@@ -168,12 +187,15 @@
     (match l
       [`(,s ... ())       s]
       [`(,s ... (,r ...)) (: `(,@s ,@(chop r w)) w)]))
-  (define spc (cfg:char-space))
-  (define (join s) (string-join s (string spc)))
+  (define spc (~a (cfg:char-space)))
+  (define (split s) (string-split s spc #:trim? #f))
+  (define (join s) (string-join s spc))
   (define (wrap s)
-   (string-append s (string (cfg:char-newline))))
+    (if (string-suffix? s "\n")
+      s
+      (string-append s (string (cfg:char-newline)))))
   (if w
-    (let* ([l (string-split s)]
+    (let* ([l (split s)]
            [n (apply max (map measure l))])
       (if (> w (add1 n))
         (let ([fs (map join (: `(,l) (* (quotient w 2) 2)))])
