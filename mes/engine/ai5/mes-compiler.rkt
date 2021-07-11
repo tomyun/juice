@@ -196,16 +196,14 @@
       [`(,s ... (,r ...)) (: `(,@s ,@(chop r w)) w)]))
   (define spc (cfg:char-space))
   (define (join s) (string-join s (string spc)))
-  (define (fill s w)
-    (define n (measure s))
-    (define f (make-string (max (- w n) 0) spc))
-    (string-append s f))
+  (define (wrap s)
+    (string-append s (string (cfg:char-newline))))
   (if w
     (let* ([l (string-split s)]
            [n (apply max (map measure l))])
       (if (> w (add1 n))
         (let ([fs (map join (: `(,l) (* (quotient w 2) 2)))])
-          `(,@(map (curryr fill w) (drop-right fs 1)) ,(last fs)))
+          `(,@(map wrap (drop-right fs 1)) ,(last fs)))
         `(,s)))
     `(,s)))
 
