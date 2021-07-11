@@ -198,14 +198,10 @@
       [t             t]))
   `(,@c ,@(map : (text-wrap l w))))
 
-;;TODO: remove custom newline function; use "\n" instead
+;; nothing implemented at this moment
 (define (mes:text-func s)
   (match s
-    [(or 'n 'newline) (mes:text-newline)]))
-
-(define (mes:text-newline)
-  (mes:set-arr~ #\@ 17 (mes:~ #\@ 13)
-                       (mes:+ (mes:~ #\@ 18) (mes:&& (mes:~ #\@ 21) #xFF))))
+    [_ '()]))
 
 (define (mes:text* s)
   (define l
