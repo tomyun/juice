@@ -14,7 +14,7 @@
 (require "mes-config.rkt")
 (require "mes-engine.rkt")
 
-(define version "v0.0.6-DEV+20210702")
+(define version "v0.0.6-DEV+20211105")
 (define command (make-parameter null))
 (define exists (make-parameter 'error))
 
@@ -141,6 +141,9 @@
       (displayln-color color ext1))]
    [else (displayln-color 'b-yellow "?")])
   (flush-output))
+
+; (begin-for-syntax
+;   (define pc98 (file->list "charset/_charset_pc98.rkt")))
 
 (case (command)
  ['decompile   (work decompile)]
