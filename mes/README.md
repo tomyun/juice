@@ -45,15 +45,16 @@ Then for compiling, you'd need to run `juice -c *.MES.rkt.rkt` (note extension) 
 Type `juice -h` to see a list of available commands and options.
 
 - `--version`, `-v` : show version
-- `--force`, `-f` : force overwriting output files
-- `--charset <c>` : specify charset encoding (**pc98**, europe)
-- `--dictbase <b>` : dictionary base (**80**, D0)
-- `--extraop` : support incompatible opcodes found in some games
-- `--no-decode` : *(decompile)* skip SJIS character decoding
-- `--no-resolve` : *(decompile)* skip cmd/sys name resolution
-- `--no-protag` : *(decompile)* skip text fusion with protag proc/call
-- `--wordwrap <w>` : *(compile)* set threshold for word wrapping
-- `--no-compress` : *(compile)* skip text compression with dict
+- `--force`, `-f`   : force overwrite output files
+- `--engine <e>`    : engine type (**AI5**, AI1)
+- `--charset <c>`   : charset encoding (**pc98**, english, europe, korean-..)
+- `--dictbase <b>`  : [AI5] dictionary base (**80**, D0)
+- `--extraop`       : [AI5] support incompatible opcodes found in some games
+- `--no-decode`     : *{decompile}* skip SJIS character decoding
+- `--no-resolve`    : *{decompile}* skip cmd/sys name resolution
+- `--protag <p>`    : *{decompile}* proc/call(s) fused in text (*none*, all, 0, 3, Z, ..)
+- `--wordwrap <w>`  : *{compile}* threshold for word wrapping
+- `--no-compress`   : *{compile}* skip text compression with dict
 
 ## Guides
 
@@ -69,18 +70,16 @@ juice -cf *.MES.rkt.rkt
 
 ### Dictionary
 
-Dictionary is a table storing characters commonly used in the dialogue texts. Characters in the dictionary are referenced by one byte index, in contrast to a typical SJIS code encoded in two bytes, that could greatly reduce the size of compiled script. The dictionary is located at the header of MES file. In rkt source, an existing dictionary is declared with `(dict ..)` instruction found under `meta` section.
+Dictionary is a table storing characters commonly used in the dialogue texts. Characters in the dictionary are referenced by one byte index, in contrast to a typical SJIS code encoded in two bytes, that could greatly reduce the size of compiled script. The dictionary is located at the header of MES file. In rkt source, an existing dictionary is declared with `(dict ..)` instruction found at the top.
 
 ```racket
-(meta
-  (dict #\u3000 #\【 #\】 ..))
+(dict #\u3000 #\【 #\】 ..)
 ```
 
-You would want to replace it with `(dict-build)` to regenerate a dictionary for translated script.
+You would want to replace it with `(dict-build)` to regenerate a dictionary for reducing the size of translated MES file.
 
 ```racket
-(meta
-  (dict-build))
+(dict-build)
 ```
 
 Some games published in later years opted to use a wider region of SJIS codes, leaving a smaller space for dictionary. `--dictbase` is an option to specify two variants of base offset for dictionary index; `80` (128) for many earlier games and `D0` (208) for later games including Jack, Isaku, Kakyuusei, and YU-NO. If `0xD0` was not set for these games, you would likely see an error message like "dict index 86 >= dict size 48". Since the value of `dictbase` is stored in `meta` section of the decompiled source, you don't have to provide one again for compiling.
@@ -122,6 +121,8 @@ Number 0 between two strings indicate `(proc 0)` call which is often used for di
 (proc 0)
 (text "】こんにちは。")
 ```
+
+Note `--protag` option is to choose which proc/call fused in text automatically on decompiling. For the games mentioned above, use `--protag 0`, `--protag 3`, and `--protag Z`, respectively. Multiple instances of proc/calls can be specified with comma separator like `--protag 0,3,Z`. If you want every proc/calls between text fused into a single command, use `--protag all`. By default, no fusion would take place as with `--protag none`.
 
 Some games like Doukyuusei extensively uses separate text color for each line of dialogue.
 
@@ -176,7 +177,7 @@ In addition to that, by supplying a proper custom charset mapping, we can easily
 - `europe`: `pc98` extended with many combinations of diacritics mapped to row 48 and 49. Requires a custom font.
 - `korean-kk`: `pc98` extended with Korean syllables mapped to row 19. Used in Korean translation of Shangrlia 2, Jack, Elle, and YU-NO by K.K; Ushinawareta Rakuen, Dragon Knight 4, and Shangrlia by edenrock.
 - `korean-hannuri`: `pc98` extended with custom mapping used by Team Hannuri for Doukyuusei 1/2.
-- `korean-gamebox`: custom mapping found in official Korean localization of Doukyuusei 2.
+- `korean-gamebox`: custom mapping found in official Korean localization of Doukyuusei 2 and Dragon Knight 4.
 
 You can create a custom charset file, e.g., "_charset_chinese.rkt", yourself if you want. The charset file may contain a series of charset-related instructions. For example, bundled "_charset_english.rkt" looks like below.
 
@@ -191,7 +192,7 @@ You can create a custom charset file, e.g., "_charset_chinese.rkt", yourself if 
  #\a #\b #\c #\d #\e #\f #\g #\h #\i #\j #\k #\l #\m #\n #\o #\p #\q #\r #\s #\t #\u #\v #\w #\x #\y #\z
  #\{ #\| #\} #\~)
 (fontwidth 1)
-(charspc #\ )
+(char-space #\ )
 ```
 
 `(charset ..)` in the first line can include an existing charset. `(charset* k t c ..)` in the next defines a mapping for characters listed in `c ..` to JIS code points starting from row `r` and cell `t`. A JIS code point is represented by a pair of (row, cell) which is also called (ku, ten). The pair corresponds to a position in font space, i.e., a specific location in ANEX86.BMP or FREECG98.BMP. For example, character `!` in `english` charset is mapped to JIS code point (9, 1) which translates to (0x85 0x40). Every `!` appeared inside text string would then result into this particular SJIS bytes in the output file. Note that the default SJIS encoding defines a similarly looking, but distinct character for many ASCII letters; full-width `！` (0x81 0x49) is different from regular `!` (0x21). Pay close attention to these subtle differences when typing in translated strings into `(text ..)`.
@@ -289,4 +290,4 @@ The syntax used in source file came from underlying Racket language. Enabling sy
 
 If you have any questions, please come to #pc-98_translation_discussion channel on PC-9800 Series Central Discord.
 
-Last edited: 2021-06-23
+Last edited: 2021-07-04
