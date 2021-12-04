@@ -113,8 +113,13 @@
   (for ([p paths])
     (save-patched-rkt p (patch (file->value p)))))
 
+(define mes-style-table
+  (pretty-print-extend-style-table #f
+    '(define-proc)
+    '(define)))
 (define (format-rkt mes)
-  (pretty-format mes #:mode 'write))
+  (parameterize [(pretty-print-current-style-table mes-style-table)]
+    (pretty-format mes #:mode 'write)))
 
 (define (save-rkt path)
   (define (r f) (format-rkt (load-mes f)))
