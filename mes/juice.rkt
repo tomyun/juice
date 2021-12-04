@@ -86,12 +86,12 @@
   (define h (make-hash))
   (define (remember d) (hash-update! h d add1 0))
   (for ([p paths])
-    (map remember (extract (file->value p)))
+    (map remember (remove-duplicates (extract (file->value p))))
     (display ".")
     (flush-output))
   (displayln "")
 
-  ;; find out common procs shared more than once
+  ;; find out common procs shared more than once in multiple files
   (define procs
     (for/hash ([(k v) (in-hash h)] #:when (> v 1))
       (match-define `(define-proc ,n ,b) k)
