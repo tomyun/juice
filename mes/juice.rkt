@@ -115,8 +115,8 @@
 
 (define mes-style-table
   (pretty-print-extend-style-table #f
-    '(define-proc)
-    '(define)))
+    '(define-proc if-else set-arr~ set-arr~b set-reg: set-reg:: set-var)
+    '(define      if      send     send      set!     set!      set!)))
 (define (format-rkt mes)
   (parameterize [(pretty-print-current-style-table mes-style-table)]
     (pretty-format mes #:mode 'write)))
