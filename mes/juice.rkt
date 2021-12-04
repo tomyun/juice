@@ -95,9 +95,10 @@
   (define procs
     (for/hash ([(k v) (in-hash h)] #:when (> v 1))
       (match-define `(define-proc ,n ,b) k)
+      (define c (build-mes-source k))
       (define f (format "_proc_~a_~a"
                         n
-                        (bytes->hex-string (integer->integer-bytes (equal-hash-code k) 8 #t))))
+                        (bytes->hex-string (integer->integer-bytes (equal-hash-code c) 8 #t))))
       (save-proc-rkt f k)
       (values k (format "~a.rkt" f))))
 
