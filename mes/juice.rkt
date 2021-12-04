@@ -113,16 +113,19 @@
   (for ([p paths])
     (save-patched-rkt p (patch (file->value p)))))
 
+(define (format-rkt mes)
+  (pretty-format mes #:mode 'write))
+
 (define (save-rkt path)
-  (define (r f) (pretty-format (load-mes f) #:mode 'write))
+  (define (r f) (format-rkt (load-mes f)))
   (save path ".mes" ".rkt" r display 'b-green))
 
 (define (save-proc-rkt name mes)
-  (define (r f) (pretty-format mes #:mode 'write))
+  (define (r f) (format-rkt mes))
   (save name "" ".rkt" r display 'b-magenta))
 
 (define (save-patched-rkt path mes)
-  (define (r f) (pretty-format mes #:mode 'write))
+  (define (r f) (format-rkt mes))
   (save path ".rkt" ".rkt" r display 'b-cyan))
 
 (define (save-mes path)
