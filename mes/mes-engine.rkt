@@ -18,13 +18,17 @@
 
 (define (build-mes path)
   (define src (file->value path))
+  (build-mes-source src))
+
+(define (build-mes-source src)
   (define engine
     (match src
       [`(mes (meta (engine ',e) ,m ...) ,r ...) e]
       [a                                       (cfg:engine)]))
   (match engine
-    ['AI1 (ai1:build-mes path)]
-    ['AI5 (ai5:build-mes path)]))
+    ['AI1 (ai1:build-mes-source src)]
+    ['AI5 (ai5:build-mes-source src)]))
 
 (provide load-mes
-         build-mes)
+         build-mes
+         build-mes-source)
