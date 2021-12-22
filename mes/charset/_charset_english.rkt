@@ -31,6 +31,8 @@
  #\ 
  #\〞
  #\〟)
+; disable mapping for box-drawing characters
+;(charset* 11 4 ..)
 (charset* 11 80
  #\´ #\¨
  #\‘ #\“
