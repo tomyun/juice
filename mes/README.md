@@ -1,6 +1,6 @@
 # Juice
 
-Juice is a command line utility for parsing MES script used in most games developed by Elf and Silky's in 90s. It can decompile MES bytecodes into a textual source format and then compile it back to bytecodes. By allowing code modification at the source level, the tool is well suited for producing language translation patches for these games. Juice is currently compatible with AI5 engine. AI4 engine is also supported with a little caveat.
+Juice is a command line utility for parsing MES script used in most games developed by Elf and Silky's in 90s. It can decompile MES bytecodes into a textual source format and then compile it back to bytecodes. By allowing code modification at the source level, the tool is well suited for producing language translation patches for these games. Juice primarily targets for AI5 engine, but also supports AI1, AI2, and AI4 engines.
 
 ## How to use
 
@@ -40,21 +40,31 @@ $ ./juice -D *.MES.rkt
 
 Then for compiling, you'd need to run `juice -c *.MES.rkt.rkt` (note extension) to pick up deduplicated source files. Resulting MES.rkt.rkt.mes file should be identical to non-deduplicated products of MES.rkt.mes as well as the original MES file.
 
-## Options
+## Arguments
 
 Type `juice -h` to see a list of available commands and options.
 
-- `--version`, `-v` : show version
-- `--force`, `-f`   : force overwrite output files
-- `--engine <e>`    : engine type (**AI5**, AI1)
-- `--charset <c>`   : charset encoding (**pc98**, english, europe, korean-..)
-- `--dictbase <b>`  : [AI5] dictionary base (**80**, D0)
-- `--extraop`       : [AI5] support incompatible opcodes found in some games
-- `--no-decode`     : *{decompile}* skip SJIS character decoding
-- `--no-resolve`    : *{decompile}* skip cmd/sys name resolution
-- `--protag <p>`    : *{decompile}* proc/call(s) fused in text (*none*, all, 0, 3, Z, ..)
-- `--wordwrap <w>`  : *{compile}* threshold for word wrapping
-- `--no-compress`   : *{compile}* skip text compression with dict
+### Commands
+
+- `--decompile`, `-d`      : decompile MES bytecode into rkt source
+- `--deduplicate`, `-D`    : deduplicate common procs in rkt source
+- `--compile`, `-c`        : compile rkt source into MES bytecode
+- `--show-preset`, `-P`    : show supported presets
+- `--version`, `-v`        : show version
+
+### Options
+
+- `--force`, `-f`          : force overwrite output files
+- `--preset <p>`, `-p <p>` : preset for a specific game; see `--show-preset`
+- `--engine <e>`           : engine type (**AI5**, AI1)
+- `--charset <c>`          : charset encoding (**pc98**, english, europe, korean-..)
+- `--dictbase <b>`         : [AI5] dictionary base (**80**, D0)
+- `--extraop`              : [AI5] support incompatible opcodes found in some games
+- `--no-decode`            : *{decompile}* skip SJIS character decoding
+- `--no-resolve`           : *{decompile}* skip cmd/sys name resolution
+- `--protag <p>`           : *{decompile}* proc/call(s) fused in text (*none*, all, 0, 3, Z, ..)
+- `--wordwrap <w>`         : *{compile}* threshold for word wrapping
+- `--no-compress`          : *{compile}* skip text compression with dict
 
 ## Guides
 
@@ -92,12 +102,22 @@ juice -cf *.MES.rkt.rkt
 
 ### Compatibility
 
+Juice primarily targets for AI5 engine, but also supports earlier engines like AI1, AI2, and AI4. In terms of bytecode structure, AI4 was pretty similar to AI5 with some notable differences like system variables mapping. AI1 and AI2 were earlier engines based on a completely different structure with limited functionality. By the way, there is no known game published based on AI3. Later engines, namely variations of AI5WIN, are not currently supported.
+
 While AI5 engine was often adapted specifically for each game release, an overall bytecode structure remained mostly unchanged. Yet, some later games had to make a questionable move and introduce an exception that a couple of new opcodes were laid out in a slightly different way. As the same opcodes were also used in earlier games, the tool needs an additional information to decide which instruction set it is currently trying to understand. Use `-extraop` option for games like Isaku and YU-NO. As the flag is stored in `meta` section, you don't have to repeat this in the remaining steps of workflow.
 
 ```
 juice -df --dictbase D0 --extraop *.MES
 juice -Df *.MES.rkt
 juice -cf *.MES.rkt.rkt
+```
+
+### Preset
+
+A preset is a known set of options required for decompiling a certain game. In the case of YU-NO example above, you can decompile scripts without fiddling with `--dictbase` and `--extraop` options, but instead giving the name of preset (`-p yuno`). A full list of supported presets are available via `--show-preset` or `-P` command.
+
+```
+juice -df -p yuno *.MES
 ```
 
 ### Text
@@ -173,7 +193,7 @@ In addition to that, by supplying a proper custom charset mapping, we can easily
 `(charset ..)` loads a predefined charset bundled with the tool. Currently, we have `pc98`, `english`, `europe`, and `korean-kk`.
 
 - `pc98`: SJIS encoding extended with several NEC PC-98 exclusive characters in row 12 and 13.
-- `english`: `pc98` extended with ASCII characters mapped to row 9 which was another PC-98 exclusive assigned for half-width ASCII. Requires no custom font.
+- `english`: `pc98` extended with additional mappings from row 9 to 11 utilizing PC-98 exclusive half-width characters. Requires no custom font.
 - `europe`: `pc98` extended with many combinations of diacritics mapped to row 48 and 49. Requires a custom font.
 - `korean-kk`: `pc98` extended with Korean syllables mapped to row 19. Used in Korean translation of Shangrlia 2, Jack, Elle, and YU-NO by K.K; Ushinawareta Rakuen, Dragon Knight 4, and Shangrlia by edenrock.
 - `korean-hannuri`: `pc98` extended with custom mapping used by Team Hannuri for Doukyuusei 1/2.
@@ -183,14 +203,29 @@ You can create a custom charset file, e.g., "_charset_chinese.rkt", yourself if 
 
 ```racket
 (charset "pc98")
+..
 (charset* 9 1
- #\! #\" #\# #\$ #\% #\& #\' #\( #\) #\* #\+ #\, #\- #\. #\/
+ #\! #\” #\# #\$ #\% #\& #\’ #\( #\) #\* #\+ #\, #\- #\. #\/
  #\0 #\1 #\2 #\3 #\4 #\5 #\6 #\7 #\8 #\9
  #\: #\; #\< #\= #\> #\? #\@
  #\A #\B #\C #\D #\E #\F #\G #\H #\I #\J #\K #\L #\M #\N #\O #\P #\Q #\R #\S #\T #\U #\V #\W #\X #\Y #\Z
- #\[ #\\ #\] #\^ #\_ #\`
+ #\[ #\¥ #\] #\^ #\_ #\`
  #\a #\b #\c #\d #\e #\f #\g #\h #\i #\j #\k #\l #\m #\n #\o #\p #\q #\r #\s #\t #\u #\v #\w #\x #\y #\z
- #\{ #\| #\} #\~)
+ #\{ #\| #\} #\¯)
+(charset* 10 1
+ #\。 #\「 #\」 #\、 #\・
+..)
+(charset* 11 2
+ #\〞 #\〟)
+(charset* 11 80
+ #\´ #\¨
+ #\‘ #\“
+ #\〔 #\〕
+ #\〈 #\〉
+ #\《 #\》
+ #\『 #\』
+ #\【 #\】
+ #\ｰ)
 (fontwidth 1)
 (char-space #\ )
 ```
@@ -211,7 +246,7 @@ Most of the time original games would assume each character occupies a full-widt
 (set-arr~ @ 21 (+ 512 16))
 ```
 
-`@` is a name of array containing system variables. The system variable whose index is `21` stores font width and height. Each system variable is two bytes (one word) wide. The first byte stores font height in pixel unit. The second byte stores font width in the unit of "character" which takes 8 pixels horizontally. In the example above, `16` is font height and `512` (= 2 << 8) corresponds to font width. Font width of `2` characters here indicates double space. What we need is to change that `2` into `1` for getting a narrow font width like this.
+`@` is a name of array containing system variables. In AI5 engine, the system variable whose index is `21` stores font width and height. Each system variable is two bytes (one word) wide. The first byte stores font height in pixel unit. The second byte stores font width in the unit of "character" which takes 8 pixels horizontally. In the example above, `16` is font height and `512` (= 2 << 8) corresponds to font width. Font width of `2` characters here indicates double space. What we need is to change that `2` into `1` for getting a narrow font width like this.
 
 ```racket
 ;; set up narrow spacing
@@ -228,6 +263,8 @@ You may put this code above before a paragraph of translated texts. At the end o
 ```
 
 Chances are original scripts already have that wide font setting code all over the place, especially at the beginning of each scene. Sometimes this code would be contained in a common procedure defined in other script files. As it'd wise to keep changes in original instructions small as possible to avoid unexpected results, take a look at common files such as `START1.MES` to see how the game lays out initialization code. Version control with Git would be highly recommended for keeping track of any changes introduced during the project.
+
+Note that AI4 engine uses `@ 12` instead of `@ 21` for controlling font width. Unfortunately, earlier engines like AI1 and AI2 do not support font width adjustment via system variable.
 
 ### Word Wrap
 
@@ -290,4 +327,4 @@ The syntax used in source file came from underlying Racket language. Enabling sy
 
 If you have any questions, please come to #pc-98_translation_discussion channel on PC-9800 Series Central Discord.
 
-Last edited: 2021-07-04
+Last edited: 2021-12-22
