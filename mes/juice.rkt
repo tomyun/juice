@@ -14,13 +14,14 @@
 (require "mes-config.rkt")
 (require "mes-engine.rkt")
 
+(define title "juice")
 (define version "v0.0.6+20211222")
 (define command (make-parameter null))
 (define exists (make-parameter 'error))
 
 (define filenames
   (command-line
-   #:program "juice"
+   #:program title
    #:once-any
    [("--decompile" "-d")   "decompile MES bytecode into rkt source"
                            (command 'decompile)]
@@ -159,5 +160,5 @@
  ['deduplicate (deduplicate)]
  ['compile     (work compile)]
  ['preset      (show-preset)]
- ['version     (displayln (format "juice ~a by tomyun" version))]
- [else         (displayln "type `juice -h` for help")])
+ ['version     (displayln (format "~a ~a by tomyun" title version))]
+ [else         (displayln (format "type `~a -h` for help" title))])
