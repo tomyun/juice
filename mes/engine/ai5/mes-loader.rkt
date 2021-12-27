@@ -19,6 +19,7 @@
   (fuse (resolve (lower r)) dict))
 
 (define (load-mes-snippet h [p p:<mes>])
+  (charset (cfg:charset))
   (parse-result (parser p) (open-mes-snippet h)))
 
 (define (lower l)
