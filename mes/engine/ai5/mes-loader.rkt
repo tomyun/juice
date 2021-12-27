@@ -22,6 +22,10 @@
   (charset (cfg:charset))
   (parse-result (parser p) (open-mes-snippet h)))
 
+(define (load-mes-snippet* h [p p:stmts])
+  (define r (load-mes-snippet h p))
+  `(<*> ,@(fuse-text (lower r))))
+
 (define (lower l)
   (define (: x)
     (match x
@@ -317,4 +321,5 @@
     [`(mes ,r ...) `(mes (meta ,@m) ,@r)]))
 
 (provide load-mes
-         load-mes-snippet)
+         load-mes-snippet
+         load-mes-snippet*)
