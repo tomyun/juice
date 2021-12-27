@@ -9,6 +9,7 @@
 
 ;; config
 
+(define cfg:preset    (make-parameter #f))
 (define cfg:engine    (make-parameter 'AI5))
 (define cfg:charset   (make-parameter "pc98"))
 (define cfg:char-space   (make-parameter #\u3000))
@@ -25,7 +26,8 @@
 (define cfg:wordwrap  (make-parameter #f))
 (define cfg:compress  (make-parameter #t))
 
-(provide cfg:engine
+(provide cfg:preset
+         cfg:engine
          cfg:charset
          cfg:char-space
          cfg:char-newline
@@ -84,6 +86,7 @@
     (displayln (format " : ~a" d))))
 
 (define (use-preset p)
+  (cfg:preset p)
   (match (string-downcase p)
     ;["angel"   (cfg:engine 'AI1)]
     ["aishi"   (void)]
