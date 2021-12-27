@@ -18,6 +18,7 @@
 (define cfg:char-continue (make-parameter #\＠))
 (define cfg:char-break    (make-parameter #\＃))
 (define cfg:fontwidth (make-parameter 2))
+(define cfg:usedict   (make-parameter #t))
 (define cfg:dictbase  (make-parameter #x80))
 (define cfg:extraop   (make-parameter #f))
 (define cfg:decode    (make-parameter #t))
@@ -34,6 +35,7 @@
          cfg:char-continue
          cfg:char-break
          cfg:fontwidth
+         cfg:usedict
          cfg:dictbase
          cfg:extraop
          cfg:decode

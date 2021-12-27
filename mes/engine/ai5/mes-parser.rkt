@@ -42,7 +42,8 @@
 
 (define (lex-chr c1 c2)
   (define i (map char->integer `(,c1 ,c2)))
-  (define m (match i [`(,a ,b) `(,(+ a #x20) ,b)]))
+  (define o (if (cfg:usedict) #x20 0))
+  (define m (match i [`(,a ,b) `(,(+ a o) ,b)]))
   `(chr-raw ,@m))
 
 (define (lex-dic c d) `(dic ,(- (char->integer c) d)))
@@ -83,13 +84,20 @@
 (define TERM0 ($list 'term0 (<or> (char #\u2D) (char #\u2F))))
 (define NUM0  (:% (c <- (char-between #\u30 #\u3F)) (return (lex-num0 c))))
 (define VAR   ($list 'var (char-between #\u40 #\u5A)))
-(define CHR   (:% (d  <- (getState 'dictbase))
-                  (c1 <- (char-between #\u60 (integer->char (sub1 d))))
+(define CHR   (:% (d? <- (getState 'usedict))
+                  (d  <- (getState 'dictbase))
+                  (c1 <- (if d?
+                           (char-between #\u60 (integer->char (sub1 d)))
+                           (char-between #\u80 #\uFF)))
                   ;(c2 <- (char-between #\u40 #\uFC))
                   (c2 <- $anyChar) ;HACK: irregular SJIS code used by korean-hannuri charset
                   (return (lex-chr c1 c2))))
-(define DIC   (:% (d <- (getState 'dictbase))
-                  (c <- (char-between (integer->char d) #\uFF)) (return (lex-dic c d))))
+(define DIC   (:% (d? <- (getState 'usedict))
+                  (d  <- (getState 'dictbase))
+                  (c  <- (if d?
+                           (char-between (integer->char d) #\uFF)
+                           (err "dictionary is disabled!")))
+                  (return (lex-dic c d))))
 
 ;; parser
 
@@ -139,7 +147,8 @@
 (define <mes> ($cons 'mes (:~ (~> stmts) (optional END) (optional $eof)))) ; many inconsistent endings
 
 (define (parser [p <mes>])
-  (:% (withState (['dictbase (cfg:dictbase)]
+  (:% (withState (['usedict (cfg:usedict)]
+                  ['dictbase (cfg:dictbase)]
                   ['extraop (cfg:extraop)])
        p)))
 

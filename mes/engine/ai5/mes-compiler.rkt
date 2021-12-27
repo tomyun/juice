@@ -167,7 +167,7 @@
   (map integer->char
        (if (and (cfg:compress) c0)
            `(,(+ c0 (cfg:dictbase)))
-           `(,(- c1 #x20) ,c2))))
+           `(,(- c1 (if (cfg:usedict) #x20 0)) ,c2))))
 
 (define (text-wrap l w)
   (define (rearrange l)
