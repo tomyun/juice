@@ -33,8 +33,8 @@
 (define (charset* k t . l)
   (for ([c l]
         [i (range (length l))])
-    (define j (sjis (+ k (quotient (+ (sub1 t) i) 94))
-                    (add1 (remainder (+ (sub1 t) i) 94))))
+    (define j (kuten->sjis `(,(+ k (quotient (+ (sub1 t) i) 94))
+                             ,(add1 (remainder (+ (sub1 t) i) 94)))))
     (charset!! j c))
   '())
 (define (charset** k t . l) (apply charset* k t (flatten (map string->list l))))
@@ -79,7 +79,8 @@
   (define c2 (bitwise-and i #x00FF))
   `(,c1 ,c2))
 
-(define (sjis k t)
+(define (kuten->sjis kt)
+  (match-define `(,k ,t) kt)
   (define s1 (cond [(<=  1 k 62) (floor (/ (+ k 257) 2))]
                    [(<= 63 k 94) (floor (/ (+ k 385) 2))]))
   (define s2 (cond [(even? k)    (+ t 158)]
@@ -87,7 +88,8 @@
                    [(<= 64 t 94) (+ t 64)]))
   `(,s1 ,s2))
 
-(define (jis s1 s2)
+(define (sjis->kuten l)
+  (match-define `(,s1 ,s2) l)
   (define i (if (<= s2 #x9E) 0 1))
   (define k (+ i (cond [(<= #x81 s1 #x9F)                 (- (* s1 2) 257)]
                        [(<= #xE0 s1 #xEF)                 (- (* s1 2) 385)]
@@ -100,7 +102,7 @@
 
 ;;HACK: check if SJIS code pointing to ASCII chars in section 9 - 15 (PC-98 exclusive)
 (define (sjis-nonstandard? l)
-  (match-define `(,k ,t) (apply jis l))
+  (match-define `(,k ,t) (sjis->kuten l))
   (<= 9 k 15))
 
 (define (sjis-regular? l)
@@ -125,8 +127,8 @@
          char->sjis
          sjis->integer
          integer->sjis
-         sjis
-         jis
+         kuten->sjis
+         sjis->kuten
          char-space
          char-newline
          fontwidth)
