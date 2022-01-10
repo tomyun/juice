@@ -70,14 +70,8 @@
       (define j (bytes->list b))
       (if (sjis-regular? j) j (error (format "SJIS decoding error: ~v => ~a" c j))))))
 
-(define (sjis->integer l)
-  (match-define `(,c1 ,c2) l)
-  (+ (arithmetic-shift c1 8) c2))
-
-(define (integer->sjis i)
-  (define c1 (arithmetic-shift (bitwise-and i #xFF00) -8))
-  (define c2 (bitwise-and i #x00FF))
-  `(,c1 ,c2))
+(define (sjis->integer l) (word->integer l))
+(define (integer->sjis i) (integer->word i))
 
 (define (kuten->sjis kt)
   (match-define `(,k ,t) kt)
@@ -108,8 +102,17 @@
   (match-define `(,j1 ,j2) j)
   `(,(- j1 #x20) ,(- j2 #x20)))
 
-(define (jis->integer j) (sjis->integer j))
-(define (integer->jis i) (integer->sjis i))
+(define (jis->integer j) (word->integer j))
+(define (integer->jis i) (integer->word i))
+
+(define (word->integer l)
+  (match-define `(,c1 ,c2) l)
+  (+ (arithmetic-shift c1 8) c2))
+
+(define (integer->word i)
+  (define c1 (arithmetic-shift (bitwise-and i #xFF00) -8))
+  (define c2 (bitwise-and i #x00FF))
+  `(,c1 ,c2))
 
 ;;HACK: check if SJIS code pointing to ASCII chars in section 9 - 15 (PC-98 exclusive)
 (define (sjis-nonstandard? l)
