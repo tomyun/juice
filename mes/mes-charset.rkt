@@ -100,6 +100,17 @@
                        [else                              #f]))
   `(,k ,t))
 
+(define (kuten->jis kt)
+  (match-define `(,k ,t) kt)
+  `(,(+ k #x20) ,(+ t #x20)))
+
+(define (jis->kuten j)
+  (match-define `(,j1 ,j2) j)
+  `(,(- j1 #x20) ,(- j2 #x20)))
+
+(define (jis->integer j) (sjis->integer j))
+(define (integer->jis i) (integer->sjis i))
+
 ;;HACK: check if SJIS code pointing to ASCII chars in section 9 - 15 (PC-98 exclusive)
 (define (sjis-nonstandard? l)
   (match-define `(,k ,t) (sjis->kuten l))
@@ -129,6 +140,10 @@
          integer->sjis
          kuten->sjis
          sjis->kuten
+         kuten->jis
+         jis->kuten
+         jis->integer
+         integer->jis
          char-space
          char-newline
          fontwidth)
