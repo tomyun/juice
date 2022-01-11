@@ -70,7 +70,7 @@
       (define j (bytes->list b))
       (if (sjis-regular? j) j (error (format "SJIS decoding error: ~v => ~a" c j))))))
 
-(define (sjis->integer l) (word->integer l))
+(define (sjis->integer j) (word->integer j))
 (define (integer->sjis i) (integer->word i))
 
 (define (kuten->sjis kt)
@@ -82,8 +82,8 @@
                    [(<= 64 t 94) (+ t 64)]))
   `(,s1 ,s2))
 
-(define (sjis->kuten l)
-  (match-define `(,s1 ,s2) l)
+(define (sjis->kuten j)
+  (match-define `(,s1 ,s2) j)
   (define i (if (<= s2 #x9E) 0 1))
   (define k (+ i (cond [(<= #x81 s1 #x9F)                 (- (* s1 2) 257)]
                        [(<= #xE0 s1 #xEF)                 (- (* s1 2) 385)]
@@ -115,18 +115,18 @@
   `(,c1 ,c2))
 
 ;;HACK: check if SJIS code pointing to ASCII chars in section 9 - 15 (PC-98 exclusive)
-(define (sjis-nonstandard? l)
-  (match-define `(,k ,t) (sjis->kuten l))
+(define (sjis-nonstandard? j)
+  (match-define `(,k ,t) (sjis->kuten j))
   (<= 9 k 15))
 
-(define (sjis-regular? l)
-  (match-define `(,s1 ,s2) l)
+(define (sjis-regular? j)
+  (match-define `(,s1 ,s2) j)
   (and (or (<= #x81 s1 #x9F)
            (<= #xE0 s1 #xEF))
        (or (<= #x40 s2 #x7E)
            (<= #x80 s2 #x9E)
            (<= #x9F s2 #xFC))))
-(define (sjis-irregular? l) (not (sjis-regular? l)))
+(define (sjis-irregular? j) (not (sjis-regular? j)))
  
 (define (char-space c) (cfg:char-space c))
 (define (char-newline c) (cfg:char-newline c)  (charset!! (char->sjis c) #\newline))
