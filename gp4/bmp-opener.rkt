@@ -37,13 +37,13 @@
 
 (define (open-bmp-bytes b)
   (bit-string-case b
-     ;; Bitmap file header
+     ;; Bitmap file header (14 bytes)
    ([(id                     :: binary bytes 2)
      (file-size              :: little-endian integer bytes 4)
      (reserve1               :: little-endian integer bytes 2)
      (reserve2               :: little-endian integer bytes 2)
      (offset                 :: little-endian integer bytes 4)
-     ;; DIB header
+     ;; DIB header (40 bytes)
      (info-size              :: little-endian integer bytes 4)
      (width                  :: little-endian integer bytes 4)
      (height                 :: little-endian integer bytes 4)
@@ -57,8 +57,12 @@
      (important-colors-count :: little-endian integer bytes 4)
      ;; Color table
      (palette                :: binary bytes (bmp-palette-size colors-count))
+     ;; Gap
+     (gap1                   :: binary bytes (- offset 14 40 (bmp-palette-size colors-count)))
      ;; Pixel Storage
-     (pixels                 :: binary bytes (* (bmp-row-size bits-per-pixel width) height))] ; image-size might be zero
+     (pixels                 :: binary bytes (* (bmp-row-size bits-per-pixel width) height)) ; image-size might be zero
+     ;; Gap
+     (gap2                   :: binary bytes (apply - `(,(bytes-length b) 14 40 ,@(map (compose bytes-length bit-string->bytes) `(,palette ,gap1 ,pixels)))))]
     (cond
      [(not (= info-size 40))     (error (format "Unsupported DIB header size: ~a" info-size))]
      [(not (= bits-per-pixel 4)) (error (format "Unsupported bits per pixel: ~a" bits-per-pixel))]
