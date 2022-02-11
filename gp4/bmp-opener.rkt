@@ -17,7 +17,7 @@
 (define (bmp-row-size bpp w)
   (* (ceiling (/ (* bpp w) 32)) 4))
  
-(define (bit-string->bmp-data b bpp w)
+(define (bit-string->bmp-data b bpp w [n 16])
   (define l (bytes->list (bit-string->bytes b)))
   (define z (bmp-row-size bpp w))
   (define (unpack v i)
@@ -29,11 +29,15 @@
     (for/list ([i (in-range n)]) (unpack v i)))
   (define (scan r)
     (take (flatten (map split r)) w))
+  (define (check c)
+    (if (< c n)
+      c
+      (error (format "Unsupported color index: ~a (>= ~a)" c n))))
   (define (: l)
     (match l
      ['() '()]
      [_   `(,(scan (take l z)) ,@(: (drop l z)))]))
-  (flatten (reverse (: l))))
+  (map check (flatten (reverse (: l)))))
 
 (define (open-bmp-bytes b)
   (bit-string-case b
