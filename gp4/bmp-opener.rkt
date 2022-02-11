@@ -38,7 +38,7 @@
 (define (open-bmp-bytes b)
   (bit-string-case b
      ;; Bitmap file header (14 bytes)
-   ([(id                     :: binary bytes 2)
+   ([(= #"BM"                :: binary bytes 2)
      (file-size              :: little-endian integer bytes 4)
      (reserve1               :: little-endian integer bytes 2)
      (reserve2               :: little-endian integer bytes 2)
