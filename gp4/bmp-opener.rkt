@@ -3,6 +3,9 @@
 (require bitsyntax)
 (require 2htdp/image)
 
+(define (bmp-palette-size n)
+  (* 4 n))
+
 (define (bit-string->bmp-pal b)
   (define l (bytes->list (bit-string->bytes b)))
   (define (: l)
@@ -53,7 +56,7 @@
      (colors-count           :: little-endian integer bytes 4)
      (important-colors-count :: little-endian integer bytes 4)
      ;; Color table
-     (palette                :: binary bytes (* 4 colors-count))
+     (palette                :: binary bytes (bmp-palette-size colors-count))
      ;; Pixel Storage
      (pixels                 :: binary bytes (* (bmp-row-size bits-per-pixel width) height))] ; image-size might be zero
     (cond
