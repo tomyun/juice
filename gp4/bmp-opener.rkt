@@ -55,7 +55,7 @@
      ;; Color table
      (pallette               :: binary bytes (* 4 colors-count))
      ;; Pixel Storage
-     (pixels                 :: binary bytes image-size)]
+     (pixels                 :: binary bytes (* (bmp-row-size bits-per-pixel width) height))] ; image-size might be zero
     (cond
      [(not (= info-size 40))     (error (format "Unsupported DIB header size: ~a" info-size))]
      [(not (= bits-per-pixel 4)) (error (format "Unsupported bits per pixel: ~a" bits-per-pixel))]
