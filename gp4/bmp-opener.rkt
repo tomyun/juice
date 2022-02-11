@@ -53,7 +53,7 @@
      (colors-count           :: little-endian integer bytes 4)
      (important-colors-count :: little-endian integer bytes 4)
      ;; Color table
-     (pallette               :: binary bytes (* 4 colors-count))
+     (palette                :: binary bytes (* 4 colors-count))
      ;; Pixel Storage
      (pixels                 :: binary bytes (* (bmp-row-size bits-per-pixel width) height))] ; image-size might be zero
     (cond
@@ -62,7 +62,7 @@
      [(not (= compression 0))    (error (format "Unsupported compression method: ~a" compression))]
      [(not (= colors-count 16))  (error (format "Unsupported number of colors: ~a" colors-count))]
      [else                       (list 'BMP width height
-                                            (bit-string->bmp-pal pallette)
+                                            (bit-string->bmp-pal palette)
                                             (bit-string->bmp-data pixels bits-per-pixel width))]))))
 
 (define (load-bytes path) (port->bytes (open-input-file path)))
