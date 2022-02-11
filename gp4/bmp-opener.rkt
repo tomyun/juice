@@ -65,9 +65,7 @@
      (gap2                   :: binary bytes (apply - `(,(bytes-length b) 14 40 ,@(map (compose bytes-length bit-string->bytes) `(,palette ,gap1 ,pixels)))))]
     (cond
      [(not (= info-size 40))     (error (format "Unsupported DIB header size: ~a" info-size))]
-     [(not (= bits-per-pixel 4)) (error (format "Unsupported bits per pixel: ~a" bits-per-pixel))]
      [(not (= compression 0))    (error (format "Unsupported compression method: ~a" compression))]
-     [(not (= colors-count 16))  (error (format "Unsupported number of colors: ~a" colors-count))]
      [else                       (list 'BMP width height
                                             (bit-string->bmp-pal palette)
                                             (bit-string->bmp-data pixels bits-per-pixel width))]))))
