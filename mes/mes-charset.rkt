@@ -44,11 +44,40 @@
 (define (charset-ref-sjis j) (hash-ref charset-sjis->char j))
 (define (charset-ref-char c) (hash-ref charset-char->sjis c))
 
+(define (char-sjis->char-utf8 c)
+  (integer-sjis->char-utf8 (char->integer c)))
+
+(define (integer-sjis->char-utf8 i)
+  (define b (integer->integer-bytes i 2 #f #t))
+  (read-char (reencode-input-port (open-input-bytes b) "sjis" (bytes) #t)))
+
+(define (sjis->char-utf8 j)
+  (integer-sjis->char-utf8 (sjis->integer j)))
+
+(define (char-utf8->char-sjis c)
+  (integer->integer-bytes (char-utf8->integer-sjis c) 2 #f #t))
+
+(define (char-utf8->integer-sjis c)
+  (define j (char-utf8->sjis c))
+  (match-define `(,j1 ,j2) j)
+  (+ (* j1 #x100) j2))
+
+(define (char-utf8->sjis c)
+  (let* ([s  (string c)]
+         [n8 (string-utf-8-length s)]
+         [b8 (string->bytes/utf-8 s)]
+         [b  (make-bytes 2)]
+         [t  (bytes-open-converter "utf-8" "sjis")])
+      ;; avoid iconv issue: https://github.com/racket/racket/issues/3876
+      (bytes-convert t b8 0 n8 b 0 2)
+      (bytes-convert-end t b)
+      (bytes-close-converter t)
+      (bytes->list b)))
+
 (define (sjis->char j)
   (if (charset-has-sjis? j)
     (charset-ref-sjis j)
-    (let* ([b (integer->integer-bytes (sjis->integer j) 2 #f #t)]
-           [c (read-char (reencode-input-port (open-input-bytes b) "sjis" (bytes) #t))])
+    (let ([c (sjis->char-utf8 j)])
       (if (or (sjis-irregular? j)
               (sjis-nonstandard? j)
               (eof-object? c))
@@ -58,16 +87,7 @@
 (define (char->sjis c)
   (if (charset-has-char? c)
     (charset-ref-char c)
-    (let* ([s  (string c)]
-           [n8 (string-utf-8-length s)]
-           [b8 (string->bytes/utf-8 s)]
-           [b  (make-bytes 2)]
-           [t  (bytes-open-converter "utf-8" "sjis")])
-      ;; avoid iconv issue: https://github.com/racket/racket/issues/3876
-      (bytes-convert t b8 0 n8 b 0 2)
-      (bytes-convert-end t b)
-      (bytes-close-converter t)
-      (define j (bytes->list b))
+    (let ([j (char-utf8->sjis c)])
       (if (sjis-regular? j) j (error (format "SJIS decoding error: ~v => ~a" c j))))))
 
 (define (sjis->integer j) (word->integer j))
