@@ -97,9 +97,11 @@
 
 (define (kuten->sjis kt)
   (match-define `(,k ,t) kt)
-  (define j1 (cond [(<=  1 k 62) (floor (/ (+ k 257) 2))]
+  (define j1 (cond [(= k 0)      0]
+                   [(<=  1 k 62) (floor (/ (+ k 257) 2))]
                    [(<= 63 k 94) (floor (/ (+ k 385) 2))]))
-  (define j2 (cond [(even? k)    (+ t 158)]
+  (define j2 (cond [(= k 0)      0]
+                   [(even? k)    (+ t 158)]
                    [(<=  1 t 63) (+ t 63)]
                    [(<= 64 t 94) (+ t 64)]))
   `(,j1 ,j2))
