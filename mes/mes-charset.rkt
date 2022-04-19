@@ -107,13 +107,14 @@
 (define (sjis->kuten j)
   (match-define `(,j1 ,j2) j)
   (define i (if (<= j2 #x9E) 0 1))
-  (define k (+ i (cond [(<= #x81 j1 #x9F)                 (- (* j1 2) 257)]
-                       [(<= #xE0 j1 #xEF)                 (- (* j1 2) 385)]
-                       [else                              #f])))
-  (define t      (cond [(and (odd? k)  (<= #x40 j2 #x7E)) (- j2 63)]
-                       [(and (odd? k)  (<= #x80 j2 #x9E)) (- j2 64)]
-                       [(and (even? k) (<= #x9F j2 #xFC)) (- j2 158)]
-                       [else                              #f]))
+  (define k (cond [(<= #x81 j1 #x9F)                 (+ i (- (* j1 2) 257))]
+                  [(<= #xE0 j1 #xEF)                 (+ i (- (* j1 2) 385))]
+                  [else                              0]))
+  (define t (cond [(= k 0)                           0]
+                  [(and (odd? k)  (<= #x40 j2 #x7E)) (- j2 63)]
+                  [(and (odd? k)  (<= #x80 j2 #x9E)) (- j2 64)]
+                  [(and (even? k) (<= #x9F j2 #xFC)) (- j2 158)]
+                  [else                              0]))
   `(,k ,t))
 
 (define (kuten->jis kt)
@@ -143,11 +144,14 @@
 
 (define (sjis-regular? j)
   (match-define `(,j1 ,j2) j)
-  (and (or (<= #x81 j1 #x9F)
-           (<= #xE0 j1 #xEF))
-       (or (<= #x40 j2 #x7E)
-           (<= #x80 j2 #x9E)
-           (<= #x9F j2 #xFC))))
+  (match-define `(,k  ,t)  (sjis->kuten j))
+  (or (and (<= #x20 j1 #x7E) (= j2 0)) ; ASCII
+      (and (<= #xA1 j1 #xDF) (= j2 0)) ; Katakana
+      (and (or (<= #x81 j1 #x9F)
+               (<= #xE0 j1 #xEF))
+           (or (and (odd?  k) (or (<= #x40 j2 #x7E)
+                                  (<= #x80 j2 #x9E)))
+               (and (even? k) (<= #x9F j2 #xFC))))))
 (define (sjis-irregular? j) (not (sjis-regular? j)))
  
 (define (char-space c) (cfg:char-space c))
