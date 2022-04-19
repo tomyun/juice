@@ -47,21 +47,34 @@
 (define (char-sjis->char-utf8 c)
   (integer-sjis->char-utf8 (char->integer c)))
 
+(define (bytes-sjis->char-utf8 b)
+  (define j (bytes->list b))
+  (sjis->char-utf8 j))
+
 (define (integer-sjis->char-utf8 i)
   (define n (if (<= i #xFF) 1 2))
   (define b (integer->integer-bytes i n #f #t))
   (read-char (reencode-input-port (open-input-bytes b) "sjis" (bytes) #t)))
 
 (define (sjis->char-utf8 j)
-  (integer-sjis->char-utf8 (sjis->integer j)))
-
-(define (char-utf8->char-sjis c)
-  (integer->integer-bytes (char-utf8->integer-sjis c) 2 #f #t))
+  (integer-sjis->char-utf8 (sjis->integer-sjis j)))
 
 (define (char-utf8->integer-sjis c)
-  (define j (char-utf8->sjis c))
-  (match-define `(,j1 ,j2) j)
-  (+ (* j1 #x100) j2))
+  (sjis->integer-sjis (char-utf8->sjis c)))
+
+(define (char-utf8->bytes-sjis c)
+  (define i (char-utf8->integer-sjis c))
+  (integer->bytes-sjis i))
+
+(define (integer->bytes-sjis i)
+  (define n (if (<= i #xFF) 1 2))
+  (integer->integer-bytes i n #f #t))
+
+;;TODO: confusing name (i.e. sjis->integer)
+(define (sjis->integer-sjis j)
+  (match j
+    [`(,j1  0)  j1]
+    [`(,j1 ,j2) (+ (* j1 #x100) j2)]))
 
 (define (char-utf8->sjis c)
   (let* ([s  (string c)]
@@ -91,6 +104,14 @@
     (charset-ref-char c)
     (let ([j (char-utf8->sjis c)])
       (if (sjis-regular? j) j (error (format "SJIS decoding error: ~v => ~a" c j))))))
+
+(define (char->sjis-bytes c)
+  (define j
+    (if (charset-has-char? c)
+        (charset-ref-char c)
+        (char-utf8->sjis c)))
+  (define i (sjis->integer-sjis j))
+  (integer->bytes-sjis i))
 
 (define (sjis->integer j) (word->integer j))
 (define (integer->sjis i) (integer->word i))
@@ -127,6 +148,7 @@
   (match-define `(,j1 ,j2) j)
   `(,(- j1 #x20) ,(- j2 #x20)))
 
+;;TODO: clean up (i.e. jis->integer-sjis)
 (define (jis->integer j) (word->integer j))
 (define (integer->jis i) (integer->word i))
 
@@ -165,8 +187,18 @@
 (provide charset
          charset*
          charset**
+         ;char-sjis->char-utf8
+         ;bytes-sjis->char-utf8
+         ;integer-sjis->char-utf8
+         ;sjis->char-utf8
+         ;char-utf8->integer-sjis
+         char-utf8->bytes-sjis
+         ;integer->bytes-sjis
+         sjis->integer-sjis
+         ;char-utf8->sjis
          sjis->char
          char->sjis
+         char->sjis-bytes
          sjis->integer
          integer->sjis
          kuten->sjis
