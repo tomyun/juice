@@ -187,7 +187,7 @@
       [x                      x]))
   (define (:: x)
     (define t (remove-duplicates (map car x)))
-    (if (equal? t '(chr))
+    (if (not (member 'chr-byte t))
         (list->string (map cadr x))
         (list->bytes  (map char->integer (map cadr (f x))))))
   (define (f x)
