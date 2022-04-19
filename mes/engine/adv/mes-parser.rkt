@@ -180,7 +180,7 @@
                   (return `(chrs! ,@l))))
 
 (define ARG (:% (char #\u22)
-                (l <- (manyTill (<any> cASCII cSJIS1 cBYTE) (char #\u22)))
+                (l <- (manyTill (<any> cASCII cSJIS1 cSJIS2 cBYTE) (char #\u22)))
                 (return `(arg ,@l))))
 
 (define NUM0 (:% (c <- (char-between #\u23 #\u27))
