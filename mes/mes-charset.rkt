@@ -48,7 +48,8 @@
   (integer-sjis->char-utf8 (char->integer c)))
 
 (define (integer-sjis->char-utf8 i)
-  (define b (integer->integer-bytes i 2 #f #t))
+  (define n (if (<= i #xFF) 1 2))
+  (define b (integer->integer-bytes i n #f #t))
   (read-char (reencode-input-port (open-input-bytes b) "sjis" (bytes) #t)))
 
 (define (sjis->char-utf8 j)
