@@ -70,7 +70,8 @@
          [b  (make-bytes 2)]
          [t  (bytes-open-converter "utf-8" "sjis")])
       ;; avoid iconv issue: https://github.com/racket/racket/issues/3876
-      (bytes-convert t b8 0 n8 b 0 2)
+      (let-values ([(nd ns r) (bytes-convert t b8 0 n8 b 0 2)])
+        (when (eq? r 'error) (error (format "SJIS conversion error: ~v" c))))
       (bytes-convert-end t b)
       (bytes-close-converter t)
       (bytes->list b)))
