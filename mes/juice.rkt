@@ -15,7 +15,7 @@
 (require "mes-engine.rkt")
 
 (define title "juice")
-(define version "v0.0.6+20211222")
+(define version "v0.0.7-DEV+20220419")
 (define command (make-parameter null))
 (define exists (make-parameter 'error))
 
