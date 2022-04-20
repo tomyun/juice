@@ -199,8 +199,7 @@
         ['br `(,STR-END ,(mes:text-break) ,STR-BEG)] ;TODO: handle empty STR
         [_   '()])))
 
-(define (mes:str-raw s)
-  (define i (string->number (symbol->string s)))
+(define (mes:str-raw i)
   (match-define `(,c1 ,c2) (integer->sjis i))
   (mes:chr-raw c1 c2))
 
