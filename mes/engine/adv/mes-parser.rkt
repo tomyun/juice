@@ -424,7 +424,9 @@
                   (s <- stmts)
                   (optional END) ;HACK: dangling END (marine/000012)
                   EOS
-                  (return `(seg ,c ,@s))))
+                  (return (if (equal? c '(?)) ;HACK: distinuish seg/seg* for better syntax highlighting
+                              `(seg*   ,@s)
+                              `(seg ,c ,@s)))))
 (define <mes> ($cons 'mes (:~ (~> (many1 seg)) EOM))) ; not always followed by $eof (PIA.INI)
 
 (define (parser [p <mes>])

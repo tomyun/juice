@@ -443,8 +443,10 @@
    [`(,(? char? a) ,l ... ,(? char? b)) (and (char=? a BEG) (char=? b END))]
    [_                                   #f]))
 
-(define (mes:seg . l) (flatten `(,l ,EOS)))
-(define (mes:mes . l) (flatten `(,l ,EOM)))
+(define (mes:seg  . l) (flatten `(,l ,EOS)))
+(define (mes:seg* . l) (flatten `(,l ,EOS)))
+
+(define (mes:mes  . l) (flatten `(,l ,EOM)))
 
 ;; state
 
