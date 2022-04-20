@@ -38,13 +38,13 @@
                            (exists 'replace)]
    [("--preset" "-p") p    "preset for a specific game; see `--show-preset`"
                            (use-preset p)]
-   [("--engine") e         "engine type (AI5*, AI1)"
+   [("--engine") e         "engine type (AI5*, AI1, ADV)"
                            (set-engine (string->symbol (string-upcase e)))]
    [("--charset") c        "charset encoding (pc98*, english, europe, korean-..)"
                            (cfg:charset c)]
    [("--dictbase") b       "[AI5] dictionary base (80*, D0)"
                            (cfg:dictbase (string->number b 16))]
-   [("--extraop")          "[AI5] support incompatible opcodes found in some games"
+   [("--extraop")          "[AI5/ADV] support newer opcodes found in later games"
                            (cfg:extraop #t)]
    [("--no-decode")        "{decompile} skip SJIS character decoding"
                            (cfg:decode #f)]
