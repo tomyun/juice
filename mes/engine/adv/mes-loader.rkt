@@ -157,8 +157,7 @@
 
 (define (fuse l)
   (define f
-    `(;,fuse-seg
-      ,fuse-arg
+    `(,fuse-arg
       ,fuse-str
       ,fuse-text
       ,fuse-text-break
@@ -169,15 +168,6 @@
       ,fuse-text-color
       ,fuse-meta))
   ((apply compose1 (reverse f)) l))
-
-;;TODO: remove
-(define (fuse-seg l)
-  (define (: x)
-    (match x
-      [`((seg (?) ,s ...) ,r ...)  `((seg ,@s) ,@(: r))]
-      [`(,a               ,r ...)  `(,(: a)    ,@(: r))]
-      [x                           x]))
-  (: l))
 
 (define (fuse-arg l)
   (define (: x)
