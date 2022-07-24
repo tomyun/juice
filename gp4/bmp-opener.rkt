@@ -74,7 +74,7 @@
                                             (bit-string->bmp-pal palette)
                                             (bit-string->bmp-data pixels bits-per-pixel width))]))))
 
-(define (load-bytes path) (port->bytes (open-input-file path)))
+(define (load-bytes path) (port->bytes (open-input-file path) #:close? #t))
 (define (open-bmp path) (open-bmp-bytes (load-bytes path)))
 
 (provide open-bmp-bytes

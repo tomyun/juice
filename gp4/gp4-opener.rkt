@@ -39,7 +39,7 @@
                (bit-string->gp4-pal pal)
                (bit-string->gp4-raw raw)))))
 
-(define (load-bytes path) (port->bytes (open-input-file path)))
+(define (load-bytes path) (port->bytes (open-input-file path) #:close? #t))
 (define (open-gp4 path) (open-gp4-bytes (load-bytes path)))
 
 (provide open-gp4-bytes
