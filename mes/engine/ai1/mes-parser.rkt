@@ -109,9 +109,11 @@
 (define cnd     (:: (~ CND) expr block))
 (define op-cnd1 (:% (a <- (try cnd))
                     (b <- (many (try (:~ CNT (~> cnd)))))
-                    (c <- (optional (<or> (:% CNT (<or> block             ; missing else in pp1/C1.MES
-                                                        (return '(<*>)))) ; dangling CNT with missing else in dk2/TOWER.MES
-                                          (:~ (~> block)))))              ; missing CNT in dk1/FLOOR4.MES
+                    ; the else branch exists only behind a CNT byte (AI2.EXE cs:05DC);
+                    ; a bare block after the chain is an ordinary statement that runs
+                    ; unconditionally, so it is NOT absorbed here (dk1/FLOOR4.MES)
+                    (c <- (optional (:~ CNT (~> (<or> block              ; missing else in pp1/C1.MES
+                                                      (return '(<*>))))))) ; dangling CNT with missing else in dk2/TOWER.MES
                     (return (cond [(and (empty? b) (empty? c)) `(if ,@a)]
                                   [(empty? b)                  `(if-else ,@a ,c)]
                                   [(empty? c)                  `(cond ,a ,@b)]
