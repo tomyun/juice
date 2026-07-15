@@ -151,6 +151,8 @@
                                  (char-between #\u80 #\uFC)))
                     (return (lex-chr-sjis2+ c1 c2))))
 
+(define cSJIS (<any> cSJIS1 (try cSJIS2) (try cSJIS2+)))
+
 ;; lexer
 
 (define REG*  (:% (c1 <- (char-between #\u00 #\u0F))
@@ -175,12 +177,12 @@
 (define SPC (char #\u20))
 
 (define CHRS! (:% (char #\u21)
-                  (l <- (manyTill (<any> cASCII cSJIS1 cSJIS2 cSJIS2+)
+                  (l <- (manyTill (<any> cASCII cSJIS)
                                   (<any> (char #\u00) (char #\uFF))))
                   (return `(chrs! ,@l))))
 
 (define ARG (:% (char #\u22)
-                (l <- (manyTill (<any> cASCII cSJIS1 cSJIS2 cBYTE) (char #\u22)))
+                (l <- (manyTill (<any> cASCII cSJIS cBYTE) (char #\u22)))
                 (return `(arg ,@l))))
 
 (define NUM0 (:% (c <- (char-between #\u23 #\u27))
