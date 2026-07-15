@@ -184,9 +184,14 @@
                                   (<any> (char #\u00) (char #\uFF))))
                   (return `(chrs! ,@l))))
 
+(define cARG (<any> cASCII cSJIS cBYTE))
+
 (define ARG (:% (char #\u22)
-                (l <- (manyTill (<any> cASCII cSJIS cBYTE) (char #\u22)))
+                (l <- (manyTill cARG (char #\u22)))
                 (return `(arg ,@l))))
+
+(define ARGZ (:% (l <- (many1Till cARG (char #\u00)))
+                 (return `(argz ,@l))))
 
 (define NUM0 (:% (c <- (char-between #\u23 #\u27))
                  (return (lex-num0 c))))
@@ -337,6 +342,12 @@
                                        (:- VAR NUM)))
                            (return `((cmd ,c) ,@p))))
 
+;HACK: unquoted NUL-terminated glob (dracula/D03DS)
+(define op-load-mem (:% (c <- (char #\uC8))
+                        (a <- ARG)
+                        (p <- (optional (<or> NUM ARGZ)))
+                        (return `((cmd ,c) (params ,a ,@(if (empty? p) '() `(,p)))))))
+
 (define op-CA (:% (c <- (char #\uCA))
                   (v <- VAR)
                   (n <- (many NUM)) ;HACK: not necessarily (times 3 NUM) (pia/MOVE31B)
@@ -388,6 +399,7 @@
                           op-if-when
                           op-branch-var
                           op-execute-var
+                          op-load-mem
                           (if x? op-CA $err)
                           op-sound
                           (if x? op-decrypt $err))))

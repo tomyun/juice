@@ -174,6 +174,7 @@
 (define (fuse-arg l)
   (define (: x)
     (match x
+      [`((argz ,c ...) ,r ...) `((argz ,(:: c)) ,@(: r))]
       [`((arg ,c ...) ,r ...) `(,(:: c) ,@(: r))]
       [`(,a           ,r ...) `(,(: a)  ,@(: r))]
       [x                      x]))

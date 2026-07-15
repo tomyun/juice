@@ -196,14 +196,21 @@
 
 ;; arg
 
-(define (mes:arg s)
+(define (arg->list s)
   (define b
     (match s
       ;;HACK: avoid char->sjis-bytes due to custom overrides (i.e. space)
       [(? string? s) (apply bytes-append (map char-utf8->bytes-sjis (string->list s)))]
       [(? bytes?  s) s]))
-  (define l (map integer->char (bytes->list b)))
+  (map integer->char (bytes->list b)))
+
+(define (mes:arg s)
+  (define l (arg->list s))
   `(,ARG ,@l ,ARG))
+
+(define (mes:argz s)
+  (define l (arg->list s))
+  `(,@l #\u00))
 
 ;; text
 
