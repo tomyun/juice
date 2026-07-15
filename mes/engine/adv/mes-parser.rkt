@@ -59,7 +59,10 @@
 ;;   `(var* ,name ,value ,mode))
 
 (define (integer->var i)
-  `(var ,(integer->char (+ (char->integer #\A) i))))
+  `(var ,(cond
+           [(< i 26) (integer->char (+ (char->integer #\A) i))]
+           [(< i 32) (integer->char (+ (char->integer #\a) (- i 26)))] ;HACK: a..f for 26..31 (doki/mai)
+           [else     i])))                                             ;HACK: fallback for junk index (xna)
 
 (define (lex-var c1 c2)
   (define l (list->bytes (map char->integer `(,c1 ,c2))))

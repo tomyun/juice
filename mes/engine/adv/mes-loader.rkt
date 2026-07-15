@@ -40,7 +40,9 @@
   (: l))
 
 (define (lower-var v)
-  (string->symbol (string v)))
+  (if (char? v)
+      (string->symbol (string v))
+      `(var ,v)))
 
 (define (lower-chr-ascii c)
   ;;HACK: handle modified ASCII characters

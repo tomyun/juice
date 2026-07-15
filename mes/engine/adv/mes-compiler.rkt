@@ -66,7 +66,11 @@
 ;; var
 
 (define (var->integer c)
-  (- (char->integer c) (char->integer #\A)))
+  (match c
+    [(? char?) (cond [(char<=? #\A c #\Z)       (- (char->integer c) (char->integer #\A))]
+                     [(char<=? #\a c #\f) (+ 26 (- (char->integer c) (char->integer #\a)))]
+                     [else                (error (format "[Adv] unsupported var: ~v" c))])]
+    [`(var ,n) n]))
 
 (define (mes:var1* c s v)
   (define b
@@ -111,39 +115,22 @@
 (define (mes:inc-var c v) (mes:var* c '+= v))
 (define (mes:dec-var c v) (mes:var* c '-= v))
 
-;TODO: macro implementation
-(define mes:A #\A)
-(define mes:B #\B)
-(define mes:C #\C)
-(define mes:D #\D)
-(define mes:E #\E)
-(define mes:F #\F)
-(define mes:G #\G)
-(define mes:H #\H)
-(define mes:I #\I)
-(define mes:J #\J)
-(define mes:K #\K)
-(define mes:L #\L)
-(define mes:M #\M)
-(define mes:N #\N)
-(define mes:O #\O)
-(define mes:P #\P)
-(define mes:Q #\Q)
-(define mes:R #\R)
-(define mes:S #\S)
-(define mes:T #\T)
-(define mes:U #\U)
-(define mes:V #\V)
-(define mes:W #\W)
-(define mes:X #\X)
-(define mes:Y #\Y)
-(define mes:Z #\Z)
+(define-syntax (define-vars stx)
+  (syntax-case stx ()
+    [(_ L)
+     #`(begin
+         #,@(for/list ([c (in-string (syntax-e #'L))])
+              #`(define #,(datum->syntax stx (string->symbol (format "mes:~a" c))) #,c)))]))
+(define-vars "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdef")
 
-(define (mes:var c) c)
+;; numeric spelling (var N) for junk/dead indexes: self-evaluating
+(define (mes:var c) (if (char? c) c `(var ,c)))
 
 (define (var? v)
  (match v
-  [(? char? c) (char<=? #\A c #\Z)]
+  [(? char? c) (or (char<=? #\A c #\Z)
+                   (char<=? #\a c #\f))]
+  [`(var ,_)   #t]
   [_           #f]))
 
 ;; conds
