@@ -324,7 +324,10 @@
 
 ;; special chr
 
-(define (mes:loop . l) `(,CHR-LBEG ,@l ,CHR-LEND))
+(define (mes:loop  . l) `(,CHR-LBEG ,@l ,CHR-LEND))
+(define (mes:loop! . l) `(,CHR-LBEG ,@l))
+(define (mes:loop* . l) `(,CHR-LBEG ,@l))
+(define (mes:continue)  CHR-LEND)
 (define (mes:wait$) CHR-WAIT)
 (define (mes:nop@)  CHR-NOP)
 

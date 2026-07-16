@@ -159,7 +159,8 @@
 
 (define (fuse l)
   (define f
-    `(,fuse-arg
+    `(,fuse-loop
+      ,fuse-arg
       ,fuse-str
       ,fuse-text
       ,fuse-text-break
@@ -170,6 +171,30 @@
       ,fuse-text-color
       ,fuse-meta))
   ((apply compose1 (reverse f)) l))
+
+(define (fuse-loop l)
+  (define (lend? x) (member 'lend$ (flatten x)))
+  (define (c x)
+    (match x
+      ['(lend$)  '(continue)]
+      [`(,a ...) (map c a)]
+      [x         x]))
+  (define (w b)
+    (match b
+      [`(,h ... (lend$) ,t ...) #:when (not (lend? `(,@h ,@t)))
+       `((loop ,@h) ,@t)]
+      [_ (if (lend? b)
+             `((loop* ,@(c b)))
+             `((loop! ,@b)))]))
+  (define (f x)
+    (match x
+      [`(,h ... (lbeg$) ,b ...) `(,@h ,@(w (f b)))]
+      [x                        x]))
+  (define (: x)
+    (match x
+      [`(,a ...) (f (map : a))]
+      [x         x]))
+  (c (: l)))
 
 (define (fuse-arg l)
   (define (: x)

@@ -291,12 +291,13 @@
 
 (define block-begin BEG)
 (define block-end   (<or> END
-                          (lookAhead EOS) ;HACK: implicit END closed by the end of segment (photo/GRS25)
-                          (lookAhead CHR-LEND))) ;HACK: implicit END closed by CHR-LEND (marine/000066)
+                          (lookAhead EOS))) ;HACK: implicit END closed by the end of segment (photo/GRS25)
 
-(define loop-begin  CHR-LBEG)
-(define loop-end    (<or> CHR-LEND
-                          (lookAhead EOS))) ;HACK: dangling loop (kounai1/Y2END)
+;; loop marks
+
+(define lbeg$ (:% CHR-LBEG (return '(lbeg$))))
+(define lend$ (:% CHR-LEND (return '(lend$))))
+(define loops (<or> lbeg$ lend$))
 
 (define param  ($list 'param (<or> NUM
                                    ARG
@@ -312,10 +313,6 @@
 (define op-chr (<or> (:% (c <- CHR-WAIT) (return `(wait$)))
                      (:% (c <- CHR-NOP)  (return `(nop@)))))
 
-;(define loop  (try ($cons 'loop  (:~ CHR-LBEG (~> (@ stmts)) CHR-LEND))))
-;(define loop! (try ($cons 'loop! (:~ CHR-LBEG (~> (@ stmts)))))) ;;HACK: dangling loop (kounai1/Y2END)
-;(define loops (<or> loop loop!))
-(define loops  (try ($cons 'loop  (:~ loop-begin (~> (@ stmts)) loop-end))))
 
 (define op-menu (:% (c <- (<or> (char #\uAD) (char #\uAE)))
                     (n <- (many NUM)) ;HACK: optional number args (necro/NB_02B)
