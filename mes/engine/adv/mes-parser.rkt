@@ -318,6 +318,11 @@
                     (b <- (<or> block/ block*))
                     (return `((cmd ,c) ,@n ,@t ,b))))
 
+(define op-repeat (:% (c <- (char #\uBB))
+                      (n <- (optional NUM))
+                      (b <- (if (empty? n) (@ block/?) (@ block)))
+                      (return `((cmd ,c) ,@(if (empty? n) '() `(,n)) ,b))))
+
 (define op-if-when (:% (c <- (<or> (char #\uBC) (char #\uBD)))
                        (b <- block/?)
                        (return `((cmd, c) ,b))))
@@ -379,6 +384,7 @@
 (define op-cmd* (:% (x? <- (getState 'extraop))
                     (<or> op-chr
                           op-menu
+                          op-repeat
                           op-if-when
                           op-branch-var
                           op-execute-var
