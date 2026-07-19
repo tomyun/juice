@@ -112,7 +112,7 @@
                  [0 ''=]
                  [1 ''+=]
                  [2 ''-=]
-                 [_ ''=])])
+                 [_ ''!=])])
        `(var* ,c ,s ,v)))))
 
 (define (lex-num0 c)        `(num ,(- (char->integer c) #x23)))
@@ -262,7 +262,8 @@
                    (let ([o (match s
                               [''+= 'inc-var]
                               [''-= 'dec-var]
-                              [''=  'set-var])])
+                              [''=  'set-var]
+                              [''!= 'set-var])]) ;HACK: f=3..7 mean set-var in statement context
                      (return `(,o ,c ,v))))))
 
 (define reg? (:% (l <- reg*)
@@ -279,7 +280,8 @@
                    (let ([o (match s
                               [''+= '>=]
                               [''-= '<=]
-                              [''=  '=])])
+                              [''=  '=]
+                              [''!= '!=])])
                      (return `(,o ,c ,v))))))
 
 (define block-begin BEG)

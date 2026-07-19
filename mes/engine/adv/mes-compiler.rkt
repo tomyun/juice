@@ -91,7 +91,8 @@
            [f  (match s
                  ['=  0]
                  ['+= 1]
-                 ['-= 2])]
+                 ['-= 2]
+                 ['!= 3])]
            [m  (if (var? v) 1 0)]
            [j  (if (= m 1) (var->integer v) v)]
            [j1 (arithmetic-shift j -7)]
@@ -146,6 +147,9 @@
 
 (define (mes:<= a b)
   (mes:var* a '-= b))
+
+(define (mes:!= a b)
+  (mes:var* a '!= b))
 
 ;; num
 
