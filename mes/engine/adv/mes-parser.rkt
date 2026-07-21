@@ -433,12 +433,14 @@
 (define items  (many1 item))
 (define block* (try ($cons '<*> (:~ block-begin (~> items) block-end))))
 
+(define (branch-end b) (:~ (~> b) END (lookAhead (<or> CNT END))))
+
 (define branch    ($cons '/ stmts))
 (define branch?   (:% (c <- conds)
                       (s <- stmts)
                       (return `(// ,c ,@s))))
-(define branches  (sepBy1 branch  CNT))
-(define branches? (sepBy1 branch? CNT))
+(define branches  (<or> (try (sepBy1 (branch-end branch)  CNT)) (sepBy1 branch  CNT)))
+(define branches? (<or> (try (sepBy1 (branch-end branch?) CNT)) (sepBy1 branch? CNT)))
 (define block/    (try ($cons '</> (:~ block-begin (~> branches)  block-end))))
 (define block/?   (try ($cons '</> (:~ block-begin (~> branches?) block-end))))
 
