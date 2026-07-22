@@ -444,9 +444,12 @@
 (define block/    (try ($cons '</> (:~ block-begin (~> branches)  block-end))))
 (define block/?   (try ($cons '</> (:~ block-begin (~> branches?) block-end))))
 
-(define seg   (:% (c <- conds)
-                  (s <- stmts)
-                  (optional END) ;HACK: dangling END (marine/000012)
+(define end$ (:% END (return '(end$))))
+(define cnt$ (:% CNT (return '(cnt$))))
+
+(define seg   (:% (many END)
+                  (c <- conds)
+                  (s <- (many (<or> stmt end$ cnt$)))
                   EOS
                   (return (if (equal? c '(?)) ;HACK: distinuish seg/seg* for better syntax highlighting
                               `(seg*   ,@s)

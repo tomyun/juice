@@ -330,6 +330,8 @@
 (define (mes:continue)  CHR-LEND)
 (define (mes:wait$) CHR-WAIT)
 (define (mes:nop@)  CHR-NOP)
+(define (mes:end$)  END)
+(define (mes:cnt$)  CNT)
 
 ;; command
 
